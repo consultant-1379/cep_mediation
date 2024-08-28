@@ -1,0 +1,180 @@
+{
+  integrityCheckInfo {
+    messageAuthenticationCode 3,
+    rrc-MessageSequenceNumber 0
+  },
+  messageXmeasurementReport : {
+    measurementIdentity 1,
+    measuredResultsXintraFreqMeasuredResultsList : [
+      {
+        cellSynchronisationInfo {
+          modeSpecificInfoXfdd : {
+            countC-SFN-Frame-difference {
+              countC-SFN-High 0,
+              off 240
+            },
+            tm 19336
+          }
+        },
+        modeSpecificInfoXfdd : {
+          primaryCPICH-Info {
+            primaryScramblingCode 363
+          },
+          cpich-Ec-N0 26,
+          cpich-RSCP 8
+        }
+      },
+      {
+        cellSynchronisationInfo {
+          modeSpecificInfoXfdd : {
+            countC-SFN-Frame-difference {
+              countC-SFN-High 0,
+              off 90
+            },
+            tm 27788
+          }
+        },
+        modeSpecificInfoXfdd : {
+          primaryCPICH-Info {
+            primaryScramblingCode 235
+          },
+          cpich-Ec-N0 23,
+          cpich-RSCP 7
+        }
+      },
+      {
+        cellSynchronisationInfo {
+          modeSpecificInfoXfdd : {
+            countC-SFN-Frame-difference {
+              countC-SFN-High 0,
+              off 125
+            },
+            tm 17521
+          }
+        },
+        modeSpecificInfoXfdd : {
+          primaryCPICH-Info {
+            primaryScramblingCode 263
+          },
+          cpich-Ec-N0 20,
+          cpich-RSCP 5
+        }
+      },
+      {
+        cellSynchronisationInfo {
+          modeSpecificInfoXfdd : {
+            countC-SFN-Frame-difference {
+              countC-SFN-High 0,
+              off 205
+            },
+            tm 10451
+          }
+        },
+        modeSpecificInfoXfdd : {
+          primaryCPICH-Info {
+            primaryScramblingCode 315
+          },
+          cpich-Ec-N0 0,
+          cpich-RSCP 0
+        }
+      },
+      {
+        cellSynchronisationInfo {
+          modeSpecificInfoXfdd : {
+            countC-SFN-Frame-difference {
+              countC-SFN-High 0,
+              off 231
+            },
+            tm 1966
+          }
+        },
+        modeSpecificInfoXfdd : {
+          primaryCPICH-Info {
+            primaryScramblingCode 310
+          },
+          cpich-Ec-N0 0,
+          cpich-RSCP 0
+        }
+      },
+      {
+        cellSynchronisationInfo {
+          modeSpecificInfoXfdd : {
+            countC-SFN-Frame-difference {
+              countC-SFN-High 0,
+              off 205
+            },
+            tm 11987
+          }
+        },
+        modeSpecificInfoXfdd : {
+          primaryCPICH-Info {
+            primaryScramblingCode 188
+          },
+          cpich-Ec-N0 0,
+          cpich-RSCP 0
+        }
+      }
+    ],
+    eventResultsXintraFreqEventResults : {
+      eventID e1c,
+      cellMeasurementEventResultsXfdd : [
+        {
+          primaryScramblingCode 363
+        },
+        {
+          primaryScramblingCode 235
+        },
+        {
+          primaryScramblingCode 263
+        },
+        {
+          primaryScramblingCode 255
+        },
+        {
+          primaryScramblingCode 196
+        },
+        {
+          primaryScramblingCode 204
+        },
+        {
+          primaryScramblingCode 310
+        },
+        {
+          primaryScramblingCode 157
+        },
+        {
+          primaryScramblingCode 315
+        },
+        {
+          primaryScramblingCode 188
+        }
+      ]
+    },
+    v390nonCriticalExtensions {
+      measurementReport-v390ext {},
+      laterNCEs {
+        v4b0NCEs {
+          measurementReport-v4b0ext {},
+          v590NCEs {
+            measurementReport-v590ext {
+              measuredResults-v590extXintraFrequencyMeasuredResultsList : [
+                {},
+                {},
+                {},
+                {
+                  deltaRSCP -5
+                },
+                {
+                  deltaRSCP -5
+                },
+                {
+                  deltaRSCP -5
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

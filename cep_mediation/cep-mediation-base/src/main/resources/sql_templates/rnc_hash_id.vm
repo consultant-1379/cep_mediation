@@ -1,0 +1,26 @@
+SELECT      
+    dc.DIM_E_RAN_RNCFUNCTION.rncId as RNC_ID,
+    a.HIER3_ID as HIER3_ID
+FROM 
+    (select distinct(HIER3_ID) as HIER3_ID, HIERARCHY_3 from dc.DIM_E_SGEH_HIER321_CELL
+       where status='ACTIVE') as a, 
+    dc.DIM_E_RAN_RNC, 
+    dc.DIM_E_RAN_RNCFUNCTION
+WHERE 
+    a.HIERARCHY_3 = dc.DIM_E_RAN_RNC.ALTERNATIVE_FDN 
+    AND dc.DIM_E_RAN_RNC.RNC_FDN = dc.DIM_E_RAN_RNCFUNCTION.SN 
+    AND dc.DIM_E_RAN_RNCFUNCTION.rncId is not null
+    AND dc.DIM_E_RAN_RNCFUNCTION.STATUS = 'ACTIVE'
+UNION
+
+SELECT      
+    dc.DIM_Z_SGEH_HIER3_RNCID.rncId as RNC_ID,
+    b.HIER3_ID as HIER3_ID
+FROM 
+    (select distinct(HIER3_ID) as HIER3_ID, HIERARCHY_3 from dc.DIM_Z_SGEH_HIER321_CELL
+       where status = 'ACTIVE') as b,  
+    dc.DIM_Z_SGEH_HIER3_RNCID
+WHERE 
+    b.HIERARCHY_3 = dc.DIM_Z_SGEH_HIER3_RNCID.HIERARCHY_3 
+    AND dc.DIM_Z_SGEH_HIER3_RNCID.rncId is not null
+    AND dc.DIM_Z_SGEH_HIER3_RNCID.STATUS = 'ACTIVE'

@@ -1,0 +1,192 @@
+module WcdmaUserPlaneCorrelation;
+
+import com.ericsson.cepmediation.correlation.support.Util;
+import com.ericsson.cepmediation.base.util.Utilities;
+import com.ericsson.cepmediation.base.apeventbeans.*;
+import com.ericsson.cepmediation.correlation.lookup.impl.DefaultLookupService;
+
+//TCP report session window using helper bean
+create window TcpSessionWindow.win:keepall() as correlation.TCP_REPORT_ENRICHEDHelper;
+
+//TCP report sesion duration in second
+create constant variable short CONT_SESSION_DURATION = 60;
+
+//TCP report session duration in millisecond
+create constant variable long CONT_SESSION_DURATION_MILL = 60000;
+
+//five minute session duration in millisecond
+create constant variable long CONT_FIVE_MIN_SESSION_DURATION_MILL=300000;
+
+@Name("TCP_REPORT_ENRICHED")
+@Priority(10)
+@Audit
+on correlation.SESSION_END_EVENT as sessionEndEvent
+select tsw.* from TcpSessionWindow as tsw;
+
+@Priority(9)
+@Drop
+//remove selected session
+on correlation.SESSION_END_EVENT as sessionEndEvent
+delete from TcpSessionWindow;
+
+@Name('classification-handler')
+@Audit
+select * from bearer_plane.CLASSIFICATION_REPORT;
+
+//tcp report partial event passing in, some fields need to be aggregated and some fields will be replaced by latest values
+on bearer_plane.TCP_REPORT_PARTIAL as a
+merge TcpSessionWindow as tsw
+where
+    (a.PORT_TERM = tsw.PORT_TERM or (a.PORT_TERM is null and tsw.PORT_TERM is null))
+    and (a.PORT_SERV = tsw.PORT_SERV or (a.PORT_SERV is null and tsw.PORT_SERV is null))
+    and (case a.DIRECTION when 1 then true else false end) = tsw.DOWNLINK
+    and Util.hash(a.GGSN_ADDRESS, a.UE_ADDRESS, a.ADDR_TERM, a.ADDR_SERV, a.IMSI, a.HOST, a.URI) = tsw.HASH
+    and cast((case a.IMSI 
+    	  when null then DEFAULT_LONG_VALUE_STRING
+          when "" then DEFAULT_LONG_VALUE_STRING
+          else a.IMSI end),long) = tsw.IMSI
+    and (a.HOST = tsw.HOST or (a.HOST is null and tsw.HOST is null))
+    and a.timestamp >= tsw.timestamp
+    and a.timestamp < tsw.timestamp + CONT_SESSION_DURATION_MILL
+    and (a.URI = tsw.URI or (a.URI is null and tsw.URI is null))
+    
+    and (a.GGSN_ADDRESS = tsw.GGSN_STRING or (a.GGSN_ADDRESS is null and tsw.GGSN_STRING is null))
+    and (a.UE_ADDRESS = tsw.UE_STRING or (a.UE_ADDRESS is null and tsw.UE_STRING is null))
+    and (a.ADDR_TERM = tsw.TERM_STRING or (a.ADDR_TERM is null and tsw.TERM_STRING is null))
+    and (a.ADDR_SERV = tsw.SERV_STRING or (a.ADDR_SERV is null and tsw.SERV_STRING is null))
+   
+    and a.RAT = tsw.RAT
+    and (a.MCC = tsw.MCC or (a.MCC is null and tsw.MCC is null))
+    and (a.MNC = tsw.MNC or (a.MNC is null and tsw.MNC is null))
+    and (tsw.LAC = a.LAC or (a.LAC is null and tsw.LAC is null))
+    and (tsw.RAC = a.RAC or (a.RAC is null and tsw.RAC is null))
+    and (tsw.CID = a.CID or (a.CID is null and tsw.CID is null))
+	and tsw.SAC = a.SAC
+    and tsw.ARP = cast(a.ARP, short)
+    and tsw.DELAY_CLASS = cast(a.DELAY_CLASS, byte)
+    and tsw.RELIABILITY_CLASS = cast(a.RELIABILITY_CLASS, byte)
+    and tsw.PRECEDENCE = cast(a.PRECEDENCE, byte)
+    and (tsw.TRAFFIC_CLASS = a.TRAFFIC_CLASS or ( a.TRAFFIC_CLASS is null and tsw.TRAFFIC_CLASS is null))
+    and tsw.GTPC_THROUGHPUT = cast(a.GTPC_THROUGHPUT, byte)
+    and tsw.GTPC_MAX_UPLINK = a.GTPC_MAX_UPLINK
+    and tsw.GTPC_MAX_DOWNLINK = a.GTPC_MAX_DOWNLINK
+    and tsw.GTPC_GBR_UPLINK = a.GTPC_GBR_UPLINK
+    and tsw.GTPC_GBR_DOWNLINK = a.GTPC_GBR_DOWNLINK
+    and tsw.SDU = cast(a.SDU, short)
+    and tsw.DT_FLAG = cast(a.DT_FLAG, byte)
+when matched
+    then update set
+        tsw.IMEISV = cast((case a.IMEISV 
+                           when null then DEFAULT_LONG_VALUE_STRING
+                           when "" then DEFAULT_LONG_VALUE_STRING 
+                           else a.IMEISV end), long),
+        tsw.END_APN = a.APN,
+        tsw.DATA_RECEIVED = tsw.DATA_RECEIVED + a.DATA_RECEIVED,
+        tsw.THROUGHPUT = cast(tsw.THROUGHPUT  + (case a.THROUGHPUT when DEFAULT_INT_VALUE then 0 else a.THROUGHPUT end), int),
+        tsw.THROUGHPUTCount = cast(tsw.THROUGHPUTCount + (case a.THROUGHPUT when DEFAULT_INT_VALUE then 0 else 1 end), int),
+        tsw.PIPE_THROUGHPUT = cast(tsw.PIPE_THROUGHPUT + (case a.PIPE_THROUGHPUT when DEFAULT_INT_VALUE then 0 else a.PIPE_THROUGHPUT end), int),
+        tsw.PIPE_THROUGHPUTCount = cast(tsw.PIPE_THROUGHPUTCount + (case a.PIPE_THROUGHPUT when DEFAULT_INT_VALUE then 0 else 1 end), int),
+        tsw.NONSS_PIPE_THROUGHPUT = cast(tsw.NONSS_PIPE_THROUGHPUT + (case a.NONSS_PIPE_THROUGHPUT when DEFAULT_INT_VALUE then 0 else a.NONSS_PIPE_THROUGHPUT end), int),
+        tsw.NONSS_PIPE_THROUGHPUTCount = cast(tsw.NONSS_PIPE_THROUGHPUTCount + (case a.NONSS_PIPE_THROUGHPUT when DEFAULT_INT_VALUE then 0 else 1 end), int),
+        tsw.CHANNEL_PIPE_THROUGHPUT = cast(tsw.CHANNEL_PIPE_THROUGHPUT + (case a.CHANNEL_PIPE_THROUGHPUT when DEFAULT_INT_VALUE then 0 else a.CHANNEL_PIPE_THROUGHPUT end), int),
+        tsw.CHANNEL_PIPE_THROUGHPUTCount = cast(tsw.CHANNEL_PIPE_THROUGHPUTCount + (case a.CHANNEL_PIPE_THROUGHPUT when DEFAULT_INT_VALUE then 0 else 1 end), int),
+        tsw.MAX_RWIN = max(tsw.MAX_RWIN, a.MAX_RWIN),
+        tsw.SETUP_TIME_TERM = cast (tsw.SETUP_TIME_TERM + (case a.SETUP_TIME_TERM when DEFAULT_FLOAT_VALUE then 0 else a.SETUP_TIME_TERM end)*1000, int) ,
+        tsw.SETUP_TIME_TERMCount = cast(tsw.SETUP_TIME_TERMCount + (case a.SETUP_TIME_TERM when DEFAULT_FLOAT_VALUE then 0 else 1 end), int),
+        tsw.SETUP_TIME_NET = cast (tsw.SETUP_TIME_NET + (case a.SETUP_TIME_NET when DEFAULT_FLOAT_VALUE then 0 else a.SETUP_TIME_NET end)*1000, int),
+        tsw.SETUP_TIME_NETCount = cast(tsw.SETUP_TIME_NETCount + (case a.SETUP_TIME_NET when DEFAULT_FLOAT_VALUE then 0 else 1 end), int),
+        tsw.MAX_DATA_PACKET = max(tsw.MAX_DATA_PACKET, a.MAX_DATA_PACKET),
+        tsw.PACKET_LOSS_TERM = cast(tsw.PACKET_LOSS_TERM + (case a.PACKET_LOSS_TERM when DEFAULT_FLOAT_VALUE then 0 else a.PACKET_LOSS_TERM end), float),
+        tsw.PACKET_LOSS_TERMCount = cast(tsw.PACKET_LOSS_TERMCount + (case a.PACKET_LOSS_TERM when DEFAULT_FLOAT_VALUE then 0 else 1 end), int),
+        tsw.PACKET_LOSS_NET = cast(tsw.PACKET_LOSS_NET + (case a.PACKET_LOSS_NET when DEFAULT_FLOAT_VALUE then 0 else a.PACKET_LOSS_NET end), float),
+        tsw.PACKET_LOSS_NETCount = cast(tsw.PACKET_LOSS_NETCount + (case a.PACKET_LOSS_NET when DEFAULT_FLOAT_VALUE then 0 else 1 end), int),        
+        tsw.HOST = a.HOST,
+        tsw.UE_IP_ADDRESS = Util.getIpv4Address(a.UE_ADDRESS),
+        tsw.TAC = Utilities.extractTacFromImeiSv(a.IMEISV),
+        tsw.ACTIVITY_DURATION = tsw.ACTIVITY_DURATION + cast(a.DURATION*1000, int),
+        tsw.NO_OF_SAMPLES = tsw.NO_OF_SAMPLES  + 1,        
+        tsw.MSISDN = cast((case a.MSISDN 
+        				   when null then DEFAULT_LONG_VALUE_STRING
+        				   when "" then DEFAULT_LONG_VALUE_STRING 
+        				   else a.MSISDN end), long)
+when not matched
+    then insert into
+        TcpSessionWindow
+    select
+        cast((case a.IMEISV 
+        	  when null then DEFAULT_LONG_VALUE_STRING
+        	  when "" then DEFAULT_LONG_VALUE_STRING 
+        	  else a.IMEISV end), long) as IMEISV,        
+        cast(20002, short) as EVENT_ID,
+        a.APN as START_APN,
+        a.APN as END_APN,
+        CONT_SESSION_DURATION as DURATION,
+        false as IS_PARTIAL,
+        (case a.DIRECTION when 1 then true else false end) as DOWNLINK,
+        a.DATA_RECEIVED as DATA_RECEIVED,
+        cast((case a.THROUGHPUT when DEFAULT_INT_VALUE then 0 else a.THROUGHPUT end), int) as THROUGHPUT,
+        cast((case a.THROUGHPUT when DEFAULT_INT_VALUE then 0 else 1 end), int) as THROUGHPUTCount,
+        cast((case a.PIPE_THROUGHPUT when DEFAULT_INT_VALUE then 0 else a.PIPE_THROUGHPUT end), int) as PIPE_THROUGHPUT,
+        cast((case a.PIPE_THROUGHPUT when DEFAULT_INT_VALUE then 0 else 1 end), int) as PIPE_THROUGHPUTCount,
+        cast((case a.NONSS_PIPE_THROUGHPUT when DEFAULT_INT_VALUE then 0 else a.NONSS_PIPE_THROUGHPUT end), int) as NONSS_PIPE_THROUGHPUT,
+        cast((case a.NONSS_PIPE_THROUGHPUT when DEFAULT_INT_VALUE then 0 else 1 end), int) as NONSS_PIPE_THROUGHPUTCount,
+        cast((case a.CHANNEL_PIPE_THROUGHPUT when DEFAULT_INT_VALUE then 0 else a.CHANNEL_PIPE_THROUGHPUT end), int) as CHANNEL_PIPE_THROUGHPUT,
+        cast((case a.CHANNEL_PIPE_THROUGHPUT when DEFAULT_INT_VALUE then 0 else 1 end), int) as CHANNEL_PIPE_THROUGHPUTCount,
+        cast((case a.ALONE_RATIO when DEFAULT_FLOAT_VALUE then DEFAULT_FLOAT_VALUE else a.ALONE_RATIO end), float) as ALONE_RATIO,
+        a.MAX_RWIN as MAX_RWIN,
+        cast((case a.SETUP_TIME_TERM when DEFAULT_FLOAT_VALUE then 0 else a.SETUP_TIME_TERM end)*1000, int) as SETUP_TIME_TERM,
+        cast((case a.SETUP_TIME_TERM when DEFAULT_FLOAT_VALUE then 0 else 1 end), int) as SETUP_TIME_TERMCount,
+        cast((case a.SETUP_TIME_NET when DEFAULT_FLOAT_VALUE then 0 else a.SETUP_TIME_NET end)*1000,int) as SETUP_TIME_NET,
+        cast((case a.SETUP_TIME_NET when DEFAULT_FLOAT_VALUE then 0 else 1 end), int) as SETUP_TIME_NETCount,
+        a.MAX_DATA_PACKET as MAX_DATA_PACKET,
+        cast((case a.PACKET_LOSS_TERM when DEFAULT_FLOAT_VALUE then 0 else a.PACKET_LOSS_TERM end), float) as PACKET_LOSS_TERM,
+        cast((case a.PACKET_LOSS_TERM when DEFAULT_FLOAT_VALUE then 0 else 1 end), int) as PACKET_LOSS_TERMCount,
+        cast((case a.PACKET_LOSS_NET when DEFAULT_FLOAT_VALUE then 0 else a.PACKET_LOSS_NET end), float) as PACKET_LOSS_NET,
+        cast((case a.PACKET_LOSS_NET when DEFAULT_FLOAT_VALUE then 0 else 1 end), int) as PACKET_LOSS_NETCount,
+        //a.CONTENT_TYPE as CONTENT_TYPE,
+        a.HOST AS HOST,
+        Util.getIpv4Address(a.UE_ADDRESS) as UE_IP_ADDRESS,
+        Utilities.extractTacFromImeiSv(a.IMEISV) as TAC,
+        a.timestamp as ACTIVITY_START_TIME,
+        cast(a.DURATION*1000, int) as ACTIVITY_DURATION,
+        1 as NO_OF_SAMPLES,
+        a.timestamp - a.timestamp%CONT_FIVE_MIN_SESSION_DURATION_MILL as FIVE_MIN_AGG_TIME,
+        Util.getIpv4Address(a.ADDR_TERM) as ADDR_TERM,
+        a.PORT_TERM as PORT_TERM,
+        Util.getIpv4Address(a.ADDR_SERV) as ADDR_SERV,
+        a.PORT_SERV as PORT_SERV,
+        a.URI as URI,
+        a.RAT as RAT,
+        a.MCC as MCC,
+        a.MNC as MNC,
+        a.LAC as LAC,
+        a.RAC as RAC,
+        a.CID as CID,
+        a.SAC as SAC,
+        Util.getIpv4Address(a.GGSN_ADDRESS) as GGSN_ADDR,
+        cast(a.ARP, short) as ARP,
+        cast(a.DELAY_CLASS, byte) as DELAY_CLASS,
+        cast(a.RELIABILITY_CLASS, byte) as RELIABILITY_CLASS,
+        cast(a.PRECEDENCE, byte) as PRECEDENCE,
+        a.TRAFFIC_CLASS as TRAFFIC_CLASS,
+        cast(a.GTPC_THROUGHPUT, byte) as GTPC_THROUGHPUT,
+        a.GTPC_MAX_UPLINK as GTPC_MAX_UPLINK,
+        a.GTPC_MAX_DOWNLINK as GTPC_MAX_DOWNLINK,
+        a.GTPC_GBR_UPLINK as GTPC_GBR_UPLINK,
+        a.GTPC_GBR_DOWNLINK as GTPC_GBR_DOWNLINK,
+        cast(a.SDU, short) as SDU,
+        cast(a.DT_FLAG, byte) as DT_FLAG,        
+        cast((case a.IMSI 
+        	  when null then DEFAULT_LONG_VALUE_STRING
+        	  when "" then DEFAULT_LONG_VALUE_STRING 
+        	  else a.IMSI end), long) as IMSI,
+        cast((case a.MSISDN 
+        	  when null then DEFAULT_LONG_VALUE_STRING
+        	  when "" then DEFAULT_LONG_VALUE_STRING 
+        	  else a.MSISDN end), long) as MSISDN,
+        Util.hash(a.GGSN_ADDRESS, a.UE_ADDRESS, a.ADDR_TERM, a.ADDR_SERV, a.IMSI, a.HOST, a.URI) as HASH,
+        a.GGSN_ADDRESS as GGSN_STRING,
+        a.UE_ADDRESS as UE_STRING,
+        a.ADDR_TERM as TERM_STRING,
+        a.ADDR_SERV as SERV_STRING,        
+        a.timestamp - a.timestamp%CONT_SESSION_DURATION_MILL as timestamp;

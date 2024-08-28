@@ -1,0 +1,415 @@
+module cfa_module;
+
+
+uses raw_events_base_module;
+uses cfa_hfa_common_module;
+
+
+create window CallSetupFailEnrichedWindow.win:keepall() as correlation.ENHANCED_INTERNAL_CALL_SETUP_FAIL_ENRICHED;
+create window CallSetupFailUnenrichedWindow.win:keepall() as correlation.ENHANCED_INTERNAL_CALL_SETUP_FAIL_ENRICHED;
+create window SystemReleaseWindow.win:keepall() as correlation.ENHANCED_INTERNAL_SYSTEM_RELEASE_ENRICHED;
+create window INRInfoWindow.win:keepall() as correlation.INR_ENABLED_INFO;
+create window RabEstablishInfoWindow.win:keepall() as correlation.RAB_ESTABLISH_INFO;
+create window ReestablishEnrichWindow.win:keepall() as correlation.ENHANCED_INTERNAL_CALL_REESTABLISHMENT_ENRICHED;
+create window ReestablishUnenrichWindow.win:keepall() as correlation.ENHANCED_INTERNAL_CALL_REESTABLISHMENT_ENRICHED;
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteCallSetupFail')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from CallSetupFailUnenrichedWindow;
+
+// ************************************ Call Setup Failure Handling    ***********************
+@Name('CallSetupFail-Capturing')
+@Priority(12)
+on gpeh.INTERNAL_CALL_SETUP_FAIL as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+  and not ((event.SOURCE_CONF=0 and event.PROCEDURE_INDICATOR=15) or  (event.SOURCE_CONF=1 and event.PROCEDURE_INDICATOR=0))
+  when matched
+  then insert into
+  CallSetupFailEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        Util.getMcc(imw.IMSI)                                                  as IMSI_MCC,
+        Util.getMnc(imw.IMSI)                                                  as IMSI_MNC,
+        Util.isRoaming(imw.IMSI)                                               as ROAMING,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP,
+        case when event.PROCEDURE_INDICATOR = 1
+          then Util.getNumPsRabsFailed(event.SOURCE_CONF, event.WANTED_CONF)
+        end                                                                    as PS_RAB_FAIL_CNT,
+        case when event.PROCEDURE_INDICATOR = 1
+          then Util.getNumCsRabsFailed(event.SOURCE_CONF, event.WANTED_CONF)
+        end                                                                    as CS_RAB_FAIL_CNT,
+        case when event.PROCEDURE_INDICATOR = 1
+          then Util.getNumMultiRabsFailed(event.SOURCE_CONF, event.WANTED_CONF)
+        end                                                                    as MULTI_RAB_FAIL_CNT,
+        case when event.PROCEDURE_INDICATOR = 1
+          then Util.getRabTypeForFailedRabs(event.SOURCE_CONF, event.WANTED_CONF)
+        end                                                                    as FAILED_RAB_TYPE
+when not matched and not ((event.SOURCE_CONF=0 and event.PROCEDURE_INDICATOR=15) or  (event.SOURCE_CONF=1 and event.PROCEDURE_INDICATOR=0))
+    then insert into
+  CallSetupFailUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP,
+        case when event.PROCEDURE_INDICATOR = 1
+          then Util.getNumPsRabsFailed(event.SOURCE_CONF, event.WANTED_CONF)
+        end                                                                 as PS_RAB_FAIL_CNT,
+        case when event.PROCEDURE_INDICATOR = 1
+          then Util.getNumCsRabsFailed(event.SOURCE_CONF, event.WANTED_CONF)
+        end                                                                 as CS_RAB_FAIL_CNT,
+        case when event.PROCEDURE_INDICATOR = 1
+          then Util.getNumMultiRabsFailed(event.SOURCE_CONF, event.WANTED_CONF)
+        end                                                                 as MULTI_RAB_FAIL_CNT,
+        case when event.PROCEDURE_INDICATOR = 1
+          then Util.getRabTypeForFailedRabs(event.SOURCE_CONF, event.WANTED_CONF)
+        end                                                                 as FAILED_RAB_TYPE,
+        current_timestamp()                                                 as TIMESTAMP_WINDOW_ENTRY;
+
+@Priority(5)
+@Name('CallSetupFail-Enrichment')
+on PRODUCE_OUTPUT_TIMER as produceOutputTimer
+delete from CallSetupFailEnrichedWindow;
+
+@Priority(11)
+@Name('Imsi-Arrives-After-InternalCallSetupFail')
+on gpeh.INTERNAL_IMSI as imsi
+merge CallSetupFailUnenrichedWindow as callSetupFailUnenrichedWindow
+where imsi.UE_CONTEXT     = callSetupFailUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = callSetupFailUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long),
+        IMSI_MCC     = Util.getMcc(callSetupFailUnenrichedWindow.IMSI),
+        IMSI_MNC     = Util.getMnc(callSetupFailUnenrichedWindow.IMSI),
+        ROAMING      = Util.isRoaming(IMSI_MCC, IMSI_MNC);
+
+@Priority(5)
+@Name('IncompleteCallSetupFail-Enrichment')
+on PRODUCE_OUTPUT_TIMER as produceOutputTimer
+  delete from CallSetupFailUnenrichedWindow callSetupFailUnenrichedWindow
+  where callSetupFailUnenrichedWindow.IMSI != -1l;
+
+@Name('Cleanup-IncompleteCallSetupFail-On-Connection-Setup')
+@Priority(11)
+on gpeh.RRC_RRC_CONNECTION_SETUP setup
+delete from CallSetupFailUnenrichedWindow as callSetupFailUnenrichedWindow
+  where callSetupFailUnenrichedWindow.base.UE_CONTEXT = setup.UE_CONTEXT
+  and callSetupFailUnenrichedWindow.base.RNC_MODULE_ID = setup.RNC_MODULE_ID;
+
+@Name('Cleanup-IncompleteCallSetupFail-On-Connection-Release')
+@Priority(11)
+on gpeh.RRC_RRC_CONNECTION_RELEASE_COMPLETE release
+delete from CallSetupFailUnenrichedWindow as callSetupFailUnenrichedWindow
+  where callSetupFailUnenrichedWindow.base.UE_CONTEXT = release.UE_CONTEXT
+  and callSetupFailUnenrichedWindow.base.RNC_MODULE_ID = release.RNC_MODULE_ID;
+
+// Need to ensure that event will not be kept forever if there was no imsi or rrc set/release for that ueContext, rncModule combination
+@Name('Cleanup-Expired-IncompleteCallSetupFail')
+on CLEANUP_EXPIRED_DATA as removeExpiredData
+delete from CallSetupFailUnenrichedWindow as callSetupFailUnenrichedWindow
+  where(current_timestamp() - callSetupFailUnenrichedWindow.TIMESTAMP_WINDOW_ENTRY) > EXPIRY_TIME;
+
+// ********************************************************************************************
+
+
+// *********************************** System Release Handling *******************************
+
+@Name('SystemRelease-Capturing')
+@Priority(12)
+on gpeh.INTERNAL_SYSTEM_RELEASE(not Util.isInCfaWhitelist(event.getEventId(),event.RAN_DISCONNECTION_CODE, event.RAN_DISCONNECTION_SUBCODE) and not (event.SOURCE_CONF=21 or event.TARGET_CONF=21)) as event
+  insert into SystemReleaseWindow
+  select
+    event                                                               as base,
+    case when event.IMSI != "0"     // INTERNAL_SYSTEM_RELEASE event will have imsi value "0" for null imsi
+      then cast(event.IMSI, long)
+    end                                                                 as IMSI,
+    case when event.IMSI != "0"
+      then Util.getMcc(cast(event.IMSI, long))
+    end                                                                 as IMSI_MCC,
+    case when event.IMSI != "0"
+      then Util.getMnc(cast(event.IMSI, long))
+    end                                                                 as IMSI_MNC,
+    case when event.IMSI != "0"
+      then Util.isRoaming(cast(event.IMSI, long))
+    end                                                                 as ROAMING,
+    event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP,
+    Util.getNumPsRabsDropped(event.SOURCE_CONF, event.TARGET_CONF)      as PS_RAB_FAIL_CNT,
+    Util.getNumCsRabsDropped(event.SOURCE_CONF, event.TARGET_CONF)      as CS_RAB_FAIL_CNT,
+    Util.getNumMultiRabsDropped(event.SOURCE_CONF, event.TARGET_CONF)   as MULTI_RAB_FAIL_CNT,
+    Util.getRabTypeForDroppedRabs(event.SOURCE_CONF, event.TARGET_CONF) as FAILED_RAB_TYPE;
+
+
+@Priority(5)
+@Name('SystemRelease-Enrichment')
+on PRODUCE_OUTPUT_TIMER as produceOutputTimer
+delete from SystemReleaseWindow;
+
+// ********************************************************************************************
+//*************************************Dummy event Info*****************************************
+
+@Name('DummyEventInsertOnce-Capturing')
+@Priority(14)
+on correlation.INR_SESSION_EVENT as InrSession
+  insert into INRInfoWindow
+  select
+     Util.isFileExist(InrSession.rncId)                                  as INR_ENABLED;
+
+// ********************************************************************************************
+//*************************************INR Enable Info*****************************************
+
+@Name('InternalNormalReleaseInfoUpdateOnce-Capturing')
+@Priority(11)
+on gpeh.INTERNAL_NORMAL_RELEASE as event
+  update INRInfoWindow
+  set
+    INR_ENABLED = Util.processtextFile(event.subNetwork) where INR_ENABLED = false;
+
+// ********************************************************************************************
+
+// ************************************ Internal RAB Establishment Handling ***********************
+@Name('RABEstablishment-Capturing')
+@Priority(12)
+on gpeh.INTERNAL_RAB_ESTABLISHMENT as event
+merge INRInfoWindow
+where INRInfoWindow.INR_ENABLED = false
+when matched then
+  insert into
+  RabEstablishInfoWindow select
+    event.timestamp.roundFloor('min').minus((event.timestamp.getMinuteOfHour()%15)*ONE_MINUTE_IN_MS) as timestamp,
+    event.RNC_ID_1                                                                 as RNC_ID_1,
+    event.c_ID_1                                                                   as c_ID_1,
+    Util.getNumPsRabsEstablished(event.SOURCE_CONF, event.TARGET_CONF)             as PS_RAB_ESTABLISH_CNT,
+    Util.getNumCsRabsEstablished(event.SOURCE_CONF, event.TARGET_CONF)             as CS_RAB_ESTABLISH_CNT,
+    Util.getNumMultiRabsEstablished(event.SOURCE_CONF, event.TARGET_CONF)          as MULTI_RAB_ESTABLISH_CNT,
+     case when event.EXCEPTION_CLASS = 0
+      then Util.getNumPsRabsEstablished(event.SOURCE_CONF, event.TARGET_CONF)
+      else cast(0,short)
+     end                                                                           as PS_RAB_ESTABLISH_SUC_CNT,
+     case when event.EXCEPTION_CLASS = 0
+      then Util.getNumCsRabsEstablished(event.SOURCE_CONF, event.TARGET_CONF)
+      else cast(0,short)
+     end                                                                           as CS_RAB_ESTABLISH_SUC_CNT,
+     case when event.EXCEPTION_CLASS = 0
+      then Util.getNumMultiRabsEstablished(event.SOURCE_CONF, event.TARGET_CONF)
+      else cast(0,short)
+     end                                                                           as MULTI_RAB_ESTABLISH_SUC_CNT,
+    cast(0,short)                                                                  as CHECK_INR_ACTIVATED,
+    cast(0,short)                                                                  as CHECK_INR_RECEIVED,
+    false as VALID
+
+
+when not matched then
+  insert into
+  RabEstablishInfoWindow select
+    event.timestamp.roundFloor('min').minus((event.timestamp.getMinuteOfHour()%15)*ONE_MINUTE_IN_MS) as timestamp,
+    event.RNC_ID_1                                                                 as RNC_ID_1,
+    event.c_ID_1                                                                   as c_ID_1,
+    Util.getNumPsRabsEstablished(event.SOURCE_CONF, event.TARGET_CONF)             as PS_RAB_ESTABLISH_CNT,
+    Util.getNumCsRabsEstablished(event.SOURCE_CONF, event.TARGET_CONF)             as CS_RAB_ESTABLISH_CNT,
+    Util.getNumMultiRabsEstablished(event.SOURCE_CONF, event.TARGET_CONF)          as MULTI_RAB_ESTABLISH_CNT,
+    cast(0,short)                                                                  as PS_RAB_ESTABLISH_SUC_CNT,
+    cast(0,short)                                                                  as CS_RAB_ESTABLISH_SUC_CNT,
+    cast(0,short)                                                                  as MULTI_RAB_ESTABLISH_SUC_CNT,
+    cast(1,short)                                                                  as CHECK_INR_ACTIVATED,
+    cast(0,short)                                                                  as CHECK_INR_RECEIVED,
+    true  as VALID;
+
+@Name('SetRabsBeforeInrToZero-Capturing')
+@Priority(11)
+on gpeh.INTERNAL_NORMAL_RELEASE as event
+  update RabEstablishInfoWindow
+  set
+    PS_RAB_ESTABLISH_SUC_CNT                  =   cast(0,short),
+    CS_RAB_ESTABLISH_SUC_CNT                  =   cast(0,short),
+    MULTI_RAB_ESTABLISH_SUC_CNT               =  cast(0,short),
+    VALID                                      = true
+    where VALID =false;
+
+@Name('InternalNormalRelease-Capturing')
+@Priority(11)
+on gpeh.INTERNAL_NORMAL_RELEASE(not (event.SOURCE_CONF=1)) as event
+    merge  INRInfoWindow
+    where  INRInfoWindow.INR_ENABLED                = true
+    when matched
+    then insert into RabEstablishInfoWindow select
+    event.timestamp.roundFloor('min').minus((event.timestamp.getMinuteOfHour()%15)*ONE_MINUTE_IN_MS) as timestamp,
+    event.RNC_ID_1                                                                 as RNC_ID_1,
+    event.c_ID_1                                                                   as c_ID_1,
+    cast(0,short)                                                                  as PS_RAB_ESTABLISH_CNT,
+    cast(0,short)                                                                  as CS_RAB_ESTABLISH_CNT,
+    cast(0,short)                                                                  as MULTI_RAB_ESTABLISH_CNT,
+    Util.getNumPsRabsDropped(event.SOURCE_CONF, event.TARGET_CONF)                 as PS_RAB_ESTABLISH_SUC_CNT,
+    Util.getNumCsRabsDropped(event.SOURCE_CONF, event.TARGET_CONF)                 as CS_RAB_ESTABLISH_SUC_CNT,
+    Util.getNumMultiRabsDropped(event.SOURCE_CONF, event.TARGET_CONF)              as MULTI_RAB_ESTABLISH_SUC_CNT,
+    cast(1,short)                                                                  as CHECK_INR_ACTIVATED,
+    cast(1,short)                                                                  as CHECK_INR_RECEIVED,
+    true as VALID;
+
+
+@Name('WholeSystemRelease-Capturing')
+@Priority(11)
+on gpeh.INTERNAL_SYSTEM_RELEASE as event
+  merge  INRInfoWindow
+  where  INRInfoWindow.INR_ENABLED                = true
+  when matched then
+  insert into RabEstablishInfoWindow select
+    event.timestamp.roundFloor('min').minus((event.timestamp.getMinuteOfHour()%15)*ONE_MINUTE_IN_MS) as timestamp,
+    event.RNC_ID_1                                                                 as RNC_ID_1,
+    event.c_ID_1                                                                   as c_ID_1,
+    cast(0,byte)                                                                  as PS_RAB_ESTABLISH_CNT,
+    cast(0,byte)                                                                  as CS_RAB_ESTABLISH_CNT,
+    cast(0,byte)                                                                  as MULTI_RAB_ESTABLISH_CNT,
+    Util.getNumPsRabsDropped(event.SOURCE_CONF, event.TARGET_CONF)                as PS_RAB_ESTABLISH_SUC_CNT,
+    Util.getNumCsRabsDropped(event.SOURCE_CONF, event.TARGET_CONF)                as CS_RAB_ESTABLISH_SUC_CNT,
+    Util.getNumMultiRabsDropped(event.SOURCE_CONF, event.TARGET_CONF)            as MULTI_RAB_ESTABLISH_SUC_CNT,
+    cast(1,short)                                                                as CHECK_INR_ACTIVATED,
+    cast(0,short)                                                                as CHECK_INR_RECEIVED,
+    true as VALID;
+
+
+@Name('Aggregate-RAB-To-RNC-Results')
+@Priority(29)
+on correlation.SESSION_END_EVENT(alignedToFifteenMinutes = true) as sessionEndEvent
+insert into correlation.RAB_ESTABLISH_RNC_AGGR
+    select
+        rabInfoWindow.timestamp as timestamp,
+        rabInfoWindow.RNC_ID_1 as RNC_ID,
+        sum(rabInfoWindow.PS_RAB_ESTABLISH_CNT) as CALLS_PS_ALL,
+        sum(rabInfoWindow.CS_RAB_ESTABLISH_CNT) as CALLS_CS_ALL,
+        sum(rabInfoWindow.MULTI_RAB_ESTABLISH_CNT) as CALLS_MR_ALL,
+        sum(rabInfoWindow.PS_RAB_ESTABLISH_SUC_CNT) as PS_SUC,
+        sum(rabInfoWindow.CS_RAB_ESTABLISH_SUC_CNT ) as CS_SUC,
+        sum(rabInfoWindow.MULTI_RAB_ESTABLISH_SUC_CNT) as MR_SUC,
+
+     case when sum(rabInfoWindow.CHECK_INR_ACTIVATED) > 0
+        then true
+        else false
+        end                                as INR_ACTIVATED,
+        case when sum(rabInfoWindow.CHECK_INR_RECEIVED) > 0
+        then true
+        else false
+        end                               as INR_RECEIVED,
+        true                                    as VALID
+    from  RabEstablishInfoWindow as rabInfoWindow
+    group by rabInfoWindow.RNC_ID_1, rabInfoWindow.timestamp;
+
+@Name('Aggregate-RAB-To-Cell-Results')
+@Priority(28)
+on correlation.SESSION_END_EVENT(alignedToFifteenMinutes = true) as sessionEndEvent
+insert into correlation.RAB_ESTABLISH_CELL_AGGR
+    select
+        rabInfoWindow.timestamp as timestamp,
+        rabInfoWindow.RNC_ID_1 as RNC_ID,
+        rabInfoWindow.c_ID_1 as c_ID,
+        sum(rabInfoWindow.PS_RAB_ESTABLISH_CNT) as CALLS_PS_ALL,
+        sum(rabInfoWindow.CS_RAB_ESTABLISH_CNT) as CALLS_CS_ALL,
+        sum(rabInfoWindow.MULTI_RAB_ESTABLISH_CNT) as CALLS_MR_ALL,
+        sum(rabInfoWindow.PS_RAB_ESTABLISH_SUC_CNT) as PS_SUC,
+        sum(rabInfoWindow.CS_RAB_ESTABLISH_SUC_CNT) as CS_SUC,
+        sum(rabInfoWindow.MULTI_RAB_ESTABLISH_SUC_CNT) as MR_SUC,
+
+          case when sum(rabInfoWindow.CHECK_INR_ACTIVATED) > 0
+        then true
+        else false
+        end                                as INR_ACTIVATED,
+        case when sum(rabInfoWindow.CHECK_INR_RECEIVED) > 0
+        then true
+        else false
+        end                               as INR_RECEIVED,
+        true                                           as VALID
+
+    from RabEstablishInfoWindow as rabInfoWindow
+    group by rabInfoWindow.RNC_ID_1, rabInfoWindow.c_ID_1, rabInfoWindow.timestamp;
+
+@Name('Cleanup-RABEstablishment-Window')
+@Priority(25)
+on correlation.SESSION_END_EVENT(alignedToFifteenMinutes = true) as sessionEndEvent
+delete from RabEstablishInfoWindow;
+
+// ********************************************************************************************
+
+// *********************************** Call Re-Establishment Handling **************************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteReestablish')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from ReestablishUnenrichWindow;
+
+@Name('Reestablish-Capturing')
+@Priority(12)
+on gpeh.INTERNAL_CALL_REESTABLISHMENT as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  ReestablishEnrichWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        Util.getMcc(imw.IMSI)                                                  as IMSI_MCC,
+        Util.getMnc(imw.IMSI)                                                  as IMSI_MNC,
+        Util.isRoaming(imw.IMSI)                                               as ROAMING,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP,
+        Util.getNumPsRabsFailed(event.SOURCE_CONF, event.WANTED_CONF)          as PS_RAB_FAIL_CNT,
+        Util.getNumCsRabsFailed(event.SOURCE_CONF, event.WANTED_CONF)          as CS_RAB_FAIL_CNT,
+        Util.getNumMultiRabsFailed(event.SOURCE_CONF, event.WANTED_CONF)       as MULTI_RAB_FAIL_CNT,
+        Util.getRabTypeForFailedRabs(event.SOURCE_CONF, event.WANTED_CONF)     as FAILED_RAB_TYPE
+when not matched
+  then insert into
+  ReestablishUnenrichWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP,
+        Util.getNumPsRabsFailed(event.SOURCE_CONF, event.WANTED_CONF)       as PS_RAB_FAIL_CNT,
+        Util.getNumCsRabsFailed(event.SOURCE_CONF, event.WANTED_CONF)       as CS_RAB_FAIL_CNT,
+        Util.getNumMultiRabsFailed(event.SOURCE_CONF, event.WANTED_CONF)    as MULTI_RAB_FAIL_CNT,
+        Util.getRabTypeForFailedRabs(event.SOURCE_CONF, event.WANTED_CONF)  as FAILED_RAB_TYPE,
+        current_timestamp()                                                 as TIMESTAMP_WINDOW_ENTRY;
+
+@Priority(5)
+@Name('Reestablish-Enrichment')
+on PRODUCE_OUTPUT_TIMER as produceOutputTimer
+delete from ReestablishEnrichWindow;
+
+@Priority(11)
+@Name('Imsi-Arrives-After-Reestablish')
+on gpeh.INTERNAL_IMSI as imsi
+merge ReestablishUnenrichWindow as reestablishUnenrichWindow
+where imsi.UE_CONTEXT     = reestablishUnenrichWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = reestablishUnenrichWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long),
+        IMSI_MCC     = Util.getMcc(reestablishUnenrichWindow.IMSI),
+        IMSI_MNC     = Util.getMnc(reestablishUnenrichWindow.IMSI),
+        ROAMING      = Util.isRoaming(IMSI_MCC, IMSI_MNC);
+
+@Priority(5)
+@Name('IncompleteReestablish-Enrichment')
+on PRODUCE_OUTPUT_TIMER as produceOutputTimer
+delete from ReestablishUnenrichWindow reestablishUnenrichWindow
+where reestablishUnenrichWindow.IMSI != -1l;
+
+@Name('Cleanup-IncompleteReestablish-On-Connection-Setup')
+@Priority(11)
+on gpeh.RRC_RRC_CONNECTION_SETUP setup
+delete from ReestablishUnenrichWindow as reestablishUnenrichWindow
+  where reestablishUnenrichWindow.base.UE_CONTEXT = setup.UE_CONTEXT
+  and reestablishUnenrichWindow.base.RNC_MODULE_ID = setup.RNC_MODULE_ID;
+
+@Name('Cleanup-IncompleteReestablish-On-Connection-Release')
+@Priority(11)
+on gpeh.RRC_RRC_CONNECTION_RELEASE_COMPLETE release
+delete from ReestablishUnenrichWindow as reestablishUnenrichWindow
+  where reestablishUnenrichWindow.base.UE_CONTEXT = release.UE_CONTEXT
+  and reestablishUnenrichWindow.base.RNC_MODULE_ID = release.RNC_MODULE_ID;
+
+// Need to ensure that event will not be kept forever if there was no imsi or rrc set/release for that ueContext, rncModule combination
+@Name('Cleanup-Expired-IncompleteReestablish')
+on CLEANUP_EXPIRED_DATA as removeExpiredData
+delete from ReestablishUnenrichWindow as reestablishUnenrichWindow
+  where(current_timestamp() - reestablishUnenrichWindow.TIMESTAMP_WINDOW_ENTRY) > EXPIRY_TIME;

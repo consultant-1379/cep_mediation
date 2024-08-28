@@ -1,0 +1,264 @@
+group IqFileWriter;
+
+/**
+ * The main template that generates the class
+ */
+main(method) ::= <<
+package com.ericsson.cepmediation.persist;
+/**
+ * This code is generated using java string templates
+ * see http://www.stringtemplate.org
+ */
+
+import com.ericsson.cepmediation.base.util.binaryformatter.*;
+import com.ericsson.cepmediation.base.properties.CepMediationProperties;
+import com.ericsson.cepmediation.base.properties.CepMediationProperty;
+import com.ericsson.cepmediation.base.apeventbeans.DefaultValues;
+import java.io.OutputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
+import java.io.IOException;
+import com.ericsson.cepmediation.base.apeventbeans.ApEventBean;
+/**
+ * This class persists ApEventBeans to a binary file for loading into IQ db.
+ */
+public class IqFileWriter {
+    // Defines the byte order to be used for IQ binary files.
+    private static boolean isLittleEndian = "LITTLE_ENDIAN".equals(CepMediationProperties.getProperty(CepMediationProperty.IQ_BINARY_FILE_BYTE_ORDER));
+
+    private static final int ONE_MINUTE = 60 * 1000;
+
+    private static final String TIME_ZONE = "UTC";
+
+    private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
+
+    private static final String DATE_ONLY_FORMAT = "yyyy-MM-dd";
+
+    // This date formatter is required to format dates into UTC
+    private static final DateFormat dateFormat = new SimpleDateFormat(DATE_TIME_FORMAT);
+
+    private static final DateFormat dateOnlyFormatter = new SimpleDateFormat(DATE_ONLY_FORMAT);
+
+    private static final Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(TIME_ZONE));
+
+    // Set the time zone for the formatter as UTC
+    static {
+        dateFormat.setTimeZone(TimeZone.getTimeZone(TIME_ZONE));
+        dateOnlyFormatter.setTimeZone(TimeZone.getTimeZone(TIME_ZONE));
+    }
+
+    /**
+     * This method persists all supported entity types as per persistence.xml
+     * into the provided output stream.
+     * The file created can then be loaded into IQ db.
+     */
+    public static void write(OutputStream iqBinaryStream, ApEventBean entity) throws IOException {
+        <method:writeMethodInvocation()>
+        throw new IllegalArgumentException("Entity storage in db is not supported: " + entity.getClass().getName());
+    }
+
+    <method:writeMethod()>
+
+    // Methods for writing pojo fields into output stream
+    public static void writeBit(OutputStream iqBinaryStream, boolean value) throws IOException {
+        byte[] res = BitFormatter.doFormat(value ? (byte)1 : (byte)0);
+        iqBinaryStream.write(res);
+    }
+
+    public static void writeBit(OutputStream iqBinaryStream) throws IOException {
+        writeBit(iqBinaryStream, DefaultValues.DEFAULT_BOOLEAN_VALUE);
+    }
+
+    public static void writeUnsignedbigint(OutputStream iqBinaryStream, long value) throws IOException {
+        boolean isNull = value \< 0;
+        byte[] res = BigintFormatter.doFormat(value, isLittleEndian, isNull);
+        iqBinaryStream.write(res);
+    }
+
+    public static void writeUnsignedbigint(OutputStream iqBinaryStream) throws IOException {
+        writeUnsignedbigint(iqBinaryStream, DefaultValues.DEFAULT_LONG_VALUE);
+    }
+
+    public static void writeInt(OutputStream iqBinaryStream, int value) throws IOException {
+        boolean isNull = value == Integer.MIN_VALUE;
+        byte[] res = IntFormatter.doFormat(value, isLittleEndian, isNull);
+        iqBinaryStream.write(res);
+    }
+
+    public static void writeInt(OutputStream iqBinaryStream) throws IOException {
+        writeInt(iqBinaryStream, DefaultValues.DEFAULT_INT_VALUE);
+    }
+
+    public static void writeUnsignedint(OutputStream iqBinaryStream, int value) throws IOException {
+        boolean isNull = value \< 0;
+        byte[] res = UnsignedintFormatter.doFormat(value, isLittleEndian, isNull);
+        iqBinaryStream.write(res);
+    }
+
+    public static void writeUnsignedint(OutputStream iqBinaryStream) throws IOException {
+        writeUnsignedint(iqBinaryStream, DefaultValues.DEFAULT_INT_VALUE);
+    }
+
+    public static void writeTinyint(OutputStream iqBinaryStream, byte value) throws IOException {
+        boolean isNull = value \< 0;
+        byte[] res = TinyintFormatter.doFormat(value, isNull);
+        iqBinaryStream.write(res);
+    }
+
+     public static void writeTinyint(OutputStream iqBinaryStream, boolean value) throws IOException {
+        byte[] res = BitFormatter.doFormat(value ? (byte)1 : (byte)0);
+        iqBinaryStream.write(res);
+    }
+
+    public static void writeTinyint(OutputStream iqBinaryStream) throws IOException {
+        writeTinyint(iqBinaryStream, DefaultValues.DEFAULT_BYTE_VALUE);
+    }
+
+    public static void writeSmallint(OutputStream iqBinaryStream, short value) throws IOException {
+        boolean isNull = value \< 0;
+        byte[] res = SmallintFormatter.doFormat(value, isLittleEndian, isNull);
+        iqBinaryStream.write(res);
+    }
+
+    public static void writeSmallint(OutputStream iqBinaryStream) throws IOException {
+        writeSmallint(iqBinaryStream, DefaultValues.DEFAULT_SHORT_VALUE);
+    }
+
+    public static void writeVarchar(OutputStream iqBinaryStream, String value, int size) throws IOException {
+        byte[] res = VarcharFormatter.doFormat(value, size);
+        iqBinaryStream.write(res);
+    }
+
+    public static void writeVarchar(OutputStream iqBinaryStream, int size) throws IOException {
+        writeVarchar(iqBinaryStream, DefaultValues.DEFAULT_STRING_VALUE, size);
+    }
+
+    public static void writeTimestamp(OutputStream iqBinaryStream, long timestamp) throws IOException {
+        writeTimestamp(iqBinaryStream, timestamp, false);
+    }
+
+    public static void writeTimestamp(OutputStream iqBinaryStream, long timestamp, boolean truncateMillis) throws IOException {
+        try {
+            String value = null;
+            if (timestamp > 0) {
+                if (truncateMillis) {
+                    long truncatedTimestamp = (timestamp / ONE_MINUTE) * ONE_MINUTE;
+                    synchronized(IqFileWriter.class) {
+                        value = dateFormat.format(truncatedTimestamp);
+                    }
+                } else {
+                    synchronized(IqFileWriter.class) {
+                        value = dateFormat.format(timestamp);
+                    }
+                }
+            }
+            byte[] res = DatetimeFormatter.doFormat(value, isLittleEndian);
+            iqBinaryStream.write(res);
+        } catch (Exception e) {
+          iqBinaryStream.write(DatetimeFormatter.doFormat(null, isLittleEndian));
+         }
+    }
+
+    public static void writeDate(OutputStream iqBinaryStream, String value) throws IOException {
+        byte[] res = DateFormatter.doFormat(value, isLittleEndian);
+        iqBinaryStream.write(res);
+    }
+
+    public static void writeFloat(OutputStream iqBinaryStream, float value) throws IOException {
+        boolean isNull = value == DefaultValues.DEFAULT_FLOAT_VALUE;
+        byte[] res = FloatFormatter.doFormat(value, isLittleEndian, isNull);
+        iqBinaryStream.write(res);
+    }
+
+    public static void writeFloat(OutputStream iqBinaryStream) throws IOException {
+        writeFloat(iqBinaryStream, DefaultValues.DEFAULT_FLOAT_VALUE);
+    }
+
+    public static void writeBinary(OutputStream iqBinaryStream, byte[] value, int size) throws IOException {
+        byte[] data = BinaryFormatter.doFormat(value, size);
+        iqBinaryStream.write(data);
+    }
+
+    public static void writeBinary(OutputStream iqBinaryStream, int size) throws IOException {
+        writeBinary(iqBinaryStream, DefaultValues.DEFAULT_BYTE_ARRAY_VALUE, size);
+    }
+
+    // Functions to manipulate input data
+    public static String getDate(long timestamp) {
+        Date date = new Date(timestamp);
+        return dateOnlyFormatter.format(date);
+    }
+
+    public static short getYear(long timestamp) {
+        Date date = new Date(timestamp);
+        calendar.setTime(date);
+        return (short)calendar.get(Calendar.YEAR);
+    }
+
+    public static byte getMonth(long timestamp) {
+        Date date = new Date(timestamp);
+        calendar.setTime(date);
+        return (byte)(calendar.get(Calendar.MONTH) + 1);
+    }
+
+    public static byte getDay(long timestamp) {
+        Date date = new Date(timestamp);
+        calendar.setTime(date);
+        return (byte)calendar.get(Calendar.DAY_OF_MONTH);
+    }
+
+    public static byte getHour(long timestamp) {
+        Date date = new Date(timestamp);
+        calendar.setTime(date);
+        return (byte)calendar.get(Calendar.HOUR_OF_DAY);
+    }
+
+    public static byte getMinute(long timestamp) {
+        Date date = new Date(timestamp);
+        calendar.setTime(date);
+        return (byte)calendar.get(Calendar.MINUTE);
+    }
+
+    public static boolean getBooleanFromByte(byte byteValue) {
+    return (byteValue % 2) == 1;
+    }
+
+    public static String getStringFromInt(int intValue) {
+    return new Integer(intValue).toString();
+    }
+}
+>>
+
+writeMethodInvocation(method) ::= <<
+if (entity instanceof <method.fullyQualifiedName>) {
+    write<method.className>(iqBinaryStream, (<method.fullyQualifiedName>) entity);
+    return;
+}
+
+>>
+
+
+writeMethod(method) ::= <<
+<method.definition>
+>>
+
+methodDefinition(methodDef)::= <<
+public static void write<methodDef.className>(OutputStream iqBinaryStream, <methodDef.fullyQualifiedName> entity) throws IOException {
+<methodDef.body>
+}
+
+>>
+
+methodBody(field) ::= <<
+<field:writeField()>
+>>
+
+writeField(field) ::= <<
+    <field.writeMethod>(iqBinaryStream<if (field.attributeExists)><if (field.enriches)><if (field.enriched)>, <field.func>(entity<else>, <field.func>(entity.getBase()<endif><else>, <field.func>(entity<endif>.get<field.fieldName>())<endif><if (field.size)
+>,<field.size><endif><if (field.truncateMillis)
+>,<field.truncateMillis><endif>);
+
+>>

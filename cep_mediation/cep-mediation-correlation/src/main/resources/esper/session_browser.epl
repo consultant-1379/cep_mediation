@@ -1,0 +1,564 @@
+module session_browser_module;
+
+uses raw_events_base_module;
+
+create window MeasurementWindow.win:ext_timed(timestamp,X seconds) as correlation.MeasurementWindow;
+create window EE_RRC_Measurement_Temporary.win:keepall() as correlation.EE_RRC_MEASUREMENT;
+create window HandoverWindow.win:keepall() as gpeh.INTERNAL_OUT_HARD_HANDOVER_FAILURE_ENRICHED;
+create window CellChangeWindow.win:keepall() as gpeh.INTERNAL_SUCCESSFUL_HSDSCH_CELL_CHANGE_ENRICHED;
+create window SohoWindow.win:keepall() as gpeh.INTERNAL_SOHO_DS_MISSING_NEIGHBOUR_ENRICHED;
+
+@Priority(17)
+@Name('Insert-and-Map')
+expression mapRscp {measurement => case when measurement.ASN1_MEASUREMENT.RSCP = INTEGER_MIN_VAL
+                        then
+                            measurement.ASN1_MEASUREMENT.RSCP
+                        when measurement.ASN1_MEASUREMENT.RSCP < -5
+                        then
+                            BASE_RSCP_VALUE - 5
+                        when measurement.ASN1_MEASUREMENT.RSCP >= HIGHEST_RSCP_INDEX
+                        then
+                            BASE_RSCP_VALUE + HIGHEST_RSCP_INDEX - 1
+                        else
+                            BASE_RSCP_VALUE + measurement.ASN1_MEASUREMENT.RSCP
+                        end
+                        }
+
+expression mapEcno {measurement => case when measurement.ASN1_MEASUREMENT.ECNO = INTEGER_MIN_VAL
+                        then
+                             DEFAULT_FLOAT_VALUE
+                        when measurement.ASN1_MEASUREMENT.ECNO < 0
+                        then
+                            BASE_ECNO_VALUE
+                        when measurement.ASN1_MEASUREMENT.ECNO >= HIGHEST_ECNO_INDEX
+                        then
+                            BASE_ECNO_VALUE + ((HIGHEST_ECNO_INDEX - 1)* 0.5f) 
+                        else
+                            BASE_ECNO_VALUE + (measurement.ASN1_MEASUREMENT.ECNO * 0.5f)
+                        end
+                        }
+
+on gpeh.INTERNAL_SYSTEM_RELEASE as callDroppedEvent
+insert into EE_RRC_Measurement_Temporary
+    select     mw.IMSI                                     as IMSI,
+            Util.getMcc(mw.IMSI)                        as IMSI_MCC,
+            Util.getMnc(mw.IMSI)                        as IMSI_MNC,
+            mw.ASN1_MEASUREMENT.c_ID_1                    as c_ID_1,
+            mw.ASN1_MEASUREMENT.c_ID_2                     as c_ID_2,
+            mw.ASN1_MEASUREMENT.c_ID_3                    as c_ID_3,
+            mw.ASN1_MEASUREMENT.c_ID_4                    as c_ID_4,
+            mw.ASN1_MEASUREMENT.RNC_ID_1                as RNC_ID_1,
+            mw.ASN1_MEASUREMENT.RNC_ID_2                as RNC_ID_2,
+            mw.ASN1_MEASUREMENT.RNC_ID_3                as RNC_ID_3,
+            mw.ASN1_MEASUREMENT.RNC_ID_4                as RNC_ID_4,
+            cast(RRC_MEASUREMENT_REPORT_ID,short)        as EVENT_ID,
+            mw.UE_CONTEXT                                 as UE_CONTEXT,
+            mw.RNC_MODULE_ID                            as RNC_MODULE_ID,
+            mw.timestamp                                as timestamp,
+             mw.ASN1_MEASUREMENT.BSIC                     as BSIC,
+             mw.ASN1_MEASUREMENT.MEAS_RESULTS_ORDER_NUMBER  as MEAS_RESULTS_ORDER_NUMBER,
+             mw.ASN1_MEASUREMENT.EVENT_RESULTS_ORDER_NUMBER as EVENT_RESULTS_ORDER_NUMBER,
+             mw.ASN1_MEASUREMENT.VALID_MEAS_RESULTS      as VALID_MEAS_RESULTS,
+             mw.ASN1_MEASUREMENT.VALID_EVENT_RESULTS     as VALID_EVENT_RESULTS,
+             cast(mapEcno(mw), float)                    as ECNO,
+             cast(mapRscp(mw), int)                        as RSCP,
+             mw.ASN1_MEASUREMENT.SCRAMBLING_CODE         as SCRAMBLING_CODE,
+             mw.ASN1_MEASUREMENT.MEASUREMENT_TYPE         as MEASUREMENT_TYPE,
+             mw.ASN1_MEASUREMENT.TRIGGER_EVENT_ID         as TRIGGER_EVENT_ID,
+             mw.ASN1_MEASUREMENT.ADDITIONAL_EVENT_ID     as ADDITIONAL_EVENT_ID
+from MeasurementWindow as mw
+    where mw.IMSI = (cast(callDroppedEvent.IMSI, long)); // INTERNAL_SYSTEM_RELEASE event will have imsi value "0" for null imsi
+
+
+@Priority(16)
+@Name('Wakeup-next-statement')
+on gpeh.INTERNAL_SYSTEM_RELEASE as callDroppedEvent
+insert into Wakeup
+select 1 as wakeup_value;
+
+@Priority(15)
+@Name('Thirty-Second-RRC-Measurement-Reports-Before-Call-Drop')
+on Wakeup
+select EE_RRC_Measurement_Temporary.* from EE_RRC_Measurement_Temporary as EE_RRC_Measurement_Temporary;
+
+@Priority(14)
+@Name('clean-up')
+on gpeh.INTERNAL_SYSTEM_RELEASE as callDroppedEvent
+delete from MeasurementWindow    
+    where MeasurementWindow.IMSI = (cast(callDroppedEvent.IMSI, long)); // INTERNAL_SYSTEM_RELEASE event will have imsi value "0" for null imsi
+    
+@Priority(13)
+@Name('clean-up-temporary-window')
+on Wakeup
+delete from EE_RRC_Measurement_Temporary;
+    
+@Priority(12)
+on gpeh.ASN1MeasurementWrapper as measurement
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = measurement.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = measurement.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into 
+  MeasurementWindow select
+        imw.IMSI                                          as IMSI,
+        measurement.ASN1_MEASUREMENT                    as ASN1_MEASUREMENT,
+        measurement.UE_CONTEXT                            as UE_CONTEXT,
+        measurement.RNC_MODULE_ID                        as RNC_MODULE_ID,
+        measurement.timestamp                            as timestamp
+when not matched
+  then insert into 
+  MeasurementWindow select    
+        measurement.ASN1_MEASUREMENT                    as ASN1_MEASUREMENT,
+        measurement.UE_CONTEXT                            as UE_CONTEXT,
+        measurement.RNC_MODULE_ID                        as RNC_MODULE_ID,
+        measurement.timestamp                            as timestamp;
+
+@Name('IMSI-Updates-RRC')   
+@Priority(9)
+@Drop
+on gpeh.INTERNAL_IMSI as event
+merge MeasurementWindow as measurementWindow
+where measurementWindow.UE_CONTEXT = event.UE_CONTEXT
+  and measurementWindow.RNC_MODULE_ID = event.RNC_MODULE_ID
+  and measurementWindow.IMSI = -1
+when matched
+    then update set
+    IMSI                                                = cast(event.IMSI,long); 
+
+
+@Name('Handover-Capturing')
+@Priority(12)
+on gpeh.INTERNAL_OUT_HARD_HANDOVER_FAILURE as handover
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = handover.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = handover.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched  
+  then insert into
+  HandoverWindow select
+        handover                                        as base,
+        imw.IMSI                                        as IMSI,
+        Util.getMcc(imw.IMSI)                           as IMSI_MCC,
+        Util.getMnc(imw.IMSI)                           as IMSI_MNC,
+        case when handover.RSCP_CELL_1 >= -5
+        then cast(Util.getMappedRscp(handover.RSCP_CELL_1), int)
+        else INTEGER_MIN_VAL
+        end                                             as RSCP_CELL_1,
+        case when handover.RSCP_CELL_2 >= -5
+        then cast(Util.getMappedRscp(handover.RSCP_CELL_2), int)
+        else INTEGER_MIN_VAL
+        end                                             as RSCP_CELL_2,
+        case when handover.RSCP_CELL_3 >= -5
+        then cast(Util.getMappedRscp(handover.RSCP_CELL_3), int)
+        else INTEGER_MIN_VAL
+        end                                             as RSCP_CELL_3,
+        case when handover.RSCP_CELL_4 >= -5
+        then cast(Util.getMappedRscp(handover.RSCP_CELL_4), int)
+        else INTEGER_MIN_VAL
+        end                                             as RSCP_CELL_4,
+        case when handover.CPICH_EC_NO_CELL_1 > -1
+        then Util.getMappedEcno(handover.CPICH_EC_NO_CELL_1)
+        else DEFAULT_FLOAT_VALUE
+        end                                             as ECNO_CELL_1,
+        case when handover.CPICH_EC_NO_CELL_2 > -1
+        then Util.getMappedEcno(handover.CPICH_EC_NO_CELL_2)
+        else DEFAULT_FLOAT_VALUE
+        end                                             as ECNO_CELL_2,
+        case when handover.CPICH_EC_NO_CELL_3 > -1
+        then Util.getMappedEcno(handover.CPICH_EC_NO_CELL_3)
+        else DEFAULT_FLOAT_VALUE
+        end                                             as ECNO_CELL_3,
+        case when handover.CPICH_EC_NO_CELL_4 > -1
+        then Util.getMappedEcno(handover.CPICH_EC_NO_CELL_4)
+        else DEFAULT_FLOAT_VALUE
+        end                                             as ECNO_CELL_4,
+        case when handover.PROCEDURE_INDICATOR in (7,12)
+        then Util.getMappedRSSI(handover.DL_QUALITY_MEAS1_TARGET_CELL) 
+        else cast(-1, byte)
+        end                                             as TARGET_CELL_RSSI,
+        case when handover.PROCEDURE_INDICATOR not in (7,12) and handover.DL_QUALITY_MEAS1_TARGET_CELL > -1
+        then Util.getMappedEcno(handover.DL_QUALITY_MEAS1_TARGET_CELL) 
+        else DEFAULT_FLOAT_VALUE 
+        end                                             as TARGET_CELL_ECNO,
+        case when handover.PROCEDURE_INDICATOR not in (7,12) and handover.DL_QUALITY_MEAS2_TARGET_CELL > -1
+        then cast(Util.getMappedRscp(handover.DL_QUALITY_MEAS2_TARGET_CELL), int) 
+        else INTEGER_MIN_VAL 
+        end                                             as TARGET_CELL_RSCP
+when not matched  
+  then insert into
+  HandoverWindow select
+        handover                                        as base,
+                case when handover.RSCP_CELL_1 >= -5
+        then cast(Util.getMappedRscp(handover.RSCP_CELL_1), int)
+        else INTEGER_MIN_VAL
+        end                                             as RSCP_CELL_1,
+        case when handover.RSCP_CELL_2 >= -5
+        then cast(Util.getMappedRscp(handover.RSCP_CELL_2), int)
+        else INTEGER_MIN_VAL
+        end                                             as RSCP_CELL_2,
+        case when handover.RSCP_CELL_3 >= -5
+        then cast(Util.getMappedRscp(handover.RSCP_CELL_3), int)
+        else INTEGER_MIN_VAL
+        end                                             as RSCP_CELL_3,
+        case when handover.RSCP_CELL_4 >= -5
+        then cast(Util.getMappedRscp(handover.RSCP_CELL_4), int)
+        else INTEGER_MIN_VAL
+        end                                             as RSCP_CELL_4,
+        case when handover.CPICH_EC_NO_CELL_1 > -1
+        then Util.getMappedEcno(handover.CPICH_EC_NO_CELL_1)
+        else DEFAULT_FLOAT_VALUE
+        end                                             as ECNO_CELL_1,
+        case when handover.CPICH_EC_NO_CELL_2 > -1
+        then Util.getMappedEcno(handover.CPICH_EC_NO_CELL_2)
+        else DEFAULT_FLOAT_VALUE
+        end                                             as ECNO_CELL_2,
+        case when handover.CPICH_EC_NO_CELL_3 > -1
+        then Util.getMappedEcno(handover.CPICH_EC_NO_CELL_3)
+        else DEFAULT_FLOAT_VALUE
+        end                                             as ECNO_CELL_3,
+        case when handover.CPICH_EC_NO_CELL_4 > -1
+        then Util.getMappedEcno(handover.CPICH_EC_NO_CELL_4)
+        else DEFAULT_FLOAT_VALUE
+        end                                             as ECNO_CELL_4,
+        case when handover.PROCEDURE_INDICATOR in (7,12)
+        then Util.getMappedRSSI(handover.DL_QUALITY_MEAS1_TARGET_CELL) 
+        else cast(-1, byte)
+        end                                             as TARGET_CELL_RSSI,
+        case when handover.PROCEDURE_INDICATOR not in (7,12) and handover.DL_QUALITY_MEAS1_TARGET_CELL > -1
+        then Util.getMappedEcno(handover.DL_QUALITY_MEAS1_TARGET_CELL) 
+        else DEFAULT_FLOAT_VALUE
+        end                                             as TARGET_CELL_ECNO,
+        case when handover.PROCEDURE_INDICATOR not in (7,12) and handover.DL_QUALITY_MEAS2_TARGET_CELL > -1
+        then cast(Util.getMappedRscp(handover.DL_QUALITY_MEAS2_TARGET_CELL), int) 
+        else INTEGER_MIN_VAL 
+        end                                             as TARGET_CELL_RSCP;
+        
+@Name('IMSI-Updates-Handover')   
+@Priority(11)
+on gpeh.INTERNAL_IMSI as event
+merge HandoverWindow as handoverWindow
+where handoverWindow.base.UE_CONTEXT = event.UE_CONTEXT
+  and handoverWindow.base.RNC_MODULE_ID = event.RNC_MODULE_ID
+  and handoverWindow.IMSI = -1l
+when matched
+    then update set
+    IMSI                                                = cast(event.IMSI,long),
+    IMSI_MCC                                            = Util.getMcc(handoverWindow.IMSI),
+    IMSI_MNC                                            = Util.getMnc(handoverWindow.IMSI);
+
+
+@Name('Cleanup-Handovers-Without-Imsi-On-Internal-Release')
+@Priority(11)
+on gpeh.INTERNAL_SYSTEM_RELEASE release
+delete from HandoverWindow as handoverWindow where handoverWindow.IMSI = -1l and handoverWindow.base.UE_CONTEXT = release.UE_CONTEXT and handoverWindow.base.RNC_MODULE_ID = release.RNC_MODULE_ID;
+
+@Name('Cleanup-Handovers-Without-Imsi-On-Connection-Release')
+@Priority(11)
+on gpeh.RRC_RRC_CONNECTION_RELEASE_COMPLETE release
+delete from HandoverWindow as handoverWindow where handoverWindow.IMSI = -1l and handoverWindow.base.UE_CONTEXT = release.UE_CONTEXT and handoverWindow.base.RNC_MODULE_ID = release.RNC_MODULE_ID;;
+
+@Name('Cleanup-Handovers-Without-Imsi-On-Connection-Setup')
+@Priority(11)
+on gpeh.RRC_RRC_CONNECTION_SETUP release
+delete from HandoverWindow as handoverWindow where handoverWindow.IMSI = -1l and handoverWindow.base.UE_CONTEXT = release.UE_CONTEXT and handoverWindow.base.RNC_MODULE_ID = release.RNC_MODULE_ID;;
+
+
+
+
+@Name('CellChange-Capturing')
+@Priority(12)
+on gpeh.INTERNAL_SUCCESSFUL_HSDSCH_CELL_CHANGE as cellChange
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = cellChange.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = cellChange.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched  
+  then insert into
+  CellChangeWindow select
+        cellChange                                      as base,
+        imw.IMSI                                        as IMSI,
+        Util.getMcc(imw.IMSI)                           as IMSI_MCC,
+        Util.getMnc(imw.IMSI)                           as IMSI_MNC,
+        case when cellChange.CPICH_RSCP_SOURCE_CELL >= -5
+        then cast(Util.getMappedRscp(cellChange.CPICH_RSCP_SOURCE_CELL), int)
+        else INTEGER_MIN_VAL
+        end                                             as SOURCE_CELL_RSCP,
+        case when cellChange.CPICH_EC_NO_SOURCE_CELL >= -5
+        then Util.getMappedEcno(cellChange.CPICH_EC_NO_SOURCE_CELL)
+        else DEFAULT_FLOAT_VALUE
+        end                                             as SOURCE_CELL_ECNO,
+        case when cellChange.CPICH_RSCP_TARGET_CELL >= -5
+        then cast(Util.getMappedRscp(cellChange.CPICH_RSCP_TARGET_CELL), int)
+        else INTEGER_MIN_VAL
+        end                                             as TARGET_CELL_RSCP,
+        case when cellChange.CPICH_EC_NO_TARGET_CELL > -1
+        then Util.getMappedEcno(cellChange.CPICH_EC_NO_TARGET_CELL)
+        else DEFAULT_FLOAT_VALUE
+        end                                                as TARGET_CELL_ECNO
+when not matched  
+  then insert into
+  CellChangeWindow select
+        cellChange                                      as base,
+        case when cellChange.CPICH_RSCP_SOURCE_CELL >= -5
+        then cast(Util.getMappedRscp(cellChange.CPICH_RSCP_SOURCE_CELL), int)
+        else INTEGER_MIN_VAL
+        end                                             as SOURCE_CELL_RSCP,
+        case when cellChange.CPICH_EC_NO_SOURCE_CELL >= -5
+        then Util.getMappedEcno(cellChange.CPICH_EC_NO_SOURCE_CELL)
+        else DEFAULT_FLOAT_VALUE
+        end                                             as SOURCE_CELL_ECNO,
+        case when cellChange.CPICH_RSCP_TARGET_CELL >= -5
+        then cast(Util.getMappedRscp(cellChange.CPICH_RSCP_TARGET_CELL), int)
+        else INTEGER_MIN_VAL
+        end                                             as TARGET_CELL_RSCP,
+        case when cellChange.CPICH_EC_NO_TARGET_CELL > -1
+        then Util.getMappedEcno(cellChange.CPICH_EC_NO_TARGET_CELL)
+        else DEFAULT_FLOAT_VALUE
+        end                                                as TARGET_CELL_ECNO;
+
+
+@Name('IMSI-Updates-CellChange')   
+@Priority(11)
+on gpeh.INTERNAL_IMSI as event
+merge CellChangeWindow as cellChangeWindow
+where cellChangeWindow.base.UE_CONTEXT = event.UE_CONTEXT
+  and cellChangeWindow.base.RNC_MODULE_ID = event.RNC_MODULE_ID
+  and cellChangeWindow.IMSI = -1l
+when matched
+    then update set
+    IMSI                                                = cast(event.IMSI,long),
+    IMSI_MCC                                            = Util.getMcc(cellChangeWindow.IMSI),
+    IMSI_MNC                                            = Util.getMnc(cellChangeWindow.IMSI);
+
+@Name('Cleanup-Cell-Change-Without-Imsi-On-Internal-Release')
+@Priority(11)
+on gpeh.INTERNAL_SYSTEM_RELEASE release
+delete from CellChangeWindow as cellChangeWindow where cellChangeWindow.IMSI = -1l and cellChangeWindow.base.UE_CONTEXT = release.UE_CONTEXT and cellChangeWindow.base.RNC_MODULE_ID = release.RNC_MODULE_ID;
+
+@Name('Cleanup-Cell-Change-Without-Imsi-On-Connection-Release')
+@Priority(11)
+on gpeh.RRC_RRC_CONNECTION_RELEASE_COMPLETE release
+delete from CellChangeWindow as cellChangeWindow where cellChangeWindow.IMSI = -1l and cellChangeWindow.base.UE_CONTEXT = release.UE_CONTEXT and cellChangeWindow.base.RNC_MODULE_ID = release.RNC_MODULE_ID;;
+
+@Name('Cleanup-Cell-Change-Without-Imsi-On-Connection-Setup')
+@Priority(11)
+on gpeh.RRC_RRC_CONNECTION_SETUP release
+delete from CellChangeWindow as cellChangeWindow where cellChangeWindow.IMSI = -1l and cellChangeWindow.base.UE_CONTEXT = release.UE_CONTEXT and cellChangeWindow.base.RNC_MODULE_ID = release.RNC_MODULE_ID;;
+
+
+@Name('SOHO-Capturing')
+@Priority(11)
+on gpeh.INTERNAL_SOHO_DS_MISSING_NEIGHBOUR as soho
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = soho.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = soho.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched  
+  then insert into
+  SohoWindow select
+        soho                                            as base,
+        imw.IMSI                                        as IMSI,
+        case when soho.CPICH_EC_NO_CELL_1 > -1
+        then Util.getMappedEcno(soho.CPICH_EC_NO_CELL_1)
+        else DEFAULT_FLOAT_VALUE
+        end                                             as ECNO_CELL_1,
+        case when soho.CPICH_EC_NO_CELL_2 > -1
+        then Util.getMappedEcno(soho.CPICH_EC_NO_CELL_2)
+        else DEFAULT_FLOAT_VALUE
+        end                                             as ECNO_CELL_2,
+        case when soho.CPICH_EC_NO_CELL_3 > -1
+        then Util.getMappedEcno(soho.CPICH_EC_NO_CELL_3)
+        else DEFAULT_FLOAT_VALUE
+        end                                             as ECNO_CELL_3,
+        case when soho.CPICH_EC_NO_CELL_4 > -1
+        then Util.getMappedEcno(soho.CPICH_EC_NO_CELL_4)
+        else DEFAULT_FLOAT_VALUE
+        end                                             as ECNO_CELL_4,
+        case when soho.RSCP_CELL_1 >= -5
+        then cast(Util.getMappedRscp(soho.RSCP_CELL_1), int)
+        else INTEGER_MIN_VAL
+        end                                             as RSCP_CELL_1,
+        case when soho.RSCP_CELL_2 >= -5
+        then cast(Util.getMappedRscp(soho.RSCP_CELL_2), int)
+        else INTEGER_MIN_VAL
+        end                                             as RSCP_CELL_2,
+        case when soho.RSCP_CELL_3 >= -5
+        then cast(Util.getMappedRscp(soho.RSCP_CELL_3), int)
+        else INTEGER_MIN_VAL
+        end                                             as RSCP_CELL_3,
+        case when soho.RSCP_CELL_4 >= -5
+        then cast(Util.getMappedRscp(soho.RSCP_CELL_4), int)
+        else INTEGER_MIN_VAL
+        end                                             as RSCP_CELL_4,
+        case when soho.CPICH_EC_NO_TRIGGER_CELL > -1
+        then Util.getMappedEcno(soho.CPICH_EC_NO_TRIGGER_CELL)
+        else DEFAULT_FLOAT_VALUE
+        end                                             as ECNO_TRIGGER_CELL,
+        case when soho.RSCP_TRIGGER_CELL >= -5
+        then cast(Util.getMappedRscp(soho.RSCP_TRIGGER_CELL), int)
+        else INTEGER_MIN_VAL
+        end                                             as RSCP_TRIGGER_CELL,
+        case when soho.CPICH_EC_NO_ADDITIONAL_CELL1 > -1
+        then Util.getMappedEcno(soho.CPICH_EC_NO_ADDITIONAL_CELL1)
+        else DEFAULT_FLOAT_VALUE
+        end                                             as ECNO_ADDITIONAL_CELL1,
+        case when soho.RSCP_ADDITIONAL_CELL1 >= -5
+        then cast(Util.getMappedRscp(soho.RSCP_ADDITIONAL_CELL1), int)
+        else INTEGER_MIN_VAL
+        end                                             as RSCP_ADDITIONAL_CELL1,
+        case when soho.CPICH_EC_NO_ADDITIONAL_CELL2 > -1
+        then Util.getMappedEcno(soho.CPICH_EC_NO_ADDITIONAL_CELL2)
+        else DEFAULT_FLOAT_VALUE
+        end                                             as ECNO_ADDITIONAL_CELL2,
+        case when soho.RSCP_ADDITIONAL_CELL2 >= -5
+        then cast(Util.getMappedRscp(soho.RSCP_ADDITIONAL_CELL2), int)
+        else INTEGER_MIN_VAL
+        end                                             as RSCP_ADDITIONAL_CELL2
+when not matched  
+  then insert into
+  SohoWindow select
+        soho                                            as base,
+        case when soho.CPICH_EC_NO_CELL_1 > -1
+        then Util.getMappedEcno(soho.CPICH_EC_NO_CELL_1)
+        else DEFAULT_FLOAT_VALUE
+        end                                             as ECNO_CELL_1,
+        case when soho.CPICH_EC_NO_CELL_2 > -1
+        then Util.getMappedEcno(soho.CPICH_EC_NO_CELL_2)
+        else DEFAULT_FLOAT_VALUE
+        end                                             as ECNO_CELL_2,
+        case when soho.CPICH_EC_NO_CELL_3 > -1
+        then Util.getMappedEcno(soho.CPICH_EC_NO_CELL_3)
+        else DEFAULT_FLOAT_VALUE
+        end                                             as ECNO_CELL_3,
+        case when soho.CPICH_EC_NO_CELL_4 > -1
+        then Util.getMappedEcno(soho.CPICH_EC_NO_CELL_4)
+        else DEFAULT_FLOAT_VALUE
+        end                                             as ECNO_CELL_4,
+        case when soho.RSCP_CELL_1 >= -5
+        then cast(Util.getMappedRscp(soho.RSCP_CELL_1), int)
+        else INTEGER_MIN_VAL
+        end                                             as RSCP_CELL_1,
+        case when soho.RSCP_CELL_2 >= -5
+        then cast(Util.getMappedRscp(soho.RSCP_CELL_2), int)
+        else INTEGER_MIN_VAL
+        end                                             as RSCP_CELL_2,
+        case when soho.RSCP_CELL_3 >= -5
+        then cast(Util.getMappedRscp(soho.RSCP_CELL_3), int)
+        else INTEGER_MIN_VAL
+        end                                             as RSCP_CELL_3,
+        case when soho.RSCP_CELL_4 >= -5
+        then cast(Util.getMappedRscp(soho.RSCP_CELL_4), int)
+        else INTEGER_MIN_VAL
+        end                                             as RSCP_CELL_4,
+        case when soho.CPICH_EC_NO_TRIGGER_CELL > -1
+        then Util.getMappedEcno(soho.CPICH_EC_NO_TRIGGER_CELL)
+        else DEFAULT_FLOAT_VALUE
+        end                                             as ECNO_TRIGGER_CELL,
+        case when soho.RSCP_TRIGGER_CELL >= -5
+        then cast(Util.getMappedRscp(soho.RSCP_TRIGGER_CELL), int)
+        else INTEGER_MIN_VAL
+        end                                             as RSCP_TRIGGER_CELL,
+        case when soho.CPICH_EC_NO_ADDITIONAL_CELL1 > -1
+        then Util.getMappedEcno(soho.CPICH_EC_NO_ADDITIONAL_CELL1)
+        else DEFAULT_FLOAT_VALUE
+        end                                             as ECNO_ADDITIONAL_CELL1,
+        case when soho.RSCP_ADDITIONAL_CELL1 >= -5
+        then cast(Util.getMappedRscp(soho.RSCP_ADDITIONAL_CELL1), int)
+        else INTEGER_MIN_VAL
+        end                                             as RSCP_ADDITIONAL_CELL1,
+        case when soho.CPICH_EC_NO_ADDITIONAL_CELL2 > -1
+        then Util.getMappedEcno(soho.CPICH_EC_NO_ADDITIONAL_CELL2)
+        else DEFAULT_FLOAT_VALUE
+        end                                             as ECNO_ADDITIONAL_CELL2,
+        case when soho.RSCP_ADDITIONAL_CELL2 >= -5
+        then cast(Util.getMappedRscp(soho.RSCP_ADDITIONAL_CELL2), int)
+        else INTEGER_MIN_VAL
+        end                                             as RSCP_ADDITIONAL_CELL2;
+
+
+@Name('IMSI-Updates-Soho')   
+@Priority(11)
+on gpeh.INTERNAL_IMSI as event
+merge SohoWindow as sohoWindow
+where sohoWindow.base.UE_CONTEXT = event.UE_CONTEXT
+  and sohoWindow.base.RNC_MODULE_ID = event.RNC_MODULE_ID
+  and sohoWindow.IMSI = -1l
+when matched
+    then update set
+    IMSI                                                = cast(event.IMSI,long);
+
+
+@Name('Cleanup-Soho-Without-Imsi-On-Internal-Release')
+@Priority(11)
+on gpeh.INTERNAL_SYSTEM_RELEASE release
+delete from SohoWindow as sohoWindow where sohoWindow.IMSI = -1l and sohoWindow.base.UE_CONTEXT = release.UE_CONTEXT and sohoWindow.base.RNC_MODULE_ID = release.RNC_MODULE_ID;
+
+@Name('Cleanup-Soho-Without-Imsi-On-Connection-Release')
+@Priority(11)
+on gpeh.RRC_RRC_CONNECTION_RELEASE_COMPLETE release
+delete from SohoWindow as sohoWindow where sohoWindow.IMSI = -1l and sohoWindow.base.UE_CONTEXT = release.UE_CONTEXT and sohoWindow.base.RNC_MODULE_ID = release.RNC_MODULE_ID;
+
+@Name('Cleanup-Soho-Without-Imsi-On-Connection-Setup')
+@Priority(11)
+on gpeh.RRC_RRC_CONNECTION_SETUP release
+delete from SohoWindow as sohoWindow where sohoWindow.IMSI = -1l and sohoWindow.base.UE_CONTEXT = release.UE_CONTEXT and sohoWindow.base.RNC_MODULE_ID = release.RNC_MODULE_ID;
+
+
+@Priority(6)  
+@Name('Handover-Enrichment')
+on correlation.SESSION_END_EVENT as sessionEndEvent
+select hw.* from HandoverWindow as hw
+where  hw.IMSI != -1l;
+
+@Priority(5)
+@Name('Clean-Up-Handover')
+on correlation.SESSION_END_EVENT as sessionEndEvent
+delete from HandoverWindow handoverWindow where handoverWindow.IMSI != -1l ;
+
+@Priority(6)  
+@Name('CellChange-Enrichment')
+on correlation.SESSION_END_EVENT as sessionEndEvent
+select ccw.* from CellChangeWindow as ccw
+where ccw.IMSI != -1l;
+
+@Priority(5)
+@Name('Clean-Up-CellChange')
+on correlation.SESSION_END_EVENT as sessionEndEvent
+delete from CellChangeWindow as ccw where ccw.IMSI != -1l; 
+
+@Priority(6)  
+@Name('Soho-Enrichment')
+on correlation.SESSION_END_EVENT as sessionEndEvent
+select soho.* from SohoWindow as soho
+where soho.IMSI != -1l;
+
+@Priority(5)
+@Name('Clean-Up-Soho')
+on correlation.SESSION_END_EVENT as sessionEndEvent
+delete from SohoWindow as soho where soho.IMSI != -1l;
+
+@Name('Visited-Cells-Flush')
+@Priority(31)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from MeasurementWindow;
+
+@Name('Visited-Cells-Flush')
+@Priority(31)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from EE_RRC_Measurement_Temporary;
+
+@Name('Visited-Cells-Flush')
+@Priority(31)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from HandoverWindow;
+
+@Name('Visited-Cells-Flush')
+@Priority(31)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from CellChangeWindow;
+
+@Name('Visited-Cells-Flush')
+@Priority(31)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from SohoWindow;

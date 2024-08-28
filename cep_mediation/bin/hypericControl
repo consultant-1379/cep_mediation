@@ -1,0 +1,28 @@
+#!/bin/bash
+
+
+case "$1" in
+    start)
+		echo -n "Starting CEP Mediation server: cep-mediation"
+		sudo /etc/init.d/cep-mediation start
+		echo "."
+        ;;
+    stop)
+		echo -n "Stopping CEP Mediation server: cep-mediation"
+		sudo /etc/init.d/cep-mediation stop
+		echo "."
+    	;;
+    restart)
+		echo -n "Restarting CEP Mediation server: cep-mediation"
+		sudo /etc/init.d/cep-mediation stop
+		sudo /etc/init.d/cep-mediation start
+		echo "."
+    	;;
+ 
+    *)
+        echo "Usage: $0 {start|stop|restart|}"
+        exit 1
+        ;;
+esac
+
+exit 0

@@ -1,0 +1,1124 @@
+module uertt_module_ranap;
+
+uses uertt_raw_events_base_module;
+
+create window RanapIuReleaseRequestEnrichedWindow.win:keepall() as gpeh.RANAP_IU_RELEASE_REQUEST_ENRICHED;
+create window RanapIuReleaseRequestUnenrichedWindow.win:keepall() as gpeh.RANAP_IU_RELEASE_REQUEST_ENRICHED;
+
+create window RanapIuReleaseCommandEnrichedWindow.win:keepall() as gpeh.RANAP_IU_RELEASE_COMMAND_ENRICHED;
+create window RanapIuReleaseCommandUnenrichedWindow.win:keepall() as gpeh.RANAP_IU_RELEASE_COMMAND_ENRICHED;
+
+create window RanapIuReleaseCompleteEnrichedWindow.win:keepall() as gpeh.RANAP_IU_RELEASE_COMPLETE_ENRICHED;
+create window RanapIuReleaseCompleteUnenrichedWindow.win:keepall() as gpeh.RANAP_IU_RELEASE_COMPLETE_ENRICHED;
+
+create window RanapSecurityModeCommandEnrichedWindow.win:keepall() as gpeh.RANAP_SECURITY_MODE_COMMAND_ENRICHED;
+create window RanapSecurityModeCommandUnenrichedWindow.win:keepall() as gpeh.RANAP_SECURITY_MODE_COMMAND_ENRICHED;
+
+create window RanapSecurityModeCompleteEnrichedWindow.win:keepall() as gpeh.RANAP_SECURITY_MODE_COMPLETE_ENRICHED;
+create window RanapSecurityModeCompleteUnenrichedWindow.win:keepall() as gpeh.RANAP_SECURITY_MODE_COMPLETE_ENRICHED;
+
+create window RanapSecurityModeRejectEnrichedWindow.win:keepall() as gpeh.RANAP_SECURITY_MODE_REJECT_ENRICHED;
+create window RanapSecurityModeRejectUnenrichedWindow.win:keepall() as gpeh.RANAP_SECURITY_MODE_REJECT_ENRICHED;
+
+create window RanapLocationReportingControlEnrichedWindow.win:keepall() as gpeh.RANAP_LOCATION_REPORTING_CONTROL_ENRICHED;
+create window RanapLocationReportingControlUnenrichedWindow.win:keepall() as gpeh.RANAP_LOCATION_REPORTING_CONTROL_ENRICHED;
+
+create window RanapDirectTransferEnrichedWindow.win:keepall() as gpeh.RANAP_DIRECT_TRANSFER_ENRICHED;
+create window RanapDirectTransferUnenrichedWindow.win:keepall() as gpeh.RANAP_DIRECT_TRANSFER_ENRICHED;
+
+create window RanapErrorIndicationEnrichedWindow.win:keepall() as gpeh.RANAP_ERROR_INDICATION_ENRICHED;
+create window RanapErrorIndicationUnenrichedWindow.win:keepall() as gpeh.RANAP_ERROR_INDICATION_ENRICHED;
+
+create window RanapRelocationRequiredEnrichedWindow.win:keepall() as gpeh.RANAP_RELOCATION_REQUIRED_ENRICHED;
+create window RanapRelocationRequiredUnenrichedWindow.win:keepall() as gpeh.RANAP_RELOCATION_REQUIRED_ENRICHED;
+
+create window RanapRelocationRequestEnrichedWindow.win:keepall() as gpeh.RANAP_RELOCATION_REQUEST_ENRICHED;
+create window RanapRelocationRequestUnenrichedWindow.win:keepall() as gpeh.RANAP_RELOCATION_REQUEST_ENRICHED;
+
+create window RanapRelocationRequestAcknowledgeEnrichedWindow.win:keepall() as gpeh.RANAP_RELOCATION_REQUEST_ACKNOWLEDGE_ENRICHED;
+create window RanapRelocationRequestAcknowledgeUnenrichedWindow.win:keepall() as gpeh.RANAP_RELOCATION_REQUEST_ACKNOWLEDGE_ENRICHED;
+
+create window RanapRelocationCommandEnrichedWindow.win:keepall() as gpeh.RANAP_RELOCATION_COMMAND_ENRICHED;
+create window RanapRelocationCommandUnenrichedWindow.win:keepall() as gpeh.RANAP_RELOCATION_COMMAND_ENRICHED;
+
+create window RanapRelocationDetectEnrichedWindow.win:keepall() as gpeh.RANAP_RELOCATION_DETECT_ENRICHED;
+create window RanapRelocationDetectUnenrichedWindow.win:keepall() as gpeh.RANAP_RELOCATION_DETECT_ENRICHED;
+
+create window RanapRelocationCompleteEnrichedWindow.win:keepall() as gpeh.RANAP_RELOCATION_COMPLETE_ENRICHED;
+create window RanapRelocationCompleteUnenrichedWindow.win:keepall() as gpeh.RANAP_RELOCATION_COMPLETE_ENRICHED;
+
+create window RanapRelocationPreparationFailureEnrichedWindow.win:keepall() as gpeh.RANAP_RELOCATION_PREPARATION_FAILURE_ENRICHED;
+create window RanapRelocationPreparationFailureUnenrichedWindow.win:keepall() as gpeh.RANAP_RELOCATION_PREPARATION_FAILURE_ENRICHED;
+
+create window RanapRelocationFailureEnrichedWindow.win:keepall() as gpeh.RANAP_RELOCATION_FAILURE_ENRICHED;
+create window RanapRelocationFailureUnenrichedWindow.win:keepall() as gpeh.RANAP_RELOCATION_FAILURE_ENRICHED;
+
+create window RanapRelocationCancelEnrichedWindow.win:keepall() as gpeh.RANAP_RELOCATION_CANCEL_ENRICHED;
+create window RanapRelocationCancelUnenrichedWindow.win:keepall() as gpeh.RANAP_RELOCATION_CANCEL_ENRICHED;
+
+create window RanapRelocationCancelAcknowledgeEnrichedWindow.win:keepall() as gpeh.RANAP_RELOCATION_CANCEL_ACKNOWLEDGE_ENRICHED;
+create window RanapRelocationCancelAcknowledgeUnenrichedWindow.win:keepall() as gpeh.RANAP_RELOCATION_CANCEL_ACKNOWLEDGE_ENRICHED;
+
+create window RanapSrnsContextRequestEnrichedWindow.win:keepall() as gpeh.RANAP_SRNS_CONTEXT_REQUEST_ENRICHED;
+create window RanapSrnsContextRequestUnenrichedWindow.win:keepall() as gpeh.RANAP_SRNS_CONTEXT_REQUEST_ENRICHED;
+
+create window RanapSrnsContextResponseEnrichedWindow.win:keepall() as gpeh.RANAP_SRNS_CONTEXT_RESPONSE_ENRICHED;
+create window RanapSrnsContextResponseUnenrichedWindow.win:keepall() as gpeh.RANAP_SRNS_CONTEXT_RESPONSE_ENRICHED;
+
+create window RanapSrnsDataForwardCommandEnrichedWindow.win:keepall() as gpeh.RANAP_SRNS_DATA_FORWARD_COMMAND_ENRICHED;
+create window RanapSrnsDataForwardCommandUnenrichedWindow.win:keepall() as gpeh.RANAP_SRNS_DATA_FORWARD_COMMAND_ENRICHED;
+
+create window RanapLocationReportEnrichedWindow.win:keepall() as gpeh.RANAP_LOCATION_REPORT_ENRICHED;
+create window RanapLocationReportUnenrichedWindow.win:keepall() as gpeh.RANAP_LOCATION_REPORT_ENRICHED;
+
+create window RanapRanapRelocationInformationEnrichedWindow.win:keepall() as gpeh.RANAP_RANAP_RELOCATION_INFORMATION_ENRICHED;
+create window RanapRanapRelocationInformationUnenrichedWindow.win:keepall() as gpeh.RANAP_RANAP_RELOCATION_INFORMATION_ENRICHED;
+
+create window RanapRabReleaseRequestEnrichedWindow.win:keepall() as gpeh.RANAP_RAB_RELEASE_REQUEST_ENRICHED;
+create window RanapRabReleaseRequestUnenrichedWindow.win:keepall() as gpeh.RANAP_RAB_RELEASE_REQUEST_ENRICHED;
+
+create window RanapRabAssignmentRequestEnrichedWindow.win:keepall() as gpeh.RANAP_RAB_ASSIGNMENT_REQUEST_ENRICHED;
+create window RanapRabAssignmentRequestUnenrichedWindow.win:keepall() as gpeh.RANAP_RAB_ASSIGNMENT_REQUEST_ENRICHED;
+
+create window RanapRabAssignmentResponseEnrichedWindow.win:keepall() as gpeh.RANAP_RAB_ASSIGNMENT_RESPONSE_ENRICHED;
+create window RanapRabAssignmentResponseUnenrichedWindow.win:keepall() as gpeh.RANAP_RAB_ASSIGNMENT_RESPONSE_ENRICHED;
+
+        
+// ************************************  RANAP_IU_RELEASE_REQUEST ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRanapIuReleaseRequest')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RanapIuReleaseRequestEnrichedWindow;
+
+@Name('RanapIuReleaseRequest-Capturing')
+@Priority(12)
+on gpeh.RANAP_IU_RELEASE_REQUEST as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RanapIuReleaseRequestEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RanapIuReleaseRequestUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RanapIuReleaseRequest')
+on gpeh.INTERNAL_IMSI as imsi
+merge RanapIuReleaseRequestUnenrichedWindow as RanapIuReleaseRequestUnenrichedWindow
+where imsi.UE_CONTEXT     = RanapIuReleaseRequestUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RanapIuReleaseRequestUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+// ************************************  RANAP_IU_RELEASE_COMMAND ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRanapIuReleaseCommand')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RanapIuReleaseCommandEnrichedWindow;
+
+@Name('RanapIuReleaseCommand-Capturing')
+@Priority(12)
+on gpeh.RANAP_IU_RELEASE_COMMAND as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RanapIuReleaseCommandEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RanapIuReleaseCommandUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RanapIuReleaseCommand')
+on gpeh.INTERNAL_IMSI as imsi
+merge RanapIuReleaseCommandUnenrichedWindow as RanapIuReleaseCommandUnenrichedWindow
+where imsi.UE_CONTEXT     = RanapIuReleaseCommandUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RanapIuReleaseCommandUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+// ************************************  RANAP_IU_RELEASE_COMPLETE  ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRanapIuReleaseComplete')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RanapIuReleaseCompleteEnrichedWindow;
+
+@Name('RanapIuReleaseComplete-Capturing')
+@Priority(12)
+on gpeh.RANAP_IU_RELEASE_COMPLETE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RanapIuReleaseCompleteEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RanapIuReleaseCompleteUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+                
+@Priority(11)
+@Name('Imsi-Arrives-After-RanapIuReleaseComplete')
+on gpeh.INTERNAL_IMSI as imsi
+merge RanapIuReleaseCompleteUnenrichedWindow as RanapIuReleaseCompleteUnenrichedWindow
+where imsi.UE_CONTEXT     = RanapIuReleaseCompleteUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RanapIuReleaseCompleteUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+
+  
+// ************************************  RANAP_SECURITY_MODE_COMMAND ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRanapSecurityModeCommand')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RanapSecurityModeCommandEnrichedWindow;
+
+@Name('RanapSecurityModeCommand-Capturing')
+@Priority(12)
+on gpeh.RANAP_SECURITY_MODE_COMMAND as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RanapSecurityModeCommandEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RanapSecurityModeCommandUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+              
+@Priority(11)
+@Name('Imsi-Arrives-After-RanapSecurityModeCommand')
+on gpeh.INTERNAL_IMSI as imsi
+merge RanapSecurityModeCommandUnenrichedWindow as RanapSecurityModeCommandUnenrichedWindow
+where imsi.UE_CONTEXT     = RanapSecurityModeCommandUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RanapSecurityModeCommandUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+        
+// ************************************  RANAP_SECURITY_MODE_COMPLETE ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRanapSecurityModeComplete')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RanapSecurityModeCompleteEnrichedWindow;
+
+@Name('RanapSecurityModeComplete-Capturing')
+@Priority(12)
+on gpeh.RANAP_SECURITY_MODE_COMPLETE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RanapSecurityModeCompleteEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RanapSecurityModeCompleteUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+                
+@Priority(11)
+@Name('Imsi-Arrives-After-RanapSecurityModeComplete')
+on gpeh.INTERNAL_IMSI as imsi
+merge RanapSecurityModeCompleteUnenrichedWindow as RanapSecurityModeCompleteUnenrichedWindow
+where imsi.UE_CONTEXT     = RanapSecurityModeCompleteUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RanapSecurityModeCompleteUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+// ************************************  RANAP_SECURITY_MODE_REJECT ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRanapSecurityModeReject')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RanapSecurityModeRejectEnrichedWindow;
+
+@Name('RanapSecurityModeReject-Capturing')
+@Priority(12)
+on gpeh.RANAP_SECURITY_MODE_REJECT as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RanapSecurityModeRejectEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RanapSecurityModeRejectUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+                
+@Priority(11)
+@Name('Imsi-Arrives-After-RanapSecurityModeReject')
+on gpeh.INTERNAL_IMSI as imsi
+merge RanapSecurityModeRejectUnenrichedWindow as RanapSecurityModeRejectUnenrichedWindow
+where imsi.UE_CONTEXT     = RanapSecurityModeRejectUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RanapSecurityModeRejectUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+// ************************************  RANAP_LOCATION_REPORTING_CONTROL ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRanapLocationReportingControl')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RanapLocationReportingControlEnrichedWindow;
+
+@Name('RanapLocationReportingControl-Capturing')
+@Priority(12)
+on gpeh.RANAP_LOCATION_REPORTING_CONTROL as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RanapLocationReportingControlEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RanapLocationReportingControlUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+                
+@Priority(11)
+@Name('Imsi-Arrives-After-RanapLocationReportingControl')
+on gpeh.INTERNAL_IMSI as imsi
+merge RanapLocationReportingControlUnenrichedWindow as RanapLocationReportingControlUnenrichedWindow
+where imsi.UE_CONTEXT     = RanapLocationReportingControlUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RanapLocationReportingControlUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+// ************************************  RANAP_DIRECT_TRANSFER ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRanapDirectTransfer')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RanapDirectTransferEnrichedWindow;
+
+@Name('RanapDirectTransfer-Capturing')
+@Priority(12)
+on gpeh.RANAP_DIRECT_TRANSFER as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RanapDirectTransferEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RanapDirectTransferUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+                
+@Priority(11)
+@Name('Imsi-Arrives-After-RanapDirectTransfer')
+on gpeh.INTERNAL_IMSI as imsi
+merge RanapDirectTransferUnenrichedWindow as RanapDirectTransferUnenrichedWindow
+where imsi.UE_CONTEXT     = RanapDirectTransferUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RanapDirectTransferUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+// ************************************  RANAP_ERROR_INDICATION ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRanapErrorIndication')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RanapErrorIndicationEnrichedWindow;
+
+@Name('RanapErrorIndication-Capturing')
+@Priority(12)
+on gpeh.RANAP_ERROR_INDICATION as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RanapErrorIndicationEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RanapErrorIndicationUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+                
+@Priority(11)
+@Name('Imsi-Arrives-After-RanapErrorIndication')
+on gpeh.INTERNAL_IMSI as imsi
+merge RanapErrorIndicationUnenrichedWindow as RanapErrorIndicationUnenrichedWindow
+where imsi.UE_CONTEXT     = RanapErrorIndicationUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RanapErrorIndicationUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+// ************************************  RANAP_RELOCATION_REQUIRED ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRanapRelocationRequired')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RanapRelocationRequiredEnrichedWindow;
+
+@Name('RanapRelocationRequired-Capturing')
+@Priority(12)
+on gpeh.RANAP_RELOCATION_REQUIRED as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RanapRelocationRequiredEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RanapRelocationRequiredUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+               
+@Priority(11)
+@Name('Imsi-Arrives-After-RanapRelocationRequired')
+on gpeh.INTERNAL_IMSI as imsi
+merge RanapRelocationRequiredUnenrichedWindow as RanapRelocationRequiredUnenrichedWindow
+where imsi.UE_CONTEXT     = RanapRelocationRequiredUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RanapRelocationRequiredUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+        
+// ************************************  RANAP_RELOCATION_REQUEST  ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRanapRelocationRequest')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RanapRelocationRequestEnrichedWindow;
+
+@Name('RanapRelocationRequest-Capturing')
+@Priority(12)
+on gpeh.RANAP_RELOCATION_REQUEST as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RanapRelocationRequestEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RanapRelocationRequestUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+                
+@Priority(11)
+@Name('Imsi-Arrives-After-RanapRelocationRequest')
+on gpeh.INTERNAL_IMSI as imsi
+merge RanapRelocationRequestUnenrichedWindow as RanapRelocationRequestUnenrichedWindow
+where imsi.UE_CONTEXT     = RanapRelocationRequestUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RanapRelocationRequestUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+// ************************************  RANAP_RELOCATION_REQUEST_ACKNOWLEDGE ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRanapRelocationRequestAcknowledge')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RanapRelocationRequestAcknowledgeEnrichedWindow;
+
+@Name('RanapRelocationRequestAcknowledge-Capturing')
+@Priority(12)
+on gpeh.RANAP_RELOCATION_REQUEST_ACKNOWLEDGE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RanapRelocationRequestAcknowledgeEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RanapRelocationRequestAcknowledgeUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+                
+@Priority(11)
+@Name('Imsi-Arrives-After-RanapRelocationRequestAcknowledge')
+on gpeh.INTERNAL_IMSI as imsi
+merge RanapRelocationRequestAcknowledgeUnenrichedWindow as RanapRelocationRequestAcknowledgeUnenrichedWindow
+where imsi.UE_CONTEXT     = RanapRelocationRequestAcknowledgeUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RanapRelocationRequestAcknowledgeUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+// ************************************  RANAP_RELOCATION_COMMAND ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRanapRelocationCommand')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RanapRelocationCommandEnrichedWindow;
+
+@Name('RanapRelocationCommand-Capturing')
+@Priority(12)
+on gpeh.RANAP_RELOCATION_COMMAND as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RanapRelocationCommandEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RanapRelocationCommandUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+                
+@Priority(11)
+@Name('Imsi-Arrives-After-RanapRelocationCommand')
+on gpeh.INTERNAL_IMSI as imsi
+merge RanapRelocationCommandUnenrichedWindow as RanapRelocationCommandUnenrichedWindow
+where imsi.UE_CONTEXT     = RanapRelocationCommandUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RanapRelocationCommandUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+// ************************************  RANAP_RELOCATION_DETECT ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRanapRelocationDetect')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RanapRelocationDetectEnrichedWindow;
+
+@Name('RanapRelocationDetect-Capturing')
+@Priority(12)
+on gpeh.RANAP_RELOCATION_DETECT as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RanapRelocationDetectEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RanapRelocationDetectUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+               
+@Priority(11)
+@Name('Imsi-Arrives-After-RanapRelocationDetect')
+on gpeh.INTERNAL_IMSI as imsi
+merge RanapRelocationDetectUnenrichedWindow as RanapRelocationDetectUnenrichedWindow
+where imsi.UE_CONTEXT     = RanapRelocationDetectUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RanapRelocationDetectUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+// ************************************  RANAP_RELOCATION_COMPLETE ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRanapRelocationComplete')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RanapRelocationCompleteEnrichedWindow;
+
+@Name('RanapRelocationComplete-Capturing')
+@Priority(12)
+on gpeh.RANAP_RELOCATION_COMPLETE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RanapRelocationCompleteEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RanapRelocationCompleteUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+            
+@Priority(11)
+@Name('Imsi-Arrives-After-RanapRelocationComplete')
+on gpeh.INTERNAL_IMSI as imsi
+merge RanapRelocationCompleteUnenrichedWindow as RanapRelocationCompleteUnenrichedWindow
+where imsi.UE_CONTEXT     = RanapRelocationCompleteUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RanapRelocationCompleteUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+  
+// ************************************  RANAP_RELOCATION_PREPARATION_FAILURE ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRanapRelocationPreparationFailure')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RanapRelocationPreparationFailureEnrichedWindow;
+
+@Name('RanapRelocationPreparationFailure-Capturing')
+@Priority(12)
+on gpeh.RANAP_RELOCATION_PREPARATION_FAILURE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RanapRelocationPreparationFailureEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RanapRelocationPreparationFailureUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+                
+@Priority(11)
+@Name('Imsi-Arrives-After-RanapRelocationPreparationFailure')
+on gpeh.INTERNAL_IMSI as imsi
+merge RanapRelocationPreparationFailureUnenrichedWindow as RanapRelocationPreparationFailureUnenrichedWindow
+where imsi.UE_CONTEXT     = RanapRelocationPreparationFailureUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RanapRelocationPreparationFailureUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+// ************************************  RANAP_RELOCATION_FAILURE ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRanapRelocationFailure')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RanapRelocationFailureEnrichedWindow;
+
+@Name('RanapRelocationFailure-Capturing')
+@Priority(12)
+on gpeh.RANAP_RELOCATION_FAILURE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RanapRelocationFailureEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RanapRelocationFailureUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+                
+@Priority(11)
+@Name('Imsi-Arrives-After-RanapRelocationFailure')
+on gpeh.INTERNAL_IMSI as imsi
+merge RanapRelocationFailureUnenrichedWindow as RanapRelocationFailureUnenrichedWindow
+where imsi.UE_CONTEXT     = RanapRelocationFailureUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RanapRelocationFailureUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+// ************************************  RANAP_RELOCATION_CANCEL  ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRanapRelocationCancel')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RanapRelocationCancelEnrichedWindow;
+
+@Name('RanapRelocationCancel-Capturing')
+@Priority(12)
+on gpeh.RANAP_RELOCATION_CANCEL as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RanapRelocationCancelEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RanapRelocationCancelUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+                
+@Priority(11)
+@Name('Imsi-Arrives-After-RanapRelocationCancel')
+on gpeh.INTERNAL_IMSI as imsi
+merge RanapRelocationCancelUnenrichedWindow as RanapRelocationCancelUnenrichedWindow
+where imsi.UE_CONTEXT     = RanapRelocationCancelUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RanapRelocationCancelUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+       
+// ************************************  RANAP_RELOCATION_CANCEL_ACKNOWLEDGE ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRanapRelocationCancelAcknowledge')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RanapRelocationCancelAcknowledgeEnrichedWindow;
+
+@Name('RanapRelocationCancelAcknowledge-Capturing')
+@Priority(12)
+on gpeh.RANAP_RELOCATION_CANCEL_ACKNOWLEDGE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RanapRelocationCancelAcknowledgeEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RanapRelocationCancelAcknowledgeUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+                
+@Priority(11)
+@Name('Imsi-Arrives-After-RanapRelocationCancelAcknowledge')
+on gpeh.INTERNAL_IMSI as imsi
+merge RanapRelocationCancelAcknowledgeUnenrichedWindow as RanapRelocationCancelAcknowledgeUnenrichedWindow
+where imsi.UE_CONTEXT     = RanapRelocationCancelAcknowledgeUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RanapRelocationCancelAcknowledgeUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+
+
+// ************************************  RANAP_SRNS_CONTEXT_REQUEST ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRanapSrnsContextRequest')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RanapSrnsContextRequestEnrichedWindow;
+
+@Name('RanapSrnsContextRequest-Capturing')
+@Priority(12)
+on gpeh.RANAP_SRNS_CONTEXT_REQUEST as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RanapSrnsContextRequestEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RanapSrnsContextRequestUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+                
+@Priority(11)
+@Name('Imsi-Arrives-After-RanapSrnsContextRequest')
+on gpeh.INTERNAL_IMSI as imsi
+merge RanapSrnsContextRequestUnenrichedWindow as RanapSrnsContextRequestUnenrichedWindow
+where imsi.UE_CONTEXT     = RanapSrnsContextRequestUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RanapSrnsContextRequestUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+  
+// ************************************  RANAP_SRNS_CONTEXT_RESPONSE ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRanapSrnsContextResponse')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RanapSrnsContextResponseEnrichedWindow;
+
+@Name('RanapSrnsContextResponse-Capturing')
+@Priority(12)
+on gpeh.RANAP_SRNS_CONTEXT_RESPONSE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RanapSrnsContextResponseEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RanapSrnsContextResponseUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+                
+@Priority(11)
+@Name('Imsi-Arrives-After-RanapSrnsContextResponse')
+on gpeh.INTERNAL_IMSI as imsi
+merge RanapSrnsContextResponseUnenrichedWindow as RanapSrnsContextResponseUnenrichedWindow
+where imsi.UE_CONTEXT     = RanapSrnsContextResponseUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RanapSrnsContextResponseUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+              
+// ************************************  RANAP_SRNS_DATA_FORWARD_COMMAND  ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRanapSrnsDataForwardCommand')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RanapSrnsDataForwardCommandEnrichedWindow;
+
+@Name('RanapSrnsDataForwardCommand-Capturing')
+@Priority(12)
+on gpeh.RANAP_SRNS_DATA_FORWARD_COMMAND as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RanapSrnsDataForwardCommandEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RanapSrnsDataForwardCommandUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+                
+@Priority(11)
+@Name('Imsi-Arrives-After-RanapSrnsDataForwardCommand')
+on gpeh.INTERNAL_IMSI as imsi
+merge RanapSrnsDataForwardCommandUnenrichedWindow as RanapSrnsDataForwardCommandUnenrichedWindow
+where imsi.UE_CONTEXT     = RanapSrnsDataForwardCommandUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RanapSrnsDataForwardCommandUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+// ************************************  RANAP_LOCATION_REPORT  ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRanapLocationReport')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RanapLocationReportEnrichedWindow;
+
+@Name('RanapLocationReport-Capturing')
+@Priority(12)
+on gpeh.RANAP_LOCATION_REPORT as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RanapLocationReportEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RanapLocationReportUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+               
+@Priority(11)
+@Name('Imsi-Arrives-After-RanapLocationReport')
+on gpeh.INTERNAL_IMSI as imsi
+merge RanapLocationReportUnenrichedWindow as RanapLocationReportUnenrichedWindow
+where imsi.UE_CONTEXT     = RanapLocationReportUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RanapLocationReportUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+// ************************************  RANAP_RANAP_RELOCATION_INFORMATION  ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRanapRanapRelocationInformation')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RanapRanapRelocationInformationEnrichedWindow;
+
+@Name('RanapRanapRelocationInformation-Capturing')
+@Priority(12)
+on gpeh.RANAP_RANAP_RELOCATION_INFORMATION as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RanapRanapRelocationInformationEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RanapRanapRelocationInformationUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+                
+@Priority(11)
+@Name('Imsi-Arrives-After-RanapRanapRelocationInformation')
+on gpeh.INTERNAL_IMSI as imsi
+merge RanapRanapRelocationInformationUnenrichedWindow as RanapRanapRelocationInformationUnenrichedWindow
+where imsi.UE_CONTEXT     = RanapRanapRelocationInformationUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RanapRanapRelocationInformationUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+        
+// ************************************  RANAP_RAB_RELEASE_REQUEST ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRanapRabReleaseRequest')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RanapRabReleaseRequestEnrichedWindow;
+
+@Name('RanapRabReleaseRequest-Capturing')
+@Priority(12)
+on gpeh.RANAP_RAB_RELEASE_REQUEST as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RanapRabReleaseRequestEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RanapRabReleaseRequestUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+                
+@Priority(11)
+@Name('Imsi-Arrives-After-RanapRabReleaseRequest')
+on gpeh.INTERNAL_IMSI as imsi
+merge RanapRabReleaseRequestUnenrichedWindow as RanapRabReleaseRequestUnenrichedWindow
+where imsi.UE_CONTEXT     = RanapRabReleaseRequestUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RanapRabReleaseRequestUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+
+
+
+// ************************************ RANAP_RAB_ASSIGNMENT_REQUEST ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRanapRabAssignmentRequest')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RanapRabAssignmentRequestEnrichedWindow;
+
+@Name('RanapRabAssignmentRequest-Capturing')
+@Priority(12)
+on gpeh.RANAP_RAB_ASSIGNMENT_REQUEST as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RanapRabAssignmentRequestEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+
+when not matched
+  then insert into
+  RanapRabAssignmentRequestUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+
+@Priority(11)
+@Name('Imsi-Arrives-After-RanapRabAssignmentRequest')
+on gpeh.INTERNAL_IMSI as imsi
+merge RanapRabAssignmentRequestUnenrichedWindow as RanapRabAssignmentRequestUnenrichedWindow
+where imsi.UE_CONTEXT     = RanapRabAssignmentRequestUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RanapRabAssignmentRequestUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+
+
+// ************************************ RANAP_RAB_ASSIGNMENT_RESPONSE ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRanapRabAssignmentResponse')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RanapRabAssignmentResponseEnrichedWindow;
+
+@Name('RanapRabAssignmentResponse-Capturing')
+@Priority(12)
+on gpeh.RANAP_RAB_ASSIGNMENT_RESPONSE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RanapRabAssignmentResponseEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+
+when not matched
+  then insert into
+  RanapRabAssignmentResponseUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+
+@Priority(11)
+@Name('Imsi-Arrives-After-RanapRabAssignmentResponse')
+on gpeh.INTERNAL_IMSI as imsi
+merge RanapRabAssignmentResponseUnenrichedWindow as RanapRabAssignmentResponseUnenrichedWindow
+where imsi.UE_CONTEXT     = RanapRabAssignmentResponseUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RanapRabAssignmentResponseUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);

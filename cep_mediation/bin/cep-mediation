@@ -1,0 +1,98 @@
+#!/bin/bash
+set -e
+
+### BEGIN INIT INFO
+# Provides:          cep-mediation
+# Required-Start:    $local_fs $remote_fs $network $syslog $autofs connectd
+# Required-Stop:     $local_fs $remote_fs $network $syslog
+# Default-Start:     3 5     
+# Default-Stop:      1 2 4 6
+# X-Interactive:     true
+# Short-Description: Start/stop CEP Mediation server
+### END INIT INFO
+
+#
+# This script is the debian/RHEL init.d startup/shutdown script for CEP Mediation
+#
+function isCepMediationRunning() { 
+  local __resultvariable=$1
+  local cep_mediation_processes=`ps -ef | grep java | egrep '(com.ericsson.cepmediation.server.management.ProcessManager|com.ericsson.cepmediation.server.management.ApplicationStartStop)'`
+  local _isRunning
+  if [ "$cep_mediation_processes" = "" ]
+    then
+      _isRunning="false"
+  else
+      _isRunning="true"
+  fi
+  eval $__resultvariable="'$_isRunning'"
+}
+
+# This server can only be started as root
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root" 1>&2
+   exit 1
+fi
+
+isAppRunning=""
+
+case "$1" in
+    start)
+		isCepMediationRunning isAppRunning
+                if [ "$isAppRunning" = "true" ]
+                then
+		  echo "CEP Mediation server already running"			
+		else	
+		  echo "Starting CEP Mediation server: cep-mediation"
+		  su dcuser -c '/opt/ericsson/cep-mediation/cep-mediation/bin/managed_server.sh start'
+		fi	
+		echo "."
+        ;;
+    stop)
+		isCepMediationRunning isAppRunning		
+		if [ "$isAppRunning" = "true" ]  
+		then
+		  echo "Stopping CEP Mediation server: cep-mediation"		
+		  su dcuser -c '/opt/ericsson/cep-mediation/cep-mediation/bin/managed_server.sh stop'
+		else
+		  echo "CEP Mediation server already stopped"
+		fi		
+		echo "."
+    	;;
+    restart)
+		echo "Restarting CEP Mediation server: cep-mediation"
+		isCepMediationRunning isAppRunning		
+		if [ "$isAppRunning" = "true" ]  
+		then
+		  su dcuser -c '/opt/ericsson/cep-mediation/cep-mediation/bin/managed_server.sh stop'
+		else
+		  echo "CEP Mediation server already stopped"
+		fi
+		su dcuser -c '/opt/ericsson/cep-mediation/cep-mediation/bin/managed_server.sh start'
+		echo "."
+    	;;
+    reload)
+		echo -n "Reload of CEP Mediation server not supported: cep-mediation"
+    	;;
+    force-reload)
+		echo "Force reloading CEP Mediation server: cep-mediation"
+		if [ "$isAppRunning" = "true" ]  
+		then
+		  su dcuser -c '/opt/ericsson/cep-mediation/cep-mediation/bin/managed_server.sh stop'
+		else
+		  echo "CEP Mediation server already stopped"
+		fi		
+		su dcuser -c '/opt/ericsson/cep-mediation/cep-mediation/bin/managed_server.sh start'
+		echo "."
+        ;;
+    status)
+		echo "Getting status of CEP Mediation server: cep-mediation"
+		su dcuser -c '/opt/ericsson/cep-mediation/cep-mediation/bin/check_status.sh'
+		echo "."
+    	;;        
+    *)
+        echo "Usage: $0 {start|stop|restart|reload|force-reload|status}"
+        exit 1
+        ;;
+esac
+
+exit 0

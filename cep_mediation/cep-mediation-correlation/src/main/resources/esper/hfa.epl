@@ -1,0 +1,495 @@
+module hfa_module;
+
+uses raw_events_base_module;
+uses cfa_hfa_common_module;
+
+create window SoftHandoverFailEnrichedWindow.win:keepall() as gpeh.INTERNAL_SOFT_HANDOVER_EXECUTION_ENRICHED;
+create window SoftHandoverFailUnenrichedWindow.win:keepall() as gpeh.INTERNAL_SOFT_HANDOVER_EXECUTION_ENRICHED;
+
+create window OutHardIfhoEnrichedWindow.win:keepall() as gpeh.INTERNAL_OUT_HARD_HANDOVER_FAILURE_IFHO_ENRICHED;
+create window OutHardIfhoUnenrichedWindow.win:keepall() as gpeh.INTERNAL_OUT_HARD_HANDOVER_FAILURE_IFHO_ENRICHED;
+create window OutHardIratEnrichedWindow.win:keepall() as gpeh.INTERNAL_OUT_HARD_HANDOVER_FAILURE_IRAT_ENRICHED;
+create window OutHardIratUnenrichedWindow.win:keepall() as gpeh.INTERNAL_OUT_HARD_HANDOVER_FAILURE_IRAT_ENRICHED;
+
+create window FailedHsdschCellChangeEnrichedWindow.win:keepall() as gpeh.INTERNAL_FAILED_HSDSCH_CELL_CHANGE_ENRICHED;
+create window FailedHsdschCellChangeUnenrichedWindow.win:keepall() as gpeh.INTERNAL_FAILED_HSDSCH_CELL_CHANGE_ENRICHED;
+create window HsdschNoCellSelectedEnrichedWindow.win:keepall() as gpeh.INTERNAL_HSDSCH_CELL_SELECTION_NO_CELL_SELECTED_ENRICHED;
+create window HsdschNoCellSelectedUnenrichedWindow.win:keepall() as gpeh.INTERNAL_HSDSCH_CELL_SELECTION_NO_CELL_SELECTED_ENRICHED;
+
+create window IfhoExecFailEnrichedWindow.win:keepall() as gpeh.INTERNAL_IFHO_EXECUTION_ACTIVE_ENRICHED;
+create window IfhoExecFailUnenrichedWindow.win:keepall() as gpeh.INTERNAL_IFHO_EXECUTION_ACTIVE_ENRICHED;
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically 
+@Name('Flush-IncompleteSoftHandoverExecFail')
+@Priority(31)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from SoftHandoverFailUnenrichedWindow;
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically 
+@Name('Flush-IncompleteOutHardIfho')
+@Priority(31)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from OutHardIfhoUnenrichedWindow;
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically 
+@Name('Flush-IncompleteOutHardIrat')
+@Priority(31)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from OutHardIratUnenrichedWindow;
+
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically 
+@Name('Flush-IncompleteFailedHsdschCellChange')
+@Priority(31)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from FailedHsdschCellChangeUnenrichedWindow;
+
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically 
+@Name('Flush-IncompleteHsdschNoCellSelected')
+@Priority(31)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from HsdschNoCellSelectedUnenrichedWindow;
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically 
+@Name('Flush-IncompleteIfhoExecFail')
+@Priority(31)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from IfhoExecFailUnenrichedWindow;
+
+// *************************************soft Handover exec failure analysis *****************************
+
+@Name('SoftHandoverExecFail-Capturing')
+@Priority(12)
+on gpeh.INTERNAL_SOFT_HANDOVER_EXECUTION(RESULT>0 and not Util.isInHfaWhitelist(hoFailEvent.getEventId(), hoFailEvent.RESULT, hoFailEvent.FAILURE_REASON)) as hoFailEvent
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = hoFailEvent.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = hoFailEvent.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched  
+  then insert into
+  SoftHandoverFailEnrichedWindow select
+        hoFailEvent                                     as base,
+        imw.IMSI                                        as IMSI,
+        Util.getMcc(imw.IMSI)                           as IMSI_MCC,
+        Util.getMnc(imw.IMSI)                           as IMSI_MNC,
+        Util.isRoaming(imw.IMSI)                        as ROAMING,
+        hoFailEvent.timestamp + (hoFailEvent.networkElementTimezoneOffset * 60 * 1000) as LOCAL_TIMESTAMP,
+        0x00											as CATEGORY_ID
+when not matched  
+  then insert into
+  SoftHandoverFailUnenrichedWindow select
+        hoFailEvent 		                            as base,
+    	0x00											as CATEGORY_ID,
+    	hoFailEvent.timestamp + (hoFailEvent.networkElementTimezoneOffset * 60 * 1000) as LOCAL_TIMESTAMP,
+        current_timestamp()                             as TIMESTAMP_WINDOW_ENTRY;
+        
+@Priority(5)
+@Name('SoftHandoverExecFail-Enrichment')
+on PRODUCE_OUTPUT_TIMER as produceOutputTimer
+delete from SoftHandoverFailEnrichedWindow;
+
+@Priority(11)
+@Name('Imsi-Arrives-After-SoftHandoverExecFail')
+on gpeh.INTERNAL_IMSI as imsi
+merge SoftHandoverFailUnenrichedWindow as SoftHandoverFailUnenrichedWindow
+where imsi.UE_CONTEXT     = SoftHandoverFailUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = SoftHandoverFailUnenrichedWindow.base.RNC_MODULE_ID
+when matched  
+  then update set
+        IMSI         = cast(imsi.IMSI, long),
+        IMSI_MCC     = Util.getMcc(SoftHandoverFailUnenrichedWindow.IMSI),
+        IMSI_MNC     = Util.getMnc(SoftHandoverFailUnenrichedWindow.IMSI),
+        ROAMING      = Util.isRoaming(IMSI_MCC, IMSI_MNC);
+  
+@Priority(5)
+@Name('IncompleteSoftHandoverExecFail-Enrichment')
+on PRODUCE_OUTPUT_TIMER as produceOutputTimer
+  delete from SoftHandoverFailUnenrichedWindow SoftHandoverFailUnenrichedWindow
+  where SoftHandoverFailUnenrichedWindow.IMSI != -1l;
+
+@Name('Cleanup-IncompleteSoftHandoverExecFail-On-Connection-Setup')
+@Priority(11)
+on gpeh.RRC_RRC_CONNECTION_SETUP setup
+delete from SoftHandoverFailUnenrichedWindow as SoftHandoverFailUnenrichedWindow
+  where SoftHandoverFailUnenrichedWindow.base.UE_CONTEXT = setup.UE_CONTEXT
+  and SoftHandoverFailUnenrichedWindow.base.RNC_MODULE_ID = setup.RNC_MODULE_ID;
+ 
+@Name('Cleanup-IncompleteSoftHandoverExecFail-On-Connection-Release')
+@Priority(11)
+on gpeh.RRC_RRC_CONNECTION_RELEASE_COMPLETE release
+delete from SoftHandoverFailUnenrichedWindow as SoftHandoverFailUnenrichedWindow
+  where SoftHandoverFailUnenrichedWindow.base.UE_CONTEXT = release.UE_CONTEXT
+  and SoftHandoverFailUnenrichedWindow.base.RNC_MODULE_ID = release.RNC_MODULE_ID;
+
+// Need to ensure that event will not be kept forever if there was no imsi or rrc set/release for that ueContext, rncModule combination
+@Name('Cleanup-Expired-IncompleteSoftHandoverExecFail')
+on CLEANUP_EXPIRED_DATA as removeExpiredData
+delete from SoftHandoverFailUnenrichedWindow as SoftHandoverFailUnenrichedWindow
+  where(current_timestamp() - SoftHandoverFailUnenrichedWindow.TIMESTAMP_WINDOW_ENTRY) > EXPIRY_TIME;
+  
+  
+// ********************************************************************************************
+  
+
+// ************************************ HFA - Internal Out Hard Handover Failure Handling    ***********************
+@Name('OutHardIfho-Capturing')
+@Priority(12)
+on gpeh.INTERNAL_OUT_HARD_HANDOVER_FAILURE(PROCEDURE_INDICATOR=9
+            and not Util.isInHfaWhitelist(outHardEvent.getEventId(), outHardEvent.EXCEPTION_CLASS, outHardEvent.CAUSE_VALUE, outHardEvent.EXTENDED_CAUSE_VALUE))
+                                                                      as outHardEvent
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = outHardEvent.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = outHardEvent.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched  
+  then insert into
+  OutHardIfhoEnrichedWindow select
+        outHardEvent                                                       as base,
+        imw.IMSI                                                           as IMSI,
+        Util.getMcc(imw.IMSI)                                              as IMSI_MCC,
+        Util.getMnc(imw.IMSI)                                              as IMSI_MNC,
+        Util.isRoaming(imw.IMSI)                                           as ROAMING,
+        HO_TYPE_IFHO								                       as CATEGORY_ID,
+        outHardEvent.timestamp + (outHardEvent.networkElementTimezoneOffset * 60 * 1000) as LOCAL_TIMESTAMP       
+when not matched  
+  then insert into
+  OutHardIfhoUnenrichedWindow select
+        outHardEvent                                                       as base,
+        HO_TYPE_IFHO											           as CATEGORY_ID,
+        outHardEvent.timestamp + (outHardEvent.networkElementTimezoneOffset * 60 * 1000) as LOCAL_TIMESTAMP,
+        current_timestamp()                                                as TIMESTAMP_WINDOW_ENTRY;
+        
+@Name('OutHardIrat-Capturing')
+@Priority(12)
+on gpeh.INTERNAL_OUT_HARD_HANDOVER_FAILURE((PROCEDURE_INDICATOR=7 or PROCEDURE_INDICATOR=12)
+            and not Util.isInHfaWhitelist(outHardEvent.getEventId(), outHardEvent.EXCEPTION_CLASS, outHardEvent.CAUSE_VALUE, outHardEvent.EXTENDED_CAUSE_VALUE))
+                                                                      as outHardEvent
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = outHardEvent.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = outHardEvent.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched  
+  then insert into
+  OutHardIratEnrichedWindow select
+        outHardEvent                                                       as base,
+        imw.IMSI                                                           as IMSI,
+        Util.getMcc(imw.IMSI)                                              as IMSI_MCC,
+        Util.getMnc(imw.IMSI)                                              as IMSI_MNC,
+        Util.isRoaming(imw.IMSI)                                           as ROAMING,
+        HO_TYPE_IRAT								                       as CATEGORY_ID,
+        outHardEvent.timestamp + (outHardEvent.networkElementTimezoneOffset * 60 * 1000) as LOCAL_TIMESTAMP       
+when not matched  
+  then insert into
+  OutHardIratUnenrichedWindow select
+        outHardEvent                                                       as base,
+        HO_TYPE_IRAT											           as CATEGORY_ID,
+        outHardEvent.timestamp + (outHardEvent.networkElementTimezoneOffset * 60 * 1000) as LOCAL_TIMESTAMP,
+        current_timestamp()                                                as TIMESTAMP_WINDOW_ENTRY;
+        
+@Priority(5)
+@Name('OutHardIfho-Enrichment')
+on PRODUCE_OUTPUT_TIMER as produceOutputTimer
+delete from OutHardIfhoEnrichedWindow;
+
+@Priority(5)
+@Name('OutHardIrat-Enrichment')
+on PRODUCE_OUTPUT_TIMER as produceOutputTimer
+delete from OutHardIratEnrichedWindow;
+
+@Priority(11)
+@Name('Imsi-Arrives-After-InternalOutHardHandoverFailure-IFHO')
+on gpeh.INTERNAL_IMSI as imsi
+merge OutHardIfhoUnenrichedWindow as outHardIfhoUnenrichedWindow
+where imsi.UE_CONTEXT     = outHardIfhoUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = outHardIfhoUnenrichedWindow.base.RNC_MODULE_ID
+when matched  
+  then update set
+        IMSI         = cast(imsi.IMSI, long),
+        IMSI_MCC     = Util.getMcc(outHardIfhoUnenrichedWindow.IMSI),
+        IMSI_MNC     = Util.getMnc(outHardIfhoUnenrichedWindow.IMSI),
+        ROAMING      = Util.isRoaming(IMSI_MCC, IMSI_MNC);
+
+@Priority(11)
+@Name('Imsi-Arrives-After-InternalOutHardHandoverFailure-IRAT')
+on gpeh.INTERNAL_IMSI as imsi
+merge OutHardIratUnenrichedWindow as outHardIratUnenrichedWindow
+where imsi.UE_CONTEXT     = outHardIratUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = outHardIratUnenrichedWindow.base.RNC_MODULE_ID
+when matched  
+  then update set
+        IMSI         = cast(imsi.IMSI, long),
+        IMSI_MCC     = Util.getMcc(outHardIratUnenrichedWindow.IMSI),
+        IMSI_MNC     = Util.getMnc(outHardIratUnenrichedWindow.IMSI),
+        ROAMING      = Util.isRoaming(IMSI_MCC, IMSI_MNC);
+  
+@Priority(5)
+@Name('IncompleteOutHardIfho-Enrichment')
+on PRODUCE_OUTPUT_TIMER as produceOutputTimer
+  delete from OutHardIfhoUnenrichedWindow outHardIfhoUnenrichedWindow
+  where outHardIfhoUnenrichedWindow.IMSI != -1l;
+  
+@Priority(5)
+@Name('IncompleteOutHardIrat-Enrichment')
+on PRODUCE_OUTPUT_TIMER as produceOutputTimer
+  delete from OutHardIratUnenrichedWindow outHardIratUnenrichedWindow
+  where outHardIratUnenrichedWindow.IMSI != -1l;
+
+@Name('Cleanup-IncompleteOutHardIfho-On-Connection-Setup')
+@Priority(11)
+on gpeh.RRC_RRC_CONNECTION_SETUP setup
+delete from OutHardIfhoUnenrichedWindow as outHardIfhoUnenrichedWindow
+  where outHardIfhoUnenrichedWindow.base.UE_CONTEXT = setup.UE_CONTEXT
+  and outHardIfhoUnenrichedWindow.base.RNC_MODULE_ID = setup.RNC_MODULE_ID;
+  
+@Name('Cleanup-IncompleteOutHardIrat-On-Connection-Setup')
+@Priority(11)
+on gpeh.RRC_RRC_CONNECTION_SETUP setup
+delete from OutHardIratUnenrichedWindow as outHardIratUnenrichedWindow
+  where outHardIratUnenrichedWindow.base.UE_CONTEXT = setup.UE_CONTEXT
+  and outHardIratUnenrichedWindow.base.RNC_MODULE_ID = setup.RNC_MODULE_ID;
+ 
+@Name('Cleanup-IncompleteOutHardIfho-On-Connection-Release')
+@Priority(11)
+on gpeh.RRC_RRC_CONNECTION_RELEASE_COMPLETE release
+delete from OutHardIfhoUnenrichedWindow as outHardIfhoUnenrichedWindow
+  where outHardIfhoUnenrichedWindow.base.UE_CONTEXT = release.UE_CONTEXT
+  and outHardIfhoUnenrichedWindow.base.RNC_MODULE_ID = release.RNC_MODULE_ID;
+  
+@Name('Cleanup-IncompleteOutHardIrat-On-Connection-Release')
+@Priority(11)
+on gpeh.RRC_RRC_CONNECTION_RELEASE_COMPLETE release
+delete from OutHardIratUnenrichedWindow as outHardIratUnenrichedWindow
+  where outHardIratUnenrichedWindow.base.UE_CONTEXT = release.UE_CONTEXT
+  and outHardIratUnenrichedWindow.base.RNC_MODULE_ID = release.RNC_MODULE_ID;
+
+// Need to ensure that event will not be kept forever if there was no imsi or rrc set/release for that ueContext, rncModule combination
+@Name('Cleanup-Expired-IncompleteOutHardIfho')
+on CLEANUP_EXPIRED_DATA as removeExpiredData
+delete from OutHardIfhoUnenrichedWindow as outHardIfhoUnenrichedWindow
+  where(current_timestamp() - outHardIfhoUnenrichedWindow.TIMESTAMP_WINDOW_ENTRY) > EXPIRY_TIME;
+  
+// Need to ensure that event will not be kept forever if there was no imsi or rrc set/release for that ueContext, rncModule combination
+@Name('Cleanup-Expired-IncompleteOutHardIrat')
+on CLEANUP_EXPIRED_DATA as removeExpiredData
+delete from OutHardIratUnenrichedWindow as outHardIratUnenrichedWindow
+  where(current_timestamp() - outHardIratUnenrichedWindow.TIMESTAMP_WINDOW_ENTRY) > EXPIRY_TIME;
+
+// ********************************************************************************************
+
+
+// *************************************internal_failed_hsdsch_cell_change failure analysis *****************************
+
+@Name('FailedHsdschCellChange-Capturing')
+@Priority(12)
+on gpeh.INTERNAL_FAILED_HSDSCH_CELL_CHANGE(not Util.isInHfaWhitelist(ccFailEvent.getEventId(), ccFailEvent.FAILURE_REASON)) as ccFailEvent
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = ccFailEvent.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = ccFailEvent.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched  
+  then insert into
+  FailedHsdschCellChangeEnrichedWindow select
+        ccFailEvent                                     as base,
+        imw.IMSI                                        as IMSI,
+        Util.getMcc(imw.IMSI)                           as IMSI_MCC,
+        Util.getMnc(imw.IMSI)                           as IMSI_MNC,
+        Util.isRoaming(imw.IMSI)                        as ROAMING,
+        ccFailEvent.timestamp + (ccFailEvent.networkElementTimezoneOffset * 60 * 1000) as LOCAL_TIMESTAMP,
+        0x01											as CATEGORY_ID
+when not matched  
+  then insert into
+  FailedHsdschCellChangeUnenrichedWindow select
+        ccFailEvent 		                            as base,
+    	0x01											as CATEGORY_ID,
+    	ccFailEvent.timestamp + (ccFailEvent.networkElementTimezoneOffset * 60 * 1000) as LOCAL_TIMESTAMP,
+        current_timestamp()                             as TIMESTAMP_WINDOW_ENTRY;
+        
+@Priority(5)
+@Name('FailedHsdschCellChange-Enrichment')
+on PRODUCE_OUTPUT_TIMER as produceOutputTimer
+delete from FailedHsdschCellChangeEnrichedWindow;
+
+@Priority(11)
+@Name('Imsi-Arrives-After-FailedHsdschCellChange')
+on gpeh.INTERNAL_IMSI as imsi
+merge FailedHsdschCellChangeUnenrichedWindow as FailedHsdschCellChangeUnenrichedWindow
+where imsi.UE_CONTEXT     = FailedHsdschCellChangeUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = FailedHsdschCellChangeUnenrichedWindow.base.RNC_MODULE_ID
+when matched  
+  then update set
+        IMSI         = cast(imsi.IMSI, long),
+        IMSI_MCC     = Util.getMcc(FailedHsdschCellChangeUnenrichedWindow.IMSI),
+        IMSI_MNC     = Util.getMnc(FailedHsdschCellChangeUnenrichedWindow.IMSI),
+        ROAMING      = Util.isRoaming(IMSI_MCC, IMSI_MNC);
+  
+@Priority(5)
+@Name('IncompleteFailedHsdschCellChange-Enrichment')
+on PRODUCE_OUTPUT_TIMER as produceOutputTimer
+  delete from FailedHsdschCellChangeUnenrichedWindow FailedHsdschCellChangeUnenrichedWindow
+  where FailedHsdschCellChangeUnenrichedWindow.IMSI != -1l;
+
+@Name('Cleanup-IncompleteFailedHsdschCellChange-On-Connection-Setup')
+@Priority(11)
+on gpeh.RRC_RRC_CONNECTION_SETUP setup
+delete from FailedHsdschCellChangeUnenrichedWindow as FailedHsdschCellChangeUnenrichedWindow
+  where FailedHsdschCellChangeUnenrichedWindow.base.UE_CONTEXT = setup.UE_CONTEXT
+  and FailedHsdschCellChangeUnenrichedWindow.base.RNC_MODULE_ID = setup.RNC_MODULE_ID;
+ 
+@Name('Cleanup-IncompleteFailedHsdschCellChange-On-Connection-Release')
+@Priority(11)
+on gpeh.RRC_RRC_CONNECTION_RELEASE_COMPLETE release
+delete from FailedHsdschCellChangeUnenrichedWindow as FailedHsdschCellChangeUnenrichedWindow
+  where FailedHsdschCellChangeUnenrichedWindow.base.UE_CONTEXT = release.UE_CONTEXT
+  and FailedHsdschCellChangeUnenrichedWindow.base.RNC_MODULE_ID = release.RNC_MODULE_ID;
+
+// Need to ensure that event will not be kept forever if there was no imsi or rrc set/release for that ueContext, rncModule combination
+@Name('Cleanup-Expired-IncompleteFailedHsdschCellChange')
+on CLEANUP_EXPIRED_DATA as removeExpiredData
+delete from FailedHsdschCellChangeUnenrichedWindow as FailedHsdschCellChangeUnenrichedWindow
+  where(current_timestamp() - FailedHsdschCellChangeUnenrichedWindow.TIMESTAMP_WINDOW_ENTRY) > EXPIRY_TIME;
+// ********************************************************************************************
+
+// *************************************internal_hsdsch_cell_selection_no_cell_selected failure analysis *****************************
+
+@Name('HsdschNoCellSelected-Capturing')
+@Priority(12)
+on gpeh.INTERNAL_HSDSCH_CELL_SELECTION_NO_CELL_SELECTED(FAILURE_REASON != DEFAULT_BYTE_VALUE and not Util.isInHfaWhitelist(noCellEvent.getEventId(), noCellEvent.FAILURE_REASON)) as noCellEvent
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = noCellEvent.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = noCellEvent.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched  
+  then insert into
+  HsdschNoCellSelectedEnrichedWindow select
+        noCellEvent                                     as base,
+        imw.IMSI                                        as IMSI,
+        Util.getMcc(imw.IMSI)                           as IMSI_MCC,
+        Util.getMnc(imw.IMSI)                           as IMSI_MNC,
+        Util.isRoaming(imw.IMSI)                        as ROAMING,
+        noCellEvent.timestamp + (noCellEvent.networkElementTimezoneOffset * 60 * 1000) as LOCAL_TIMESTAMP,
+        0x01											as CATEGORY_ID
+when not matched  
+  then insert into
+  HsdschNoCellSelectedUnenrichedWindow select
+        noCellEvent 		                            as base,
+    	0x01											as CATEGORY_ID,
+    	noCellEvent.timestamp + (noCellEvent.networkElementTimezoneOffset * 60 * 1000) as LOCAL_TIMESTAMP,
+        current_timestamp()                             as TIMESTAMP_WINDOW_ENTRY;
+        
+@Priority(5)
+@Name('HsdschNoCellSelected-Enrichment')
+on PRODUCE_OUTPUT_TIMER as produceOutputTimer
+delete from HsdschNoCellSelectedEnrichedWindow;
+
+@Priority(11)
+@Name('Imsi-Arrives-After-HsdschNoCellSelected')
+on gpeh.INTERNAL_IMSI as imsi
+merge HsdschNoCellSelectedUnenrichedWindow as HsdschNoCellSelectedUnenrichedWindow
+where imsi.UE_CONTEXT     = HsdschNoCellSelectedUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = HsdschNoCellSelectedUnenrichedWindow.base.RNC_MODULE_ID
+when matched  
+  then update set
+        IMSI         = cast(imsi.IMSI, long),
+        IMSI_MCC     = Util.getMcc(HsdschNoCellSelectedUnenrichedWindow.IMSI),
+        IMSI_MNC     = Util.getMnc(HsdschNoCellSelectedUnenrichedWindow.IMSI),
+        ROAMING      = Util.isRoaming(IMSI_MCC, IMSI_MNC);
+  
+@Priority(5)
+@Name('IncompleteHsdschNoCellSelected-Enrichment')
+on PRODUCE_OUTPUT_TIMER as produceOutputTimer
+  delete from HsdschNoCellSelectedUnenrichedWindow HsdschNoCellSelectedUnenrichedWindow
+  where HsdschNoCellSelectedUnenrichedWindow.IMSI != -1l;
+
+@Name('Cleanup-IncompleteHsdschNoCellSelected-On-Connection-Setup')
+@Priority(11)
+on gpeh.RRC_RRC_CONNECTION_SETUP setup
+delete from HsdschNoCellSelectedUnenrichedWindow as HsdschNoCellSelectedUnenrichedWindow
+  where HsdschNoCellSelectedUnenrichedWindow.base.UE_CONTEXT = setup.UE_CONTEXT
+  and HsdschNoCellSelectedUnenrichedWindow.base.RNC_MODULE_ID = setup.RNC_MODULE_ID;
+ 
+@Name('Cleanup-IncompleteHsdschNoCellSelected-On-Connection-Release')
+@Priority(11)
+on gpeh.RRC_RRC_CONNECTION_RELEASE_COMPLETE release
+delete from HsdschNoCellSelectedUnenrichedWindow as HsdschNoCellSelectedUnenrichedWindow
+  where HsdschNoCellSelectedUnenrichedWindow.base.UE_CONTEXT = release.UE_CONTEXT
+  and HsdschNoCellSelectedUnenrichedWindow.base.RNC_MODULE_ID = release.RNC_MODULE_ID;
+
+// Need to ensure that event will not be kept forever if there was no imsi or rrc set/release for that ueContext, rncModule combination
+@Name('Cleanup-Expired-IncompleteHsdschNoCellSelected')
+on CLEANUP_EXPIRED_DATA as removeExpiredData
+delete from HsdschNoCellSelectedUnenrichedWindow as HsdschNoCellSelectedUnenrichedWindow
+  where(current_timestamp() - HsdschNoCellSelectedUnenrichedWindow.TIMESTAMP_WINDOW_ENTRY) > EXPIRY_TIME;
+// ********************************************************************************************
+  
+// *************************************INTERNAL_IFHO_EXECUTION_ACTIVE failure analysis *****************************
+
+@Name('IfhoExecFail-Capturing')
+@Priority(12)
+on gpeh.INTERNAL_IFHO_EXECUTION_ACTIVE(RESULT>0 and not Util.isInHfaWhitelist(ifhoExecFailEvent.getEventId(), ifhoExecFailEvent.RESULT, ifhoExecFailEvent.FAILURE_REASON)) as ifhoExecFailEvent
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = ifhoExecFailEvent.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = ifhoExecFailEvent.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched  
+  then insert into
+  IfhoExecFailEnrichedWindow select
+        ifhoExecFailEvent                               as base,
+        imw.IMSI                                        as IMSI,
+        Util.getMcc(imw.IMSI)                           as IMSI_MCC,
+        Util.getMnc(imw.IMSI)                           as IMSI_MNC,
+        Util.isRoaming(imw.IMSI)                        as ROAMING,
+        ifhoExecFailEvent.timestamp + (ifhoExecFailEvent.networkElementTimezoneOffset * 60 * 1000) as LOCAL_TIMESTAMP,
+        0x02											as CATEGORY_ID
+when not matched  
+  then insert into
+  IfhoExecFailUnenrichedWindow select
+        ifhoExecFailEvent	                            as base,
+    	0x02											as CATEGORY_ID,
+    	ifhoExecFailEvent.timestamp + (ifhoExecFailEvent.networkElementTimezoneOffset * 60 * 1000) as LOCAL_TIMESTAMP,
+        current_timestamp()                             as TIMESTAMP_WINDOW_ENTRY;
+        
+@Priority(5)
+@Name('IfhoExecFail-Enrichment')
+on PRODUCE_OUTPUT_TIMER as produceOutputTimer
+delete from IfhoExecFailEnrichedWindow;
+
+@Priority(11)
+@Name('Imsi-Arrives-After-IfhoExecFail')
+on gpeh.INTERNAL_IMSI as imsi
+merge IfhoExecFailUnenrichedWindow as IfhoExecFailUnenrichedWindow
+where imsi.UE_CONTEXT     = IfhoExecFailUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = IfhoExecFailUnenrichedWindow.base.RNC_MODULE_ID
+when matched  
+  then update set
+        IMSI         = cast(imsi.IMSI, long),
+        IMSI_MCC     = Util.getMcc(IfhoExecFailUnenrichedWindow.IMSI),
+        IMSI_MNC     = Util.getMnc(IfhoExecFailUnenrichedWindow.IMSI),
+        ROAMING      = Util.isRoaming(IMSI_MCC, IMSI_MNC);
+  
+@Priority(5)
+@Name('IncompleteIfhoExecFail-Enrichment')
+on PRODUCE_OUTPUT_TIMER as produceOutputTimer
+  delete from IfhoExecFailUnenrichedWindow IfhoExecFailUnenrichedWindow
+  where IfhoExecFailUnenrichedWindow.IMSI != -1l;
+
+@Name('Cleanup-IncompleteIfhoExecFail-On-Connection-Setup')
+@Priority(11)
+on gpeh.RRC_RRC_CONNECTION_SETUP setup
+delete from IfhoExecFailUnenrichedWindow as IfhoExecFailUnenrichedWindow
+  where IfhoExecFailUnenrichedWindow.base.UE_CONTEXT = setup.UE_CONTEXT
+  and IfhoExecFailUnenrichedWindow.base.RNC_MODULE_ID = setup.RNC_MODULE_ID;
+ 
+@Name('Cleanup-IncompleteIfhoExecFail-On-Connection-Release')
+@Priority(11)
+on gpeh.RRC_RRC_CONNECTION_RELEASE_COMPLETE release
+delete from IfhoExecFailUnenrichedWindow as IfhoExecFailUnenrichedWindow
+  where IfhoExecFailUnenrichedWindow.base.UE_CONTEXT = release.UE_CONTEXT
+  and IfhoExecFailUnenrichedWindow.base.RNC_MODULE_ID = release.RNC_MODULE_ID;
+
+// Need to ensure that event will not be kept forever if there was no imsi or rrc set/release for that ueContext, rncModule combination
+@Name('Cleanup-Expired-IncompleteIfhoExecFail')
+on CLEANUP_EXPIRED_DATA as removeExpiredData
+delete from IfhoExecFailUnenrichedWindow as IfhoExecFailUnenrichedWindow
+  where(current_timestamp() - IfhoExecFailUnenrichedWindow.TIMESTAMP_WINDOW_ENTRY) > EXPIRY_TIME;
+// ********************************************************************************************

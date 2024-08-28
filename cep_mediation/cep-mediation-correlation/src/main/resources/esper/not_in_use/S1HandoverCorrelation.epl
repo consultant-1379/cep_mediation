@@ -1,0 +1,371 @@
+// Declare the name for the module
+module S1HandoverCorrelation;
+
+// Imports
+import com.ericsson.cepmediation.eventbeans.celltrace.*;
+import com.ericsson.cepmediation.eventbeans.ctum.*;
+import com.ericsson.cepmediation.eventbeans.ebm.*;
+import  com.ericsson.cepmediation.correlation.support.Util;
+@Name('select-LOG_EVENT')
+@Description('Select all LOG_EVENT events for storage')
+//@Audit
+select * from correlation.LOG_EVENT.win:length(1);
+
+@Name('S1-Handover-create-window')
+@Description('Create a window for handling S1 handover events')
+//@Audit
+create window S1HoWindow.win:keepall() as correlation.S1_HANDOVER;
+
+@Name('S1-Handover-flush-window')
+@Description('Flush the named window for S1 handover correlations')
+//@Audit
+on pattern [every timer:interval(10 sec)]
+	delete from S1HoWindow as s1ho
+	where (s1ho.IEBCE and s1ho.HPXO and s1ho.HPXI and s1ho.HEXO and s1ho.HEXI  ) // Correlation complete
+	or current_timestamp - s1ho.CORRELATION_TIME > 60000; // Correlation times out after 5 mins
+
+@Name('S1-Handover-handle-INTERNAL_EVENT_BEST_CELL_EVAL')
+@Description('Handle INTERNAL_EVENT_BEST_CELL_EVAL events for S1 handover Correlation, create a new S1_HANDOVER event')
+//@Audit
+
+on celltrace.INTERNAL_EVENT_BEST_CELL_EVAL iebce
+ merge S1HoWindow s1ho
+	where s1ho.MMES1APID_SOURCE = iebce.MMES1APID and Arrays.equals(s1ho.GUMMEI_SOURCE, iebce.GUMMEI)
+	when matched
+		then update	set
+			s1ho.name										=	'S1_HANDOVER' ,
+			s1ho.version									=	iebce.version,
+			s1ho.timestamp 									=	iebce.timestamp ,
+			s1ho.subNetwork									=	iebce.subNetwork,
+			s1ho.ne 										=	iebce.ne,
+			s1ho.CORRELATION_TIME 							=	current_timestamp(),
+			s1ho.ENBS1APID_SOURCE 							=	iebce.ENBS1APID ,
+			s1ho.MMES1APID_SOURCE 							=	iebce.MMES1APID ,   
+			s1ho.GUMMEI_SOURCE								=	iebce.GUMMEI ,
+			s1ho.MILESTONES_MILESTONE_NAME					=	{iebce.name},
+			s1ho.MILESTONES_MILESTONE_TIMESTAMP				=	Util.castArrayType({iebce.timestamp}),
+			s1ho.PCI										=	iebce.NEIGHBOR_PCI  ,
+			s1ho.RAC_UE_REF_SOURCE							=	iebce.RAC_UE_REF,
+			s1ho.ENB_ID_SOURCE								=	cast(iebce.ne,int),
+			s1ho.RSRP_SOURCE								=	iebce.SERVING_RSRP,
+			s1ho.RSRQ_SOURCE								=	iebce.SERVING_RSRQ ,
+			s1ho.RSRQ_OLD									=	iebce.NEIGHBOR_RSRP ,
+			s1ho.RSRQ_OLD									=	iebce.NEIGHBOR_RSRQ ,
+			s1ho.IEBCE										=	true where iebce.BEST_CELL_DECISION=0
+		
+	when not matched
+		then insert into correlation.S1_HANDOVER select
+			'S1_HANDOVER'       							as name,
+			iebce.version       							as version,
+			iebce.timestamp     							as timestamp,
+			iebce.subNetwork       							as subNetwork,
+			iebce.ne            							as ne,
+			current_timestamp()								as CORRELATION_TIME,
+			iebce.timestamp     							as END_TIMESTAMP,
+			iebce.ENBS1APID     							as ENBS1APID_SOURCE,
+			iebce.MMES1APID     							as MMES1APID_SOURCE,
+			iebce.GUMMEI        							as GUMMEI_SOURCE,
+			iebce.NEIGHBOR_PCI  							as PCI,
+			{iebce.name}									as MILESTONES_MILESTONE_NAME,
+			Util.castArrayType({iebce.timestamp})			as MILESTONES_MILESTONE_TIMESTAMP,
+			iebce.RAC_UE_REF								as RAC_UE_REF_SOURCE,
+			cast(iebce.ne,int)								as ENB_ID_SOURCE,
+			iebce.SERVING_RSRP  							as RSRP_SOURCE,
+			iebce.SERVING_RSRQ  							as RSRQ_SOURCE,
+			iebce.NEIGHBOR_RSRP 							as RSRP_OLD,
+			iebce.NEIGHBOR_RSRQ 							as RSRQ_OLD,
+			true                							as IEBCE  where iebce.BEST_CELL_DECISION=0;   
+			
+		
+@Name('S1-Handover-handle-INTERNAL_PROC_HO_PREP_S1_OUT')
+@Description('Handle INTERNAL_PROC_HO_PREP_S1_OUT event for S1 handover Correlation Source ENB event')
+//@Audit
+on celltrace.INTERNAL_PROC_HO_PREP_S1_OUT hpxo
+	merge S1HoWindow s1ho
+	where s1ho.MMES1APID_SOURCE = hpxo.MMES1APID  and Arrays.equals(s1ho.GUMMEI_SOURCE, hpxo.GUMMEI)
+	when matched
+		then update	set
+			s1ho.RESULT = case when s1ho.IEBCE  and s1ho.HPXO  then 1 else 2 end,
+			s1ho.HPXO                         			= true,
+			s1ho.DURATION                     			= cast(hpxo.timestamp - s1ho.timestamp, int),
+			s1ho.END_TIMESTAMP                			= hpxo.timestamp,
+			s1ho.ENBS1APID_SOURCE						= hpxo.ENBS1APID,   
+			s1ho.MMES1APID_SOURCE 						= hpxo.MMES1APID,   
+			s1ho.RAC_UE_REF_SOURCE						= hpxo.RAC_UE_REF,
+			s1ho.CGI_SOURCE								= hpxo.NEIGHBOR_CGI,
+			s1ho.GUMMEI_SOURCE							= hpxo.GUMMEI,
+			s1ho.IMSI									= Util.getImsi(hpxo.ENBS1APID,hpxo.MMES1APID),
+			s1ho.HO_CAUSE                    			= hpxo.PROC_HO_PREP_OUT_ATTEMPT_CAUSE,
+			s1ho.ENB_SRC_HO_PREP_RESULT       			= hpxo.PROC_HO_PREP_OUT_RESULT,
+			s1ho.CELL_ID_SOURCE               			= hpxo.GLOBAL_CELL_ID,
+			s1ho.TARGET_SELECTION_TYPE					= hpxo.HO_TARGET_SELECTION_TYPE,
+			s1ho.HO_OUT_PREP_ERAB_REQ_BITMAP  			= hpxo.HO_OUT_PREP_ERAB_REQ_BITMAP,
+			s1ho.HO_OUT_PREP_ERAB_FAIL_BITMAP 			= hpxo.HO_OUT_PREP_ERAB_FAIL_BITMAP
+	when not matched
+		then insert into correlation.S1_HANDOVER  select
+			'S1_HANDOVER'       							as name,
+			hpxo.version       								as version,
+			hpxo.timestamp     								as timestamp,
+			hpxo.subNetwork    								as subNetwork,
+			hpxo.ne            								as ne,
+			current_timestamp()								as CORRELATION_TIME,
+			hpxo.timestamp     								as END_TIMESTAMP,
+			hpxo.ENBS1APID     								as ENBS1APID_SOURCE,
+			hpxo.MMES1APID     								as MMES1APID_SOURCE,
+			hpxo.GUMMEI        								as GUMMEI_SOURCE,
+			hpxo.RAC_UE_REF									as RAC_UE_REF_SOURCE,
+			Util.getImsi(hpxo.ENBS1APID,hpxo.MMES1APID)		as IMSI,
+			cast(hpxo.ne,int)								as ENB_ID_SOURCE,
+			hpxo.PROC_HO_PREP_OUT_ATTEMPT_CAUSE  			as HO_CAUSE,
+	 		hpxo.PROC_HO_PREP_OUT_RESULT 					as ENB_SRC_HO_PREP_RESULT,
+	  		hpxo.GLOBAL_CELL_ID 							as CELL_ID_SOURCE,
+	   		hpxo.HO_TARGET_SELECTION_TYPE 					as TARGET_SELECTION_TYPE,
+	  		hpxo.HO_OUT_PREP_ERAB_REQ_BITMAP 				as HO_OUT_PREP_ERAB_REQ_BITMAP,
+	   		hpxo.HO_OUT_PREP_ERAB_FAIL_BITMAP 				as HO_OUT_PREP_ERAB_FAIL_BITMAP,
+	   		true											as HPXO,
+			true                							as IEBCE ;
+				
+		
+			
+@Name('S1-Handover-handle-S1_HANDOVER_REQUIRED')
+@Description('so a handover is required, then the Src eNodeB sends a HO request to its MME')
+//@Audit
+on celltrace.S1_HANDOVER_REQUIRED s1horequired
+	merge S1HoWindow s1ho
+	where s1ho.ENBS1APID_SOURCE = s1horequired.ENBS1APID and  s1ho.MMES1APID_SOURCE = s1horequired.MMES1APID
+	when matched
+		then update	set
+			s1ho.DURATION                     				= 	cast(s1horequired.timestamp - s1ho.timestamp, int),
+			s1ho.END_TIMESTAMP                				= 	s1horequired.timestamp,
+			s1ho.MILESTONES_MILESTONE_NAME					=	Util.buildMilestone(s1ho,s1horequired.name,s1horequired.name,s1horequired.timestamp)	
+			when not matched
+			then insert into correlation.LOG_EVENT select
+		    'S1_HANDOVER_REQUIRED' 							as 	name,
+			s1horequired.version 							as 	version,
+			s1horequired.timestamp 							as 	timestamp,
+			s1horequired.subNetwork							as 	subNetwork,
+			s1horequired.ne 								as 	ne,
+			2 												as 	RESULT, // ABORT value
+			s1horequired.getCSVStringQuoted() 				as 	LOG_MESSAGE;
+
+
+		
+@Name('S1-Handover-handle-RRC_RRC_CONNECTION_RECONFIGURATION')
+@Description('second occurance of this event only captures here ')
+//@Audit
+on celltrace.RRC_RRC_CONNECTION_RECONFIGURATION rrcrconf
+	merge S1HoWindow s1ho
+	where s1ho.MMES1APID_TARGET = rrcrconf.MMES1APID and Arrays.equals(s1ho.GUMMEI_SOURCE, rrcrconf.GUMMEI) 
+			and s1ho.RAC_UE_REF_SOURCE=rrcrconf.RAC_UE_REF and s1ho.ENBS1APID_SOURCE = rrcrconf.ENBS1APID
+	when matched
+		then update	set
+			s1ho.DURATION      								= 	cast(rrcrconf.timestamp - s1ho.timestamp, int),
+			s1ho.MILESTONES_MILESTONE_NAME					=	Util.buildMilestone(s1ho,rrcrconf.name,rrcrconf.name,rrcrconf.timestamp),
+			s1ho.END_TIMESTAMP 								=	rrcrconf.timestamp;
+			
+		
+						
+@Name('S1-Handover-handle-INTERNAL_PROC_HO_EXEC_S1_OUT')
+@Description('Handle INTERNAL_PROC_HO_EXEC_S1_OUT event for S1 handover Correlation')
+//@Audit
+on celltrace.INTERNAL_PROC_HO_EXEC_S1_OUT hexo
+	merge S1HoWindow s1ho
+	where s1ho.MMES1APID_SOURCE = hexo.MMES1APID  and s1ho.ENBS1APID_SOURCE = hexo.ENBS1APID and 
+	s1ho.RAC_UE_REF_SOURCE=hexo.RAC_UE_REF and Arrays.equals(s1ho.GUMMEI_SOURCE, hexo.GUMMEI)
+	when matched
+		then update	set
+			s1ho.RESULT = case when s1ho.IEBCE and s1ho.HPXI and s1ho.HEXO and s1ho.HEXI and s1ho.XSST and s1ho.RRCRC  then 1 else 2 end,
+			s1ho.HEXO                         			= true,
+			s1ho.DURATION                     			= cast(hexo.timestamp - s1ho.timestamp, int),
+			s1ho.END_TIMESTAMP               			= hexo.timestamp,
+			s1ho.ENB_SRC_HO_EXEC_RESULT       			= hexo.PROC_HO_EXEC_OUT_RESULT,
+			s1ho.HO_OUT_PREP_ERAB_REQ_BITMAP  			= hexo.HO_OUT_EXEC_ERAB_REQ_BITMAP,
+			s1ho.HO_OUT_PREP_ERAB_FAIL_BITMAP 			= hexo.HO_OUT_EXEC_ERAB_FAIL_BITMAP
+			
+			
+	when not matched
+		// INTERNAL_PROC_HO_PREP_S1_OUT out of sequence for this UE
+		then insert into correlation.LOG_EVENT select
+		'INTERNAL_PROC_HO_EXEC_S1_OUT' as name,
+		hexo.version 									as version,
+		hexo.timestamp 									as timestamp,
+		hexo.subNetwork									as subNetwork,
+		hexo.ne 										as ne,
+		2 												as RESULT, // ABORT value
+		hexo.getCSVStringQuoted() 						as LOG_MESSAGE;
+		
+			
+	
+		
+		
+		
+		
+@Name('S1-Handover-handle-INTERNAL_PROC_HO_PREP_S1_IN')
+@Description('Handle INTERNAL_PROC_HO_PREP_S1_IN event for S1 handover Correlation')
+@Audit
+on celltrace.INTERNAL_PROC_HO_PREP_S1_IN hpxi
+	merge S1HoWindow s1ho
+	where Util.validate(s1ho.IMSI,hpxi.ENBS1APID,hpxi.MMES1APID) and Arrays.equals(s1ho.GUMMEI_SOURCE, hpxi.GUMMEI)
+	when matched
+		then update	set
+			s1ho.RESULT = case when s1ho.IEBCE and s1ho.HPXO and s1ho.HEXO and s1ho.HEXI and s1ho.XSST and s1ho.RRCRC  then 1 else 2 end,
+			s1ho.HPXI                        			= true,
+			s1ho.DURATION                   			= cast(hpxi.timestamp - s1ho.timestamp, int),
+			s1ho.ENBS1APID_TARGET						= hpxi.ENBS1APID,
+			s1ho.MMES1APID_TARGET						= hpxi.MMES1APID,
+			s1ho.END_TIMESTAMP               			= hpxi.timestamp,
+			s1ho.ENB_ID_TARGET							= cast(hpxi.ne,int),
+			s1ho.CELL_ID_TARGET							= hpxi.GLOBAL_CELL_ID,
+			s1ho.GUMMEI_TARGET							= hpxi.GUMMEI,
+			s1ho.CGI_TARGET								= hpxi.NEIGHBOR_CGI,
+			s1ho.RAC_UE_REF_TARGET						= hpxi.RAC_UE_REF,
+			s1ho.ENB_TRG_HO_PREP_RESULT      			= hpxi.PROC_HO_PREP_IN_RESULT,
+			s1ho.HO_IN_PREP_ERAB_REQ_BITMAP  			= hpxi.HO_IN_PREP_ERAB_REQ_BITMAP,
+			s1ho.HO_IN_PREP_ERAB_SUCC_BITMAP 			= hpxi.HO_IN_PREP_ERAB_SUCC_BITMAP;
+	
+		
+						
+//target enb
+@Name('S1-Handover-handle-S1_HANDOVER_REQUEST_ACKNOWLEDGE')
+@Description('the target eNB acks back to their target mme')
+//@Audit
+on celltrace.S1_HANDOVER_REQUEST s1horeq
+	merge S1HoWindow s1ho
+	where s1ho.ENBS1APID_TARGET = s1horeq.ENBS1APID and  s1ho.MMES1APID_TARGET = s1horeq.MMES1APID
+	when matched
+		then update	set
+		s1ho.DURATION                     				= 	cast(s1horeq.timestamp - s1ho.timestamp, int),
+		s1ho.END_TIMESTAMP                				= 	s1horeq.timestamp,
+		s1ho.MILESTONES_MILESTONE_NAME					=	Util.buildMilestone(s1ho,s1horeq.name,s1horeq.name,s1horeq.timestamp);
+	
+				
+//target enb
+@Name('S1-Handover-handle-S1_HANDOVER_REQUEST_ACKNOWLEDGE')
+@Description('the target eNB acks back to their target mme')
+//@Audit
+on celltrace.S1_HANDOVER_REQUEST_ACKNOWLEDGE s1horequstack
+	merge S1HoWindow s1ho
+	where s1ho.ENBS1APID_TARGET = s1horequstack.ENBS1APID and  s1ho.MMES1APID_TARGET = s1horequstack.MMES1APID
+	when matched
+		then update	set
+		s1ho.DURATION                     				= 	cast(s1horequstack.timestamp - s1ho.timestamp, int),
+		s1ho.END_TIMESTAMP                				= 	s1horequstack.timestamp,
+		s1ho.MILESTONES_MILESTONE_NAME					=	Util.buildMilestone(s1ho,s1horequstack.name,s1horequstack.name,s1horequstack.timestamp);
+	
+		
+
+@Name('S1-Handover-handle-INTERNAL_PROC_HO_EXEC_S1_IN')
+@Description('Handle INTERNAL_PROC_HO_EXEC_S1_IN event for S1 handover Correlation')
+//@Audit
+on celltrace.INTERNAL_PROC_HO_EXEC_S1_IN hexi
+	merge S1HoWindow s1ho
+	where s1ho.MMES1APID_TARGET = hexi.MMES1APID and s1ho.ENBS1APID_TARGET = hexi.ENBS1APID and 
+	Arrays.equals(s1ho.GUMMEI_SOURCE, hexi.GUMMEI)
+	when matched
+		then update	set
+			s1ho.RESULT = case when s1ho.IEBCE and s1ho.HPXO and s1ho.HPXI and s1ho.HEXO and s1ho.XSST and s1ho.RRCRC  then 1 else 2 end,
+			s1ho.HEXI                         			= true,
+			s1ho.DURATION                    			= cast(hexi.timestamp - s1ho.timestamp, int),
+			s1ho.END_TIMESTAMP                			= hexi.timestamp,
+			s1ho.RANDOM_ACCESS_TYPE 					= hexi.RANDOM_ACCESS_TYPE,
+			s1ho.ENB_TRG_HO_EXEC_RESULT       			= hexi.PROC_HO_EXEC_IN_RESULT
+	when not matched
+		// INTERNAL_PROC_HO_EXEC_S1_IN out of sequence for this UE
+		then insert into correlation.LOG_EVENT select
+		'INTERNAL_PROC_HO_EXEC_S1_IN' as name,
+		hexi.version 									as version,
+		hexi.timestamp 									as timestamp,
+		hexi.subNetwork									as subNetwork,
+		hexi.ne 										as ne,
+		2 												as RESULT, // ABORT value
+		hexi.getCSVStringQuoted() 						as LOG_MESSAGE;		
+		
+		
+		
+@Name('S1-Handover-handle-RRC_RRC_CONNECTION_RECONFIGURATION_COMPLETE')
+@Description('Handle RRC_RRC_CONNECTION_RECONFIGURATION_COMPLETE event for s1 handover Correlation')
+//@Audit
+on celltrace.RRC_RRC_CONNECTION_RECONFIGURATION_COMPLETE rrcrc
+	merge S1HoWindow s1ho
+	where s1ho.MMES1APID_TARGET = rrcrc.MMES1APID and Arrays.equals(s1ho.GUMMEI_TARGET , rrcrc.GUMMEI) and 
+	s1ho.ENBS1APID_TARGET = rrcrc.ENBS1APID
+	when matched
+		then update	set
+			//s1ho.RESULT 								= 	case when s1ho.IEBCE  then 1 else 2 end,
+			s1ho.RRCRC        							= 	true,
+			s1ho.MILESTONES_MILESTONE_NAME				=	Util.buildMilestone(s1ho,rrcrc.name,rrcrc.name,rrcrc.timestamp),
+			s1ho.DURATION      							= 	cast(rrcrc.timestamp - s1ho.timestamp, int),
+			s1ho.END_TIMESTAMP 							= 	rrcrc.timestamp;
+			
+			
+//source enb
+@Name('S1-Handover-handle-S1_HANDOVER_COMMAND')
+@Description('the Src MME sends a Handover command to the Src eNB')
+//@Audit
+on celltrace.S1_HANDOVER_COMMAND s1hos1hocmd
+	merge S1HoWindow s1ho
+	where s1ho.ENBS1APID_SOURCE = s1hos1hocmd.ENBS1APID and  s1ho.MMES1APID_SOURCE = s1hos1hocmd.MMES1APID
+	when matched
+		then update	set
+		s1ho.DURATION                    			 		= 	cast(s1hos1hocmd.timestamp - s1ho.timestamp, int),
+		s1ho.END_TIMESTAMP                					= 	s1hos1hocmd.timestamp,
+		s1ho.MILESTONES_MILESTONE_NAME						=	Util.buildMilestone(s1ho,s1hos1hocmd.name,s1hos1hocmd.name,s1hos1hocmd.timestamp);
+		
+				
+@Name('S1-Handover-handle-S1_HANDOVER_NOTIFY')
+@Description('target eNB notifys its MME about the change')
+//@Audit
+on celltrace.S1_HANDOVER_NOTIFY s1honotify
+	merge S1HoWindow s1ho
+	where s1ho.ENBS1APID_TARGET = s1honotify.ENBS1APID and  s1ho.MMES1APID_TARGET = s1honotify.MMES1APID
+	when matched
+		then update	set
+			s1ho.DURATION                     				= 	cast(s1honotify.timestamp - s1ho.timestamp, int),
+			s1ho.END_TIMESTAMP                				= 	s1honotify.timestamp,
+			s1ho.MILESTONES_MILESTONE_NAME					=	Util.buildMilestone(s1ho,s1honotify.name,s1honotify.name,s1honotify.timestamp);
+			
+@Name('S1-Handover-handle-S1_UE_CONTEXT_RELEASE_COMMAND')
+@Description('the origonal src MME performes a context release on the Src. eNB for the UE ')
+//@Audit
+on celltrace.S1_UE_CONTEXT_RELEASE_COMMAND s1ctxrel
+	merge S1HoWindow s1ho
+	where s1ho.ENBS1APID_SOURCE = s1ctxrel.ENBS1APID and  s1ho.MMES1APID_SOURCE = s1ctxrel.MMES1APID
+	when matched
+		then update	set
+			s1ho.RESULT 							= 	1,
+			s1ho.DURATION                     		= 	cast(s1ctxrel.timestamp - s1ho.timestamp, int),
+			s1ho.END_TIMESTAMP                		= 	s1ctxrel.timestamp;
+		
+@Name('S1-Handover-handle-S1_UE_CONTEXT_RELEASE_COMPLETE')
+@Description('the origonal src MME performes a context release on the Src. eNB for the UE ')
+//@Audit
+on celltrace.S1_UE_CONTEXT_RELEASE_COMPLETE s1ctxrelcplt
+	merge S1HoWindow s1ho
+	where s1ho.ENBS1APID_SOURCE = s1ctxrelcplt.ENBS1APID and  s1ho.MMES1APID_SOURCE = s1ctxrelcplt.MMES1APID
+	when matched
+		then update	set
+			s1ho.RESULT 							= 	0,
+			s1ho.DURATION                     		= 	cast(s1ctxrelcplt.timestamp - s1ho.timestamp, int),
+			s1ho.END_TIMESTAMP                		= 	s1ctxrelcplt.timestamp;
+			
+			
+// Insert the new S1 Handover event into the named window
+@Name('S1-Handover-handle-new-S1_HANDOVER')
+@Description('Handle new S1_HANDOVER event for S1 handover Correlation')
+//@Audit
+on correlation.S1_HANDOVER new_S1ho
+	merge S1HoWindow s1ho
+	where s1ho.MMES1APID_TARGET = new_S1ho.MMES1APID_TARGET and Arrays.equals(s1ho.GUMMEI_SOURCE, new_S1ho.GUMMEI_SOURCE)
+	when matched
+		// INTERNAL_EVENT_BEST_CELL_EVAL on UE with ongoing handover
+		then insert into correlation.LOG_EVENT select
+		'S1_HANDOVER' 								as name,
+		new_S1ho.version 							as version,
+		new_S1ho.timestamp 							as timestamp,
+		new_S1ho.subNetwork							as subNetwork,
+		new_S1ho.ne 								as ne,
+		2 											as RESULT, // ABORT value
+		new_S1ho.getCSVStringQuoted() 				as LOG_MESSAGE	
+	when not matched
+		then insert select *;
+	

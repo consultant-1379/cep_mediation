@@ -1,0 +1,683 @@
+/*************************************************************/
+/* Copyright (C) 2012 OSS Nokalva, Inc.  All rights reserved.*/
+/*************************************************************/
+
+/* THIS FILE IS PROPRIETARY MATERIAL OF OSS NOKALVA, INC.
+ * AND MAY BE USED ONLY BY DIRECT LICENSEES OF OSS NOKALVA, INC.
+ * THIS FILE MAY NOT BE DISTRIBUTED. */
+
+/* Generated for: LM Ericsson Ltd, Athlone, Ireland - License 11536 for Solaris x86 */
+/* Abstract syntax: class-definitions */
+/* ASN.1 Java project: rrc.Rrc */
+/* Created: Wed Feb 15 12:27:03 2012 */
+/* ASN.1 Compiler for Java version: 4.1 */
+/* ASN.1 compiler options and file names specified:
+ * -output rrc -uper -root constants.asn ie-definitions.asn internode.asn
+ * pdu-definitions.asn class-definitions.asn
+ */
+
+
+package rrc.informationelements;
+
+import com.oss.asn1.*;
+import com.oss.metadata.*;
+import rrc.*;
+
+/**
+ * Define the ASN1 Type CommonTransChTFS_LCR from ASN1 Module InformationElements.
+ * @see Sequence
+ */
+
+public class CommonTransChTFS_LCR extends Sequence {
+    
+    /**
+     * The default constructor.
+     */
+    public CommonTransChTFS_LCR()
+    {
+    }
+    
+    /**
+     * Construct with AbstractData components.
+     */
+    public CommonTransChTFS_LCR(Tti tti, 
+		    SemistaticTF_Information semistaticTF_Information)
+    {
+	setTti(tti);
+	setSemistaticTF_Information(semistaticTF_Information);
+    }
+    
+    public void initComponents()
+    {
+	mComponents[0] = new Tti();
+	mComponents[1] = new SemistaticTF_Information();
+    }
+    
+    // Instance initializer
+    {
+	mComponents = new AbstractData[2];
+    }
+    
+    // Method to create a specific component instance
+    public AbstractData createInstance(int index)
+    {
+	switch (index) {
+	    case 0:
+		return new Tti();
+	    case 1:
+		return new SemistaticTF_Information();
+	    default:
+		throw new InternalError("AbstractCollection.createInstance()");
+	}
+	
+    }
+    
+    
+    // Methods for field "tti"
+    public Tti getTti()
+    {
+	return (Tti)mComponents[0];
+    }
+    
+    public void setTti(Tti tti)
+    {
+	mComponents[0] = tti;
+    }
+    
+    
+    
+    /**
+     * Define the ASN1 Type Tti from ASN1 Module InformationElements.
+     * @see Choice
+     */
+    public static class Tti extends Choice {
+	
+	/**
+	 * The default constructor.
+	 */
+	public Tti()
+	{
+	}
+	
+	public static final  int  tti5_chosen = 1;
+	public static final  int  tti10_chosen = 2;
+	public static final  int  tti20_chosen = 3;
+	public static final  int  tti40_chosen = 4;
+	public static final  int  tti80_chosen = 5;
+	public static final  int  dynamic_chosen = 6;
+	
+	// Methods for field "tti5"
+	public static Tti createTtiWithTti5(CommonDynamicTF_InfoList tti5)
+	{
+	    Tti __object = new Tti();
+
+	    __object.setTti5(tti5);
+	    return __object;
+	}
+	
+	public boolean hasTti5()
+	{
+	    return getChosenFlag() == tti5_chosen;
+	}
+	
+	public void setTti5(CommonDynamicTF_InfoList tti5)
+	{
+	    setChosenValue(tti5);
+	    setChosenFlag(tti5_chosen);
+	}
+	
+	
+	// Methods for field "tti10"
+	public static Tti createTtiWithTti10(CommonDynamicTF_InfoList tti10)
+	{
+	    Tti __object = new Tti();
+
+	    __object.setTti10(tti10);
+	    return __object;
+	}
+	
+	public boolean hasTti10()
+	{
+	    return getChosenFlag() == tti10_chosen;
+	}
+	
+	public void setTti10(CommonDynamicTF_InfoList tti10)
+	{
+	    setChosenValue(tti10);
+	    setChosenFlag(tti10_chosen);
+	}
+	
+	
+	// Methods for field "tti20"
+	public static Tti createTtiWithTti20(CommonDynamicTF_InfoList tti20)
+	{
+	    Tti __object = new Tti();
+
+	    __object.setTti20(tti20);
+	    return __object;
+	}
+	
+	public boolean hasTti20()
+	{
+	    return getChosenFlag() == tti20_chosen;
+	}
+	
+	public void setTti20(CommonDynamicTF_InfoList tti20)
+	{
+	    setChosenValue(tti20);
+	    setChosenFlag(tti20_chosen);
+	}
+	
+	
+	// Methods for field "tti40"
+	public static Tti createTtiWithTti40(CommonDynamicTF_InfoList tti40)
+	{
+	    Tti __object = new Tti();
+
+	    __object.setTti40(tti40);
+	    return __object;
+	}
+	
+	public boolean hasTti40()
+	{
+	    return getChosenFlag() == tti40_chosen;
+	}
+	
+	public void setTti40(CommonDynamicTF_InfoList tti40)
+	{
+	    setChosenValue(tti40);
+	    setChosenFlag(tti40_chosen);
+	}
+	
+	
+	// Methods for field "tti80"
+	public static Tti createTtiWithTti80(CommonDynamicTF_InfoList tti80)
+	{
+	    Tti __object = new Tti();
+
+	    __object.setTti80(tti80);
+	    return __object;
+	}
+	
+	public boolean hasTti80()
+	{
+	    return getChosenFlag() == tti80_chosen;
+	}
+	
+	public void setTti80(CommonDynamicTF_InfoList tti80)
+	{
+	    setChosenValue(tti80);
+	    setChosenFlag(tti80_chosen);
+	}
+	
+	
+	// Methods for field "dynamic"
+	public static Tti createTtiWithDynamic(CommonDynamicTF_InfoList_DynamicTTI dynamic)
+	{
+	    Tti __object = new Tti();
+
+	    __object.setDynamic(dynamic);
+	    return __object;
+	}
+	
+	public boolean hasDynamic()
+	{
+	    return getChosenFlag() == dynamic_chosen;
+	}
+	
+	public void setDynamic(CommonDynamicTF_InfoList_DynamicTTI dynamic)
+	{
+	    setChosenValue(dynamic);
+	    setChosenFlag(dynamic_chosen);
+	}
+	
+	
+	// Method to create a specific choice instance
+	public AbstractData createInstance(int chosen)
+	{
+	    switch (chosen) {
+		case tti5_chosen:
+		    return new CommonDynamicTF_InfoList();
+		case tti10_chosen:
+		    return new CommonDynamicTF_InfoList();
+		case tti20_chosen:
+		    return new CommonDynamicTF_InfoList();
+		case tti40_chosen:
+		    return new CommonDynamicTF_InfoList();
+		case tti80_chosen:
+		    return new CommonDynamicTF_InfoList();
+		case dynamic_chosen:
+		    return new CommonDynamicTF_InfoList_DynamicTTI();
+		default:
+		    throw new InternalError("Choice.createInstance()");
+	    }
+	    
+	}
+	
+	/**
+	 * Initialize the type descriptor.
+	 */
+	private static final ChoiceInfo c_typeinfo = new ChoiceInfo (
+	    new Tags (
+		new short[] {
+		    (short)0x8000
+		}
+	    ),
+	    new QName (
+		"rrc.informationelements",
+		"CommonTransChTFS_LCR$Tti"
+	    ),
+	    new QName (
+		"builtin",
+		"CHOICE"
+	    ),
+	    12314,
+	    null,
+	    new Fields (
+		new FieldInfo[] {
+		    new FieldInfo (
+			new TypeInfoRef (
+			    new ContainerInfo (
+				new Tags (
+				    new short[] {
+					(short)0x8000
+				    }
+				),
+				new QName (
+				    "rrc.informationelements",
+				    "CommonDynamicTF_InfoList"
+				),
+				new QName (
+				    "InformationElements",
+				    "CommonDynamicTF-InfoList"
+				),
+				12314,
+				new SizeConstraint (
+				    new ValueRangeConstraint (
+					new AbstractBounds(
+					    new com.oss.asn1.INTEGER(1), 
+					    new com.oss.asn1.INTEGER(32),
+					    0
+					)
+				    )
+				),
+				new Bounds (
+				    new java.lang.Long(1),
+				    new java.lang.Long(32)
+				),
+				new TypeInfoRef (
+				    new QName (
+					"rrc.informationelements",
+					"CommonDynamicTF_Info"
+				    )
+				)
+			    )
+			),
+			"tti5",
+			0,
+			2
+		    ),
+		    new FieldInfo (
+			new TypeInfoRef (
+			    new ContainerInfo (
+				new Tags (
+				    new short[] {
+					(short)0x8001
+				    }
+				),
+				new QName (
+				    "rrc.informationelements",
+				    "CommonDynamicTF_InfoList"
+				),
+				new QName (
+				    "InformationElements",
+				    "CommonDynamicTF-InfoList"
+				),
+				12314,
+				new SizeConstraint (
+				    new ValueRangeConstraint (
+					new AbstractBounds(
+					    new com.oss.asn1.INTEGER(1), 
+					    new com.oss.asn1.INTEGER(32),
+					    0
+					)
+				    )
+				),
+				new Bounds (
+				    new java.lang.Long(1),
+				    new java.lang.Long(32)
+				),
+				new TypeInfoRef (
+				    new QName (
+					"rrc.informationelements",
+					"CommonDynamicTF_Info"
+				    )
+				)
+			    )
+			),
+			"tti10",
+			1,
+			2
+		    ),
+		    new FieldInfo (
+			new TypeInfoRef (
+			    new ContainerInfo (
+				new Tags (
+				    new short[] {
+					(short)0x8002
+				    }
+				),
+				new QName (
+				    "rrc.informationelements",
+				    "CommonDynamicTF_InfoList"
+				),
+				new QName (
+				    "InformationElements",
+				    "CommonDynamicTF-InfoList"
+				),
+				12314,
+				new SizeConstraint (
+				    new ValueRangeConstraint (
+					new AbstractBounds(
+					    new com.oss.asn1.INTEGER(1), 
+					    new com.oss.asn1.INTEGER(32),
+					    0
+					)
+				    )
+				),
+				new Bounds (
+				    new java.lang.Long(1),
+				    new java.lang.Long(32)
+				),
+				new TypeInfoRef (
+				    new QName (
+					"rrc.informationelements",
+					"CommonDynamicTF_Info"
+				    )
+				)
+			    )
+			),
+			"tti20",
+			2,
+			2
+		    ),
+		    new FieldInfo (
+			new TypeInfoRef (
+			    new ContainerInfo (
+				new Tags (
+				    new short[] {
+					(short)0x8003
+				    }
+				),
+				new QName (
+				    "rrc.informationelements",
+				    "CommonDynamicTF_InfoList"
+				),
+				new QName (
+				    "InformationElements",
+				    "CommonDynamicTF-InfoList"
+				),
+				12314,
+				new SizeConstraint (
+				    new ValueRangeConstraint (
+					new AbstractBounds(
+					    new com.oss.asn1.INTEGER(1), 
+					    new com.oss.asn1.INTEGER(32),
+					    0
+					)
+				    )
+				),
+				new Bounds (
+				    new java.lang.Long(1),
+				    new java.lang.Long(32)
+				),
+				new TypeInfoRef (
+				    new QName (
+					"rrc.informationelements",
+					"CommonDynamicTF_Info"
+				    )
+				)
+			    )
+			),
+			"tti40",
+			3,
+			2
+		    ),
+		    new FieldInfo (
+			new TypeInfoRef (
+			    new ContainerInfo (
+				new Tags (
+				    new short[] {
+					(short)0x8004
+				    }
+				),
+				new QName (
+				    "rrc.informationelements",
+				    "CommonDynamicTF_InfoList"
+				),
+				new QName (
+				    "InformationElements",
+				    "CommonDynamicTF-InfoList"
+				),
+				12314,
+				new SizeConstraint (
+				    new ValueRangeConstraint (
+					new AbstractBounds(
+					    new com.oss.asn1.INTEGER(1), 
+					    new com.oss.asn1.INTEGER(32),
+					    0
+					)
+				    )
+				),
+				new Bounds (
+				    new java.lang.Long(1),
+				    new java.lang.Long(32)
+				),
+				new TypeInfoRef (
+				    new QName (
+					"rrc.informationelements",
+					"CommonDynamicTF_Info"
+				    )
+				)
+			    )
+			),
+			"tti80",
+			4,
+			2
+		    ),
+		    new FieldInfo (
+			new TypeInfoRef (
+			    new ContainerInfo (
+				new Tags (
+				    new short[] {
+					(short)0x8005
+				    }
+				),
+				new QName (
+				    "rrc.informationelements",
+				    "CommonDynamicTF_InfoList_DynamicTTI"
+				),
+				new QName (
+				    "InformationElements",
+				    "CommonDynamicTF-InfoList-DynamicTTI"
+				),
+				12314,
+				new SizeConstraint (
+				    new ValueRangeConstraint (
+					new AbstractBounds(
+					    new com.oss.asn1.INTEGER(1), 
+					    new com.oss.asn1.INTEGER(32),
+					    0
+					)
+				    )
+				),
+				new Bounds (
+				    new java.lang.Long(1),
+				    new java.lang.Long(32)
+				),
+				new TypeInfoRef (
+				    new QName (
+					"rrc.informationelements",
+					"CommonDynamicTF_Info_DynamicTTI"
+				    )
+				)
+			    )
+			),
+			"dynamic",
+			5,
+			2
+		    )
+		}
+	    ),
+	    0,
+	    new TagDecoder (
+		new TagDecoderElement[] {
+		    new TagDecoderElement((short)0x8000, 0),
+		    new TagDecoderElement((short)0x8001, 1),
+		    new TagDecoderElement((short)0x8002, 2),
+		    new TagDecoderElement((short)0x8003, 3),
+		    new TagDecoderElement((short)0x8004, 4),
+		    new TagDecoderElement((short)0x8005, 5)
+		}
+	    )
+	);
+	
+	/**
+	 * Get the type descriptor (TypeInfo) of 'this' Tti object.
+	 */
+	public TypeInfo getTypeInfo()
+	{
+	    return c_typeinfo;
+	}
+	
+	/**
+	 * Get the static type descriptor (TypeInfo) of 'this' Tti object.
+	 */
+	public static TypeInfo getStaticTypeInfo()
+	{
+	    return c_typeinfo;
+	}
+	
+    } // End class definition for Tti
+
+    // Methods for field "semistaticTF_Information"
+    public SemistaticTF_Information getSemistaticTF_Information()
+    {
+	return (SemistaticTF_Information)mComponents[1];
+    }
+    
+    public void setSemistaticTF_Information(SemistaticTF_Information semistaticTF_Information)
+    {
+	mComponents[1] = semistaticTF_Information;
+    }
+    
+    
+    /**
+     * Initialize the type descriptor.
+     */
+    private static final SequenceInfo c_typeinfo = new SequenceInfo (
+	new Tags (
+	    new short[] {
+		0x0010
+	    }
+	),
+	new QName (
+	    "rrc.informationelements",
+	    "CommonTransChTFS_LCR"
+	),
+	new QName (
+	    "InformationElements",
+	    "CommonTransChTFS-LCR"
+	),
+	12314,
+	null,
+	new Fields (
+	    new SequenceFieldInfo[] {
+		new SequenceFieldInfo (
+		    new TypeInfoRef (
+			new QName (
+			    "rrc.informationelements",
+			    "CommonTransChTFS_LCR$Tti"
+			)
+		    ),
+		    "tti",
+		    0,
+		    2,
+		    null
+		),
+		new SequenceFieldInfo (
+		    new TypeInfoRef (
+			new SequenceInfo (
+			    new Tags (
+				new short[] {
+				    (short)0x8001
+				}
+			    ),
+			    new QName (
+				"rrc.informationelements",
+				"SemistaticTF_Information"
+			    ),
+			    new QName (
+				"InformationElements",
+				"SemistaticTF-Information"
+			    ),
+			    12314,
+			    null,
+			    new FieldsRef (
+				new QName (
+				    "rrc.informationelements",
+				    "SemistaticTF_Information"
+				)
+			    ),
+			    0,
+			    new TagDecodersRef (
+				new QName (
+				    "rrc.informationelements",
+				    "SemistaticTF_Information"
+				)
+			    ),
+			    0
+			)
+		    ),
+		    "semistaticTF-Information",
+		    1,
+		    2,
+		    null
+		)
+	    }
+	),
+	0,
+	new TagDecoders (
+	    new TagDecoder[] {
+		new TagDecoder (
+		    new TagDecoderElement[] {
+			new TagDecoderElement((short)0x8000, 0)
+		    }
+		),
+		new TagDecoder (
+		    new TagDecoderElement[] {
+			new TagDecoderElement((short)0x8001, 1)
+		    }
+		)
+	    }
+	),
+	0
+    );
+    
+    /**
+     * Get the type descriptor (TypeInfo) of 'this' CommonTransChTFS_LCR object.
+     */
+    public TypeInfo getTypeInfo()
+    {
+	return c_typeinfo;
+    }
+    
+    /**
+     * Get the static type descriptor (TypeInfo) of 'this' CommonTransChTFS_LCR object.
+     */
+    public static TypeInfo getStaticTypeInfo()
+    {
+	return c_typeinfo;
+    }
+    
+} // End class definition for CommonTransChTFS_LCR

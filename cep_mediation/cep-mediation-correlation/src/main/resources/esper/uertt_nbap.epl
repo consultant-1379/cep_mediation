@@ -1,0 +1,1154 @@
+module uertt_module_nbap;
+
+uses uertt_raw_events_base_module;
+
+create window NbapRadioLinkSetupRequestEnrichedWindow.win:keepall() as gpeh.NBAP_RADIO_LINK_SETUP_REQUEST_ENRICHED;
+create window NbapRadioLinkSetupRequestUnenrichedWindow.win:keepall() as gpeh.NBAP_RADIO_LINK_SETUP_REQUEST_ENRICHED;
+
+create window NbapRadioLinkSetupResponseEnrichedWindow.win:keepall() as gpeh.NBAP_RADIO_LINK_SETUP_RESPONSE_ENRICHED;
+create window NbapRadioLinkSetupResponseUnenrichedWindow.win:keepall() as gpeh.NBAP_RADIO_LINK_SETUP_RESPONSE_ENRICHED;
+
+create window NbapRadioLinkSetupFailureEnrichedWindow.win:keepall() as gpeh.NBAP_RADIO_LINK_SETUP_FAILURE_ENRICHED;
+create window NbapRadioLinkSetupFailureUnenrichedWindow.win:keepall() as gpeh.NBAP_RADIO_LINK_SETUP_FAILURE_ENRICHED;
+
+create window NbapRadioLinkAdditionRequestEnrichedWindow.win:keepall() as gpeh.NBAP_RADIO_LINK_ADDITION_REQUEST_ENRICHED;
+create window NbapRadioLinkAdditionRequestUnenrichedWindow.win:keepall() as gpeh.NBAP_RADIO_LINK_ADDITION_REQUEST_ENRICHED;
+
+create window NbapRadioLinkAdditionResponseEnrichedWindow.win:keepall() as gpeh.NBAP_RADIO_LINK_ADDITION_RESPONSE_ENRICHED;
+create window NbapRadioLinkAdditionResponseUnenrichedWindow.win:keepall() as gpeh.NBAP_RADIO_LINK_ADDITION_RESPONSE_ENRICHED;
+
+create window NbapRadioLinkAdditionFailureEnrichedWindow.win:keepall() as gpeh.NBAP_RADIO_LINK_ADDITION_FAILURE_ENRICHED;
+create window NbapRadioLinkAdditionFailureUnenrichedWindow.win:keepall() as gpeh.NBAP_RADIO_LINK_ADDITION_FAILURE_ENRICHED;
+
+create window NbapRadioLinkReconfigurationPrepareEnrichedWindow.win:keepall() as gpeh.NBAP_RADIO_LINK_RECONFIGURATION_PREPARE_ENRICHED;
+create window NbapRadioLinkReconfigurationPrepareUnenrichedWindow.win:keepall() as gpeh.NBAP_RADIO_LINK_RECONFIGURATION_PREPARE_ENRICHED;
+
+create window NbapRadioLinkReconfigurationReadyEnrichedWindow.win:keepall() as gpeh.NBAP_RADIO_LINK_RECONFIGURATION_READY_ENRICHED;
+create window NbapRadioLinkReconfigurationReadyUnenrichedWindow.win:keepall() as gpeh.NBAP_RADIO_LINK_RECONFIGURATION_READY_ENRICHED;
+
+create window NbapRadioLinkReconfigurationFailureEnrichedWindow.win:keepall() as gpeh.NBAP_RADIO_LINK_RECONFIGURATION_FAILURE_ENRICHED;
+create window NbapRadioLinkReconfigurationFailureUnenrichedWindow.win:keepall() as gpeh.NBAP_RADIO_LINK_RECONFIGURATION_FAILURE_ENRICHED;
+
+create window NbapRadioLinkReconfigurationCommitEnrichedWindow.win:keepall() as gpeh.NBAP_RADIO_LINK_RECONFIGURATION_COMMIT_ENRICHED;
+create window NbapRadioLinkReconfigurationCommitUnenrichedWindow.win:keepall() as gpeh.NBAP_RADIO_LINK_RECONFIGURATION_COMMIT_ENRICHED;
+
+create window NbapRadioLinkReconfigurationCancelEnrichedWindow.win:keepall() as gpeh.NBAP_RADIO_LINK_RECONFIGURATION_CANCEL_ENRICHED;
+create window NbapRadioLinkReconfigurationCancelUnenrichedWindow.win:keepall() as gpeh.NBAP_RADIO_LINK_RECONFIGURATION_CANCEL_ENRICHED;
+
+create window NbapRadioLinkDeletionRequestEnrichedWindow.win:keepall() as gpeh.NBAP_RADIO_LINK_DELETION_REQUEST_ENRICHED;
+create window NbapRadioLinkDeletionRequestUnenrichedWindow.win:keepall() as gpeh.NBAP_RADIO_LINK_DELETION_REQUEST_ENRICHED;
+
+create window NbapRadioLinkDeletionResponseEnrichedWindow.win:keepall() as gpeh.NBAP_RADIO_LINK_DELETION_RESPONSE_ENRICHED;
+create window NbapRadioLinkDeletionResponseUnenrichedWindow.win:keepall() as gpeh.NBAP_RADIO_LINK_DELETION_RESPONSE_ENRICHED;
+
+create window NbapDedicatedMeasurementInitiationRequestEnrichedWindow.win:keepall() as gpeh.NBAP_DEDICATED_MEASUREMENT_INITIATION_REQUEST_ENRICHED;
+create window NbapDedicatedMeasurementInitiationRequestUnenrichedWindow.win:keepall() as gpeh.NBAP_DEDICATED_MEASUREMENT_INITIATION_REQUEST_ENRICHED;
+
+create window NbapDedicatedMeasurementInitiationResponseEnrichedWindow.win:keepall() as gpeh.NBAP_DEDICATED_MEASUREMENT_INITIATION_RESPONSE_ENRICHED;
+create window NbapDedicatedMeasurementInitiationResponseUnenrichedWindow.win:keepall() as gpeh.NBAP_DEDICATED_MEASUREMENT_INITIATION_RESPONSE_ENRICHED;
+
+create window NbapDedicatedMeasurementInitiationFailureEnrichedWindow.win:keepall() as gpeh.NBAP_DEDICATED_MEASUREMENT_INITIATION_FAILURE_ENRICHED;
+create window NbapDedicatedMeasurementInitiationFailureUnenrichedWindow.win:keepall() as gpeh.NBAP_DEDICATED_MEASUREMENT_INITIATION_FAILURE_ENRICHED;
+
+create window NbapDedicatedMeasurementReportEnrichedWindow.win:keepall() as gpeh.NBAP_DEDICATED_MEASUREMENT_REPORT_ENRICHED;
+create window NbapDedicatedMeasurementReportUnenrichedWindow.win:keepall() as gpeh.NBAP_DEDICATED_MEASUREMENT_REPORT_ENRICHED;
+
+create window NbapDedicatedMeasurementTerminationRequestEnrichedWindow.win:keepall() as gpeh.NBAP_DEDICATED_MEASUREMENT_TERMINATION_REQUEST_ENRICHED;
+create window NbapDedicatedMeasurementTerminationRequestUnenrichedWindow.win:keepall() as gpeh.NBAP_DEDICATED_MEASUREMENT_TERMINATION_REQUEST_ENRICHED;
+
+create window NbapDedicatedMeasurementFailureIndicationEnrichedWindow.win:keepall() as gpeh.NBAP_DEDICATED_MEASUREMENT_FAILURE_INDICATION_ENRICHED;
+create window NbapDedicatedMeasurementFailureIndicationUnenrichedWindow.win:keepall() as gpeh.NBAP_DEDICATED_MEASUREMENT_FAILURE_INDICATION_ENRICHED;
+
+create window NbapRadioLinkRestoreIndicationEnrichedWindow.win:keepall() as gpeh.NBAP_RADIO_LINK_RESTORE_INDICATION_ENRICHED;
+create window NbapRadioLinkRestoreIndicationUnenrichedWindow.win:keepall() as gpeh.NBAP_RADIO_LINK_RESTORE_INDICATION_ENRICHED;
+
+create window NbapCompressedModeCommandEnrichedWindow.win:keepall() as gpeh.NBAP_COMPRESSED_MODE_COMMAND_ENRICHED;
+create window NbapCompressedModeCommandUnenrichedWindow.win:keepall() as gpeh.NBAP_COMPRESSED_MODE_COMMAND_ENRICHED;
+
+create window NbapRadioLinkParameterUpdateIndicationEnrichedWindow.win:keepall() as gpeh.NBAP_RADIO_LINK_PARAMETER_UPDATE_INDICATION_ENRICHED;
+create window NbapRadioLinkParameterUpdateIndicationUnenrichedWindow.win:keepall() as gpeh.NBAP_RADIO_LINK_PARAMETER_UPDATE_INDICATION_ENRICHED;
+
+create window NbapSecondaryUlFrequencyReportEnrichedWindow.win:keepall() as gpeh.NBAP_SECONDARY_UL_FREQUENCY_REPORT_ENRICHED;
+create window NbapSecondaryUlFrequencyReportUnenrichedWindow.win:keepall() as gpeh.NBAP_SECONDARY_UL_FREQUENCY_REPORT_ENRICHED;
+
+create window NbapSecondaryUlFrequencyUpdateIndicationEnrichedWindow.win:keepall() as gpeh.NBAP_SECONDARY_UL_FREQUENCY_UPDATE_INDICATION_ENRICHED;
+create window NbapSecondaryUlFrequencyUpdateIndicationUnenrichedWindow.win:keepall() as gpeh.NBAP_SECONDARY_UL_FREQUENCY_UPDATE_INDICATION_ENRICHED;
+
+create window NbapRadioLinkPreemptionIndicationEnrichedWindow.win:keepall() as gpeh.NBAP_RADIO_LINK_PREEMPTION_REQUIRED_INDICATION_ENRICHED;
+create window NbapRadioLinkPreemptionIndicationUnenrichedWindow.win:keepall() as gpeh.NBAP_RADIO_LINK_PREEMPTION_REQUIRED_INDICATION_ENRICHED;
+
+
+create window NbapDlPowerControlRequestEnrichedWindow.win:keepall() as gpeh.NBAP_DL_POWER_CONTROL_REQUEST_ENRICHED;
+create window NbapDlPowerControlRequestUnenrichedWindow.win:keepall() as gpeh.NBAP_DL_POWER_CONTROL_REQUEST_ENRICHED;
+
+create window NbapRadioLinkFailureIndicationEnrichedWindow.win:keepall() as gpeh.NBAP_RADIO_LINK_FAILURE_INDICATION_ENRICHED;
+create window NbapRadioLinkFailureIndicationUnenrichedWindow.win:keepall() as gpeh.NBAP_RADIO_LINK_FAILURE_INDICATION_ENRICHED;
+
+
+
+// ************************************ NBAP_RADIO_LINK_SETUP_REQUEST ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteNbapRadioLinkSetupRequest')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from NbapRadioLinkSetupRequestEnrichedWindow;
+
+@Name('NbapRadioLinkSetupRequest-Capturing')
+@Priority(12)
+on gpeh.NBAP_RADIO_LINK_SETUP_REQUEST as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  NbapRadioLinkSetupRequestEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  NbapRadioLinkSetupRequestUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-NbapRadioLinkSetupRequest')
+on gpeh.INTERNAL_IMSI as imsi
+merge NbapRadioLinkSetupRequestUnenrichedWindow as NbapRadioLinkSetupRequestUnenrichedWindow
+where imsi.UE_CONTEXT     = NbapRadioLinkSetupRequestUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = NbapRadioLinkSetupRequestUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+
+
+// ************************************  NBAP_RADIO_LINK_SETUP_RESPONSE  ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteNbapRadioLinkSetupResponse')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from NbapRadioLinkSetupResponseEnrichedWindow;
+
+@Name('NbapRadioLinkSetupResponse-Capturing')
+@Priority(12)
+on gpeh.NBAP_RADIO_LINK_SETUP_RESPONSE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  NbapRadioLinkSetupResponseEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  NbapRadioLinkSetupResponseUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-NbapRadioLinkSetupResponse')
+on gpeh.INTERNAL_IMSI as imsi
+merge NbapRadioLinkSetupResponseUnenrichedWindow as NbapRadioLinkSetupResponseUnenrichedWindow
+where imsi.UE_CONTEXT     = NbapRadioLinkSetupResponseUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = NbapRadioLinkSetupResponseUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+
+// ************************************  NBAP_RADIO_LINK_SETUP_FAILURE  ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteNbapRadioLinkSetupFailure')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from NbapRadioLinkSetupFailureEnrichedWindow;
+
+@Name('NbapRadioLinkSetupFailure-Capturing')
+@Priority(12)
+on gpeh.NBAP_RADIO_LINK_SETUP_FAILURE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  NbapRadioLinkSetupFailureEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  NbapRadioLinkSetupFailureUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-NbapRadioLinkSetupFailure')
+on gpeh.INTERNAL_IMSI as imsi
+merge NbapRadioLinkSetupFailureUnenrichedWindow as NbapRadioLinkSetupFailureUnenrichedWindow
+where imsi.UE_CONTEXT     = NbapRadioLinkSetupFailureUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = NbapRadioLinkSetupFailureUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+
+      
+// ************************************  NBAP_RADIO_LINK_ADDITION_REQUEST ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteNbapRadioLinkAdditionRequest')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from NbapRadioLinkAdditionRequestEnrichedWindow;
+
+@Name('NbapRadioLinkAdditionRequest-Capturing')
+@Priority(12)
+on gpeh.NBAP_RADIO_LINK_ADDITION_REQUEST as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  NbapRadioLinkAdditionRequestEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  NbapRadioLinkAdditionRequestUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-NbapRadioLinkAdditionRequest')
+on gpeh.INTERNAL_IMSI as imsi
+merge NbapRadioLinkAdditionRequestUnenrichedWindow as NbapRadioLinkAdditionRequestUnenrichedWindow
+where imsi.UE_CONTEXT     = NbapRadioLinkAdditionRequestUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = NbapRadioLinkAdditionRequestUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+        
+// ************************************  NBAP_RADIO_LINK_ADDITION_RESPONSE ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteNbapRadioLinkAdditionResponse')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from NbapRadioLinkAdditionResponseEnrichedWindow;
+
+@Name('NbapRadioLinkAdditionResponse-Capturing')
+@Priority(12)
+on gpeh.NBAP_RADIO_LINK_ADDITION_RESPONSE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  NbapRadioLinkAdditionResponseEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  NbapRadioLinkAdditionResponseUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-NbapRadioLinkAdditionResponse')
+on gpeh.INTERNAL_IMSI as imsi
+merge NbapRadioLinkAdditionResponseUnenrichedWindow as NbapRadioLinkAdditionResponseUnenrichedWindow
+where imsi.UE_CONTEXT     = NbapRadioLinkAdditionResponseUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = NbapRadioLinkAdditionResponseUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+
+       
+// ************************************  NBAP_RADIO_LINK_ADDITION_FAILURE ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteNbapRadioLinkAdditionFailure')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from NbapRadioLinkAdditionFailureEnrichedWindow;
+
+@Name('NbapRadioLinkAdditionFailure-Capturing')
+@Priority(12)
+on gpeh.NBAP_RADIO_LINK_ADDITION_FAILURE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  NbapRadioLinkAdditionFailureEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  NbapRadioLinkAdditionFailureUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-NbapRadioLinkAdditionFailure')
+on gpeh.INTERNAL_IMSI as imsi
+merge NbapRadioLinkAdditionFailureUnenrichedWindow as NbapRadioLinkAdditionFailureUnenrichedWindow
+where imsi.UE_CONTEXT     = NbapRadioLinkAdditionFailureUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = NbapRadioLinkAdditionFailureUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+
+        
+// ************************************  NBAP_RADIO_LINK_RECONFIGURATION_PREPARE ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteNbapRadioLinkReconfigurationPrepare')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from NbapRadioLinkReconfigurationPrepareEnrichedWindow;
+
+@Name('NbapRadioLinkReconfigurationPrepare-Capturing')
+@Priority(12)
+on gpeh.NBAP_RADIO_LINK_RECONFIGURATION_PREPARE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  NbapRadioLinkReconfigurationPrepareEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  NbapRadioLinkReconfigurationPrepareUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-NbapRadioLinkReconfigurationPrepare')
+on gpeh.INTERNAL_IMSI as imsi
+merge NbapRadioLinkReconfigurationPrepareUnenrichedWindow as NbapRadioLinkReconfigurationPrepareUnenrichedWindow
+where imsi.UE_CONTEXT     = NbapRadioLinkReconfigurationPrepareUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = NbapRadioLinkReconfigurationPrepareUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+// ************************************  NBAP_RADIO_LINK_RECONFIGURATION_READY  ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteNbapRadioLinkReconfigurationReady')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from NbapRadioLinkReconfigurationReadyEnrichedWindow;
+
+@Name('NbapRadioLinkReconfigurationReady-Capturing')
+@Priority(12)
+on gpeh.NBAP_RADIO_LINK_RECONFIGURATION_READY as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  NbapRadioLinkReconfigurationReadyEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  NbapRadioLinkReconfigurationReadyUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-NbapRadioLinkReconfigurationReady')
+on gpeh.INTERNAL_IMSI as imsi
+merge NbapRadioLinkReconfigurationReadyUnenrichedWindow as NbapRadioLinkReconfigurationReadyUnenrichedWindow
+where imsi.UE_CONTEXT     = NbapRadioLinkReconfigurationReadyUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = NbapRadioLinkReconfigurationReadyUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+// ************************************  NBAP_RADIO_LINK_RECONFIGURATION_FAILURE ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteNbapRadioLinkReconfigurationFailure')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from NbapRadioLinkReconfigurationFailureEnrichedWindow;
+
+@Name('NbapRadioLinkReconfigurationFailure-Capturing')
+@Priority(12)
+on gpeh.NBAP_RADIO_LINK_RECONFIGURATION_FAILURE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  NbapRadioLinkReconfigurationFailureEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  NbapRadioLinkReconfigurationFailureUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-NbapRadioLinkReconfigurationFailure')
+on gpeh.INTERNAL_IMSI as imsi
+merge NbapRadioLinkReconfigurationFailureUnenrichedWindow as NbapRadioLinkReconfigurationFailureUnenrichedWindow
+where imsi.UE_CONTEXT     = NbapRadioLinkReconfigurationFailureUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = NbapRadioLinkReconfigurationFailureUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+// ************************************  NBAP_RADIO_LINK_RECONFIGURATION_COMMIT ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteNbapRadioLinkReconfigurationCommit')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from NbapRadioLinkReconfigurationCommitEnrichedWindow;
+
+@Name('NbapRadioLinkReconfigurationCommit-Capturing')
+@Priority(12)
+on gpeh.NBAP_RADIO_LINK_RECONFIGURATION_COMMIT as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  NbapRadioLinkReconfigurationCommitEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  NbapRadioLinkReconfigurationCommitUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-NbapRadioLinkReconfigurationCommit')
+on gpeh.INTERNAL_IMSI as imsi
+merge NbapRadioLinkReconfigurationCommitUnenrichedWindow as NbapRadioLinkReconfigurationCommitUnenrichedWindow
+where imsi.UE_CONTEXT     = NbapRadioLinkReconfigurationCommitUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = NbapRadioLinkReconfigurationCommitUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+  
+// ************************************  NBAP_RADIO_LINK_RECONFIGURATION_CANCEL ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteNbapRadioLinkReconfigurationCancel')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from NbapRadioLinkReconfigurationCancelEnrichedWindow;
+
+@Name('NbapRadioLinkReconfigurationCancel-Capturing')
+@Priority(12)
+on gpeh.NBAP_RADIO_LINK_RECONFIGURATION_CANCEL as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  NbapRadioLinkReconfigurationCancelEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  NbapRadioLinkReconfigurationCancelUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-NbapRadioLinkReconfigurationCancel')
+on gpeh.INTERNAL_IMSI as imsi
+merge NbapRadioLinkReconfigurationCancelUnenrichedWindow as NbapRadioLinkReconfigurationCancelUnenrichedWindow
+where imsi.UE_CONTEXT     = NbapRadioLinkReconfigurationCancelUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = NbapRadioLinkReconfigurationCancelUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+
+// ************************************  NBAP_RADIO_LINK_DELETION_REQUEST ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteNbapRadioLinkDeletionRequest')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from NbapRadioLinkDeletionRequestEnrichedWindow;
+
+@Name('NbapRadioLinkDeletionRequest-Capturing')
+@Priority(12)
+on gpeh.NBAP_RADIO_LINK_DELETION_REQUEST as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  NbapRadioLinkDeletionRequestEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  NbapRadioLinkDeletionRequestUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-NbapRadioLinkDeletionRequest')
+on gpeh.INTERNAL_IMSI as imsi
+merge NbapRadioLinkDeletionRequestUnenrichedWindow as NbapRadioLinkDeletionRequestUnenrichedWindow
+where imsi.UE_CONTEXT     = NbapRadioLinkDeletionRequestUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = NbapRadioLinkDeletionRequestUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+// ************************************  NBAP_RADIO_LINK_DELETION_RESPONSE ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteNbapRadioLinkDeletionResponse')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from NbapRadioLinkDeletionResponseEnrichedWindow;
+
+@Name('NbapRadioLinkDeletionResponse-Capturing')
+@Priority(12)
+on gpeh.NBAP_RADIO_LINK_DELETION_RESPONSE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  NbapRadioLinkDeletionResponseEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  NbapRadioLinkDeletionResponseUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-NbapRadioLinkDeletionResponse')
+on gpeh.INTERNAL_IMSI as imsi
+merge NbapRadioLinkDeletionResponseUnenrichedWindow as NbapRadioLinkDeletionResponseUnenrichedWindow
+where imsi.UE_CONTEXT     = NbapRadioLinkDeletionResponseUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = NbapRadioLinkDeletionResponseUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+// ************************************  NBAP_DEDICATED_MEASUREMENT_INITIATION_REQUEST ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteNbapDedicatedMeasurementInitiationRequest')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from NbapDedicatedMeasurementInitiationRequestEnrichedWindow;
+
+@Name('NbapDedicatedMeasurementInitiationRequest-Capturing')
+@Priority(12)
+on gpeh.NBAP_DEDICATED_MEASUREMENT_INITIATION_REQUEST as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  NbapDedicatedMeasurementInitiationRequestEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  NbapDedicatedMeasurementInitiationRequestUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-NbapDedicatedMeasurementInitiationRequest')
+on gpeh.INTERNAL_IMSI as imsi
+merge NbapDedicatedMeasurementInitiationRequestUnenrichedWindow as NbapDedicatedMeasurementInitiationRequestUnenrichedWindow
+where imsi.UE_CONTEXT     = NbapDedicatedMeasurementInitiationRequestUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = NbapDedicatedMeasurementInitiationRequestUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+// ************************************  NBAP_DEDICATED_MEASUREMENT_INITIATION_RESPONSE ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteNbapDedicatedMeasurementInitiationResponse')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from NbapDedicatedMeasurementInitiationResponseEnrichedWindow;
+
+@Name('NbapDedicatedMeasurementInitiationResponse-Capturing')
+@Priority(12)
+on gpeh.NBAP_DEDICATED_MEASUREMENT_INITIATION_RESPONSE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  NbapDedicatedMeasurementInitiationResponseEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  NbapDedicatedMeasurementInitiationResponseUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-NbapDedicatedMeasurementInitiationResponse')
+on gpeh.INTERNAL_IMSI as imsi
+merge NbapDedicatedMeasurementInitiationResponseUnenrichedWindow as NbapDedicatedMeasurementInitiationResponseUnenrichedWindow
+where imsi.UE_CONTEXT     = NbapDedicatedMeasurementInitiationResponseUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = NbapDedicatedMeasurementInitiationResponseUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+      
+// ************************************  NBAP_DEDICATED_MEASUREMENT_INITIATION_FAILURE ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteNbapDedicatedMeasurementInitiationFailure')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from NbapDedicatedMeasurementInitiationFailureEnrichedWindow;
+
+@Name('NbapDedicatedMeasurementInitiationFailure-Capturing')
+@Priority(12)
+on gpeh.NBAP_DEDICATED_MEASUREMENT_INITIATION_FAILURE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  NbapDedicatedMeasurementInitiationFailureEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  NbapDedicatedMeasurementInitiationFailureUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-NbapDedicatedMeasurementInitiationFailure')
+on gpeh.INTERNAL_IMSI as imsi
+merge NbapDedicatedMeasurementInitiationFailureUnenrichedWindow as NbapDedicatedMeasurementInitiationFailureUnenrichedWindow
+where imsi.UE_CONTEXT     = NbapDedicatedMeasurementInitiationFailureUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = NbapDedicatedMeasurementInitiationFailureUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+// ************************************  NBAP_DEDICATED_MEASUREMENT_REPORT  ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteNbapDedicatedMeasurementReport')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from NbapDedicatedMeasurementReportEnrichedWindow;
+
+@Name('NbapDedicatedMeasurementReport-Capturing')
+@Priority(12)
+on gpeh.NBAP_DEDICATED_MEASUREMENT_REPORT as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  NbapDedicatedMeasurementReportEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  NbapDedicatedMeasurementReportUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-NbapDedicatedMeasurementReport')
+on gpeh.INTERNAL_IMSI as imsi
+merge NbapDedicatedMeasurementReportUnenrichedWindow as NbapDedicatedMeasurementReportUnenrichedWindow
+where imsi.UE_CONTEXT     = NbapDedicatedMeasurementReportUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = NbapDedicatedMeasurementReportUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+    
+
+// ************************************  NBAP_DEDICATED_MEASUREMENT_TERMINATION_REQUEST ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteNbapDedicatedMeasurementTerminationRequest')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from NbapDedicatedMeasurementTerminationRequestEnrichedWindow;
+
+@Name('NbapDedicatedMeasurementTerminationRequest-Capturing')
+@Priority(12)
+on gpeh.NBAP_DEDICATED_MEASUREMENT_TERMINATION_REQUEST as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  NbapDedicatedMeasurementTerminationRequestEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  NbapDedicatedMeasurementTerminationRequestUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-NbapDedicatedMeasurementTerminationRequest')
+on gpeh.INTERNAL_IMSI as imsi
+merge NbapDedicatedMeasurementTerminationRequestUnenrichedWindow as NbapDedicatedMeasurementTerminationRequestUnenrichedWindow
+where imsi.UE_CONTEXT     = NbapDedicatedMeasurementTerminationRequestUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = NbapDedicatedMeasurementTerminationRequestUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+
+// ************************************  NBAP_DEDICATED_MEASUREMENT_FAILURE_INDICATION  ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteNbapDedicatedMeasurementFailureIndication')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from NbapDedicatedMeasurementFailureIndicationEnrichedWindow;
+
+@Name('NbapDedicatedMeasurementFailureIndication-Capturing')
+@Priority(12)
+on gpeh.NBAP_DEDICATED_MEASUREMENT_FAILURE_INDICATION as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  NbapDedicatedMeasurementFailureIndicationEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  NbapDedicatedMeasurementFailureIndicationUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-NbapDedicatedMeasurementFailureIndication')
+on gpeh.INTERNAL_IMSI as imsi
+merge NbapDedicatedMeasurementFailureIndicationUnenrichedWindow as NbapDedicatedMeasurementFailureIndicationUnenrichedWindow
+where imsi.UE_CONTEXT     = NbapDedicatedMeasurementFailureIndicationUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = NbapDedicatedMeasurementFailureIndicationUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+
+
+// ************************************  NBAP_RADIO_LINK_RESTORE_INDICATION  ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteNbapRadioLinkRestoreIndication')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from NbapRadioLinkRestoreIndicationEnrichedWindow;
+
+@Name('NbapRadioLinkRestoreIndication-Capturing')
+@Priority(12)
+on gpeh.NBAP_RADIO_LINK_RESTORE_INDICATION as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  NbapRadioLinkRestoreIndicationEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  NbapRadioLinkRestoreIndicationUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-NbapRadioLinkRestoreIndication')
+on gpeh.INTERNAL_IMSI as imsi
+merge NbapRadioLinkRestoreIndicationUnenrichedWindow as NbapRadioLinkRestoreIndicationUnenrichedWindow
+where imsi.UE_CONTEXT     = NbapRadioLinkRestoreIndicationUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = NbapRadioLinkRestoreIndicationUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+
+// ************************************  NBAP_COMPRESSED_MODE_COMMAND ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteNbapCompressedModeCommand')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from NbapCompressedModeCommandEnrichedWindow;
+
+@Name('NbapCompressedModeCommand-Capturing')
+@Priority(12)
+on gpeh.NBAP_COMPRESSED_MODE_COMMAND as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  NbapCompressedModeCommandEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  NbapCompressedModeCommandUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-NbapCompressedModeCommand')
+on gpeh.INTERNAL_IMSI as imsi
+merge NbapCompressedModeCommandUnenrichedWindow as NbapCompressedModeCommandUnenrichedWindow
+where imsi.UE_CONTEXT     = NbapCompressedModeCommandUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = NbapCompressedModeCommandUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+
+// ************************************  NBAP_RADIO_LINK_PARAMETER_UPDATE_INDICATION ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteNbapRadioLinkParameterUpdateIndication')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from NbapRadioLinkParameterUpdateIndicationEnrichedWindow;
+
+@Name('NbapRadioLinkParameterUpdateIndication-Capturing')
+@Priority(12)
+on gpeh.NBAP_RADIO_LINK_PARAMETER_UPDATE_INDICATION as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  NbapRadioLinkParameterUpdateIndicationEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  NbapRadioLinkParameterUpdateIndicationUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-NbapRadioLinkParameterUpdateIndication')
+on gpeh.INTERNAL_IMSI as imsi
+merge NbapRadioLinkParameterUpdateIndicationUnenrichedWindow as NbapRadioLinkParameterUpdateIndicationUnenrichedWindow
+where imsi.UE_CONTEXT     = NbapRadioLinkParameterUpdateIndicationUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = NbapRadioLinkParameterUpdateIndicationUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+ 
+// ************************************  NBAP_SECONDARY_UL_FREQUENCY_REPORT  ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteNbapSecondaryUlFrequencyReport')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from NbapSecondaryUlFrequencyReportEnrichedWindow;
+
+@Name('NbapSecondaryUlFrequencyReport-Capturing')
+@Priority(12)
+on gpeh.NBAP_SECONDARY_UL_FREQUENCY_REPORT as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  NbapSecondaryUlFrequencyReportEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  NbapSecondaryUlFrequencyReportUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-NbapSecondaryUlFrequencyReport')
+on gpeh.INTERNAL_IMSI as imsi
+merge NbapSecondaryUlFrequencyReportUnenrichedWindow as NbapSecondaryUlFrequencyReportUnenrichedWindow
+where imsi.UE_CONTEXT     = NbapSecondaryUlFrequencyReportUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = NbapSecondaryUlFrequencyReportUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+// ************************************  NBAP_SECONDARY_UL_FREQUENCY_UPDATE_INDICATION  ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteNbapSecondaryUlFrequencyUpdateIndication')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from NbapSecondaryUlFrequencyUpdateIndicationEnrichedWindow;
+
+@Name('NbapSecondaryUlFrequencyUpdateIndication-Capturing')
+@Priority(12)
+on gpeh.NBAP_SECONDARY_UL_FREQUENCY_UPDATE_INDICATION as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  NbapSecondaryUlFrequencyUpdateIndicationEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  NbapSecondaryUlFrequencyUpdateIndicationUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-NbapSecondaryUlFrequencyUpdateIndication')
+on gpeh.INTERNAL_IMSI as imsi
+merge NbapSecondaryUlFrequencyUpdateIndicationUnenrichedWindow as NbapSecondaryUlFrequencyUpdateIndicationUnenrichedWindow
+where imsi.UE_CONTEXT     = NbapSecondaryUlFrequencyUpdateIndicationUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = NbapSecondaryUlFrequencyUpdateIndicationUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+// ************************************  NBAP_RADIO_LINK_PREEMPTION_REQUIRED_INDICATION  ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteNbapRadioLinkPreemptionIndication')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from NbapRadioLinkPreemptionIndicationEnrichedWindow;
+
+@Name('NbapRadioLinkPreemptionIndication-Capturing')
+@Priority(12)
+on gpeh.NBAP_RADIO_LINK_PREEMPTION_REQUIRED_INDICATION as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  NbapRadioLinkPreemptionIndicationEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  NbapRadioLinkPreemptionIndicationUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-NbapRadioLinkPreemptionIndication')
+on gpeh.INTERNAL_IMSI as imsi
+merge NbapRadioLinkPreemptionIndicationUnenrichedWindow as NbapRadioLinkPreemptionIndicationUnenrichedWindow
+where imsi.UE_CONTEXT     = NbapRadioLinkPreemptionIndicationUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = NbapRadioLinkPreemptionIndicationUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+
+// ************************************ NBAP_DL_POWER_CONTROL_REQUEST ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteNbapDlPowerControlRequest')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from NbapDlPowerControlRequestEnrichedWindow;
+
+@Name('NbapDlPowerControlRequest-Capturing')
+@Priority(12)
+on gpeh.NBAP_DL_POWER_CONTROL_REQUEST as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  NbapDlPowerControlRequestEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+
+when not matched
+  then insert into
+  NbapDlPowerControlRequestUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+
+@Priority(11)
+@Name('Imsi-Arrives-After-NbapDlPowerControlRequest')
+on gpeh.INTERNAL_IMSI as imsi
+merge NbapDlPowerControlRequestUnenrichedWindow as NbapDlPowerControlRequestUnenrichedWindow
+where imsi.UE_CONTEXT     = NbapDlPowerControlRequestUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = NbapDlPowerControlRequestUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+
+
+// ************************************ NBAP_RADIO_LINK_FAILURE_INDICATION ***********************
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteNbapRadioLinkFailureIndication')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from NbapRadioLinkFailureIndicationEnrichedWindow;
+
+@Name('NbapRadioLinkFailureIndication-Capturing')
+@Priority(12)
+on gpeh.NBAP_RADIO_LINK_FAILURE_INDICATION as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  NbapRadioLinkFailureIndicationEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+
+when not matched
+  then insert into
+  NbapRadioLinkFailureIndicationUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+
+@Priority(11)
+@Name('Imsi-Arrives-After-NbapRadioLinkFailureIndication')
+on gpeh.INTERNAL_IMSI as imsi
+merge NbapRadioLinkFailureIndicationUnenrichedWindow as NbapRadioLinkFailureIndicationUnenrichedWindow
+where imsi.UE_CONTEXT     = NbapRadioLinkFailureIndicationUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = NbapRadioLinkFailureIndicationUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+
+

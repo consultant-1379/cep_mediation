@@ -1,0 +1,50 @@
+create context radio_logical_partition partition by RNC_MODULE_ID from com.ericsson.cepmediation.apeventbeans.gpeh.GpehBase();
+
+create window RadioSessionWindow.win:keepall() as RadioSesion;
+
+@Priority(10)
+@Name('RADIO_SESSION')		
+on pattern [every a=com.ericsson.cepmediation.apeventbeans.gpeh.GpehBase()]
+select rsw.* from RadioSessionWindow as rsw
+where rsw.sessionEnd<a.timestamp;
+
+@Priority(8) 
+on pattern [every a=com.ericsson.cepmediation.apeventbeans.gpeh.GpehBase()]
+delete from RadioSessionWindow as rsw
+where rsw.sessionEnd<a.timestamp;
+
+context radio_logical_partition
+insert into start_marker
+select b.IMSI 					       as imsi,
+       a                               as event
+from pattern [
+			 every a=com.ericsson.cepmediation.apeventbeans.gpeh.RRC_RRC_CONNECTION_SETUP()
+                -> b=com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_IMSI(b.UE_CONTEXT=a.UE_CONTEXT)
+            ];
+
+on start_marker	
+MERGE RadioSessionWindow AS radio_session_window
+WHERE radio_session_window.imsi = start_marker.imsi
+	  AND start_marker.event.timestamp.between(radio_session_window.sessionStart,radio_session_window.sessionEnd)
+	WHEN MATCHED  
+		THEN UPDATE SET
+			radio_session_window.rrcConnectionCount  = radio_session_window.rrcConnectionCount +1,
+			radio_session_window.endCellId     		 = start_marker.event.getC_ID_1(),
+			radio_session_window.totalEventCount     = radio_session_window.totalEventCount+1,
+			radio_session_window.endRNC     		 = start_marker.event.RNC_ID_1,
+			radio_session_window.rrcActivityOn       = true
+	WHEN NOT MATCHED  
+        THEN INSERT INTO RadioSessionWindow SELECT
+         	start_marker.imsi                           as imsi,
+         	start_marker.event.timestamp.roundFloor('min').minus((start_marker.event.timestamp.getMinuteOfHour()%5)*60000)                 as sessionStart,
+       		start_marker.event.timestamp.roundFloor('min').minus((start_marker.event.timestamp.getMinuteOfHour()%5)*60000).plus(5 minutes) as sessionEnd,
+         	start_marker.event.timestamp                as rrcConnectionStart,
+         	start_marker.event.timestamp                as rrcConnectionEnd,
+			1                                           as totalEventCount,
+			start_marker.event.getC_ID_1()			    as startCellId,
+			start_marker.event.getC_ID_1()			    as endCellId,
+			start_marker.event.RNC_ID_1  		        as startRNC,
+			start_marker.event.RNC_ID_1                 as endRNC,
+			300l                     				    as sessionDuration,
+			true                                        as rrcActivityOn,
+			1                                           as rrcConnectionCount;

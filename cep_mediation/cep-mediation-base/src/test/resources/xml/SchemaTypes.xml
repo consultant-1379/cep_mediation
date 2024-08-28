@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schemaTypes xmlns="http://www.ericsson.com/SchemaTypes">
+
+	<!-- Configuration for schemas. Schema revisions should increase lexically, 
+		with the highest schema revision being the highest lexically; Mappings will 
+		be generated towards the highest lexical schema from other schemas -->
+
+	<eventNamespace>http://www.ericsson.com/PmEvents</eventNamespace>
+	<eventSchemaFile>xml/EventFormat.xsd</eventSchemaFile>
+
+	<!-- Cell Trace -->
+	<schemaType>
+		<name>celltrace</name>
+		<idLength>24</idLength>       <!-- in bits -->
+		<idStartPos>0</idStartPos>    <!-- in bits -->
+		<idInEvent>false</idInEvent>  <!-- true if the event ID is included in the event as a field -->
+		<paramPreamble>EVENT_PARAM_</paramPreamble>
+		<valuePreamble>EVENT_VALUE_</valuePreamble>
+		<schemaVersion>
+			<name>celltrace_11a</name>
+			<xmlFile>xml/PmEvents_N3-L11A.xml</xmlFile>
+		</schemaVersion>
+		<schemaVersion>
+			<name>celltrace_11b</name>
+			<xmlFile>xml/PmEvents_T6-L11B.xml</xmlFile>
+		</schemaVersion>
+		<schemaVersion>
+			<name>celltrace_11x</name>
+			<xmlFile>xml/PmEvents_TX-L11X.xml</xmlFile>
+		</schemaVersion>
+		<schemaVersion>
+			<name>celltrace_12a</name>
+			<xmlFile>xml/PmEvents_X1-L12A.xml</xmlFile>
+		</schemaVersion>
+	</schemaType>
+
+	<!-- CTUM -->
+	<schemaType>
+		<name>ctum</name>
+		<idLength>0</idLength>       <!-- in bits -->
+		<idStartPos>0</idStartPos>   <!-- in bits -->
+		<idInEvent>true</idInEvent>  <!-- true if the event ID is included in the event as a field -->
+		<schemaVersion>
+			<name>ctum_l11a</name>
+			<xmlFile>xml/CTUM_B-L11A.xml</xmlFile>
+		</schemaVersion>
+	</schemaType>
+
+	<!-- EBM -->
+	<schemaType>
+		<name>ebm</name>
+		<idLength>8</idLength>       <!-- in bits -->
+		<idStartPos>0</idStartPos>   <!-- in bits -->
+		<idInEvent>true</idInEvent>  <!-- true if the event ID is included in the event as a field -->
+		<schemaVersion>
+			<name>ebm_10b</name>
+			<xmlFile>xml/EBM_E-L10B.xml</xmlFile>
+		</schemaVersion>
+		<schemaVersion>
+			<name>ebm_11a</name>
+			<xmlFile>xml/EBM_H-L11A.xml</xmlFile>
+		</schemaVersion>
+		<schemaVersion>
+			<name>ebm_11b</name>
+			<xmlFile>xml/EBM_J-L11B.xml</xmlFile>
+		</schemaVersion>
+	</schemaType>
+
+	<!-- GPEH -->
+	<schemaType>
+		<name>gpeh</name>
+		<idLength>11</idLength>      <!-- in bits -->
+		<idStartPos>52</idStartPos>  <!-- in bits -->
+		<idInEvent>true</idInEvent>  <!-- true if the event ID is included in the event as a field -->
+		<paramPreamble>EVENT_PARAM_</paramPreamble>
+		<valuePreamble>EVENT_VALUE_</valuePreamble>
+		<schemaVersion>
+			<name>gpeh_10b</name>
+			<xmlFile>xml/GPEH_BU-L10B_transformed.xml</xmlFile>
+		</schemaVersion>
+		<schemaVersion>
+			<name>gpeh_11b</name>
+			<xmlFile>xml/GPEH_CH-L11B_transformed.xml</xmlFile>
+		</schemaVersion>
+        <schemaVersion>
+            <name>gpeh_11b_12a</name>
+            <xmlFile>xml/GPEH_CF2-W11B_W12A_transformed.xml</xmlFile>
+        </schemaVersion>
+	</schemaType>
+
+	<!-- Bearer Plane -->
+	<schemaType>
+		<name>bearer_plane</name>
+		<idLength>0</idLength>       <!-- in bits -->
+		<idStartPos>0</idStartPos>   <!-- in bits -->
+		<idInEvent>false</idInEvent> <!-- true if the event ID is included in the event as a field -->
+		<schemaVersion>
+			<name>bearer_plane_pa1</name>
+			<xmlFile>xml/BearerPlane_PA1.xml</xmlFile>
+		</schemaVersion>
+	</schemaType>
+
+	<!-- Control Plane -->
+	<schemaType>
+		<name>control_plane</name>
+                <idLength>0</idLength>       <!-- in bits -->
+                <idStartPos>0</idStartPos>   <!-- in bits -->
+                <idInEvent>false</idInEvent> <!-- true if the event ID is included in the event as a field -->
+		<schemaVersion>
+			<name>control_plane_pa1</name>
+			<xmlFile>xml/ControlPlane_PA1.xml</xmlFile>
+		</schemaVersion>
+	</schemaType>
+
+	<!-- Correlation -->
+	<schemaType>
+		<name>correlation</name>
+		<idLength>0</idLength>       <!-- in bits -->
+		<idStartPos>0</idStartPos>   <!-- in bits -->
+		<idInEvent>false</idInEvent> <!-- true if the event ID is included in the event as a field -->
+		<schemaVersion>
+			<name>correlation_11b</name>
+			<xmlFile>xml/CorrelatedEvents_PA1.xml</xmlFile>
+		</schemaVersion>
+	</schemaType>
+
+	<!-- Session Records -->
+	<schemaType>
+		<name>sesson_record</name>
+		<idLength>0</idLength>       <!-- in bits -->
+		<idStartPos>0</idStartPos>   <!-- in bits -->
+		<idInEvent>false</idInEvent> <!-- true if the event ID is included in the event as a field -->
+		<schemaVersion>
+			<name>sesson_record_11B</name>
+			<xmlFile>xml/SessionRecord_PA1.xml</xmlFile>
+		</schemaVersion>
+	</schemaType>
+
+	<!-- S-KPI -->
+	<schemaType>
+		<name>s_kpi</name>
+		<idLength>0</idLength>       <!-- in bits -->
+		<idStartPos>0</idStartPos>   <!-- in bits -->
+		<idInEvent>false</idInEvent> <!-- true if the event ID is included in the event as a field -->
+		<schemaVersion>
+			<name>s_kpi_11B</name>
+			<xmlFile>xml/S_KPI_PA1.xml</xmlFile>
+		</schemaVersion>
+	</schemaType>
+</schemaTypes>

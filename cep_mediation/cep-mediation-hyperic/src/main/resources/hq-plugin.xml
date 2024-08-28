@@ -1,0 +1,147 @@
+<?xml version="1.0"?>
+<!DOCTYPE plugin [<!ENTITY process-metrics SYSTEM "/pdk/plugins/process-metrics.xml">]>
+<plugin name="cep-mediation-hyperic-2.2.6" package="com.ericsson.cepmediation.hyperic">
+ 	<property name="PLUGIN_VERSION" value="1.0"/>
+ 	
+ 	<classpath>
+ 		<include name="/opt/ericsson/cep-mediation/cep-mediation/lib/cep-mediation-app-config-generated-2.2.6.jar"/>
+ 		<include name="/opt/ericsson/cep-mediation/cep-mediation/lib/cep-mediation-base-2.2.6.jar"/>
+ 		<include name="/opt/ericsson/cep-mediation/cep-mediation/lib/slf4j-api-1.6.1.jar"/>
+ 		<include name="/opt/ericsson/cep-mediation/cep-mediation/lib/slf4j-log4j12-1.6.1.jar"/>
+ 		<include name="/opt/ericsson/cep-mediation/cep-mediation/etc/app-config/config.xml"/>
+ 	</classpath>	 
+
+
+      
+      <server name="CEP Mediation Server">
+
+         <config>
+            <option name="host.ip"            
+                  default=""
+                  description="CEP Mediation Host Ip Address">
+            </option>
+
+            <option name="process.query"
+                  default=""				                 
+                  description="CEP Mediation Server PTQL Query">
+            </option>
+         </config>
+
+         	<metric
+               indicator="true"
+               units="percentage"
+               name="Availability"
+               collectionType="dynamic"
+               template="sigar:Type=ProcState,Arg=%process.query%:State"
+               category="AVAILABILITY">
+         	</metric>
+ 
+			&process-metrics;
+
+         <plugin
+               type="autoinventory"
+               class="com.ericsson.cepmediation.management.EAServerDetector">
+
+         </plugin>    
+
+
+
+
+         <plugin type="log_track" 
+         		class="org.hyperic.hq.product.Log4JLogTrackPlugin">
+         </plugin>
+        		
+         
+
+         
+         <plugin 
+         		type="control"
+         		class="com.ericsson.cepmediation.management.EAServerControl">
+         </plugin>
+ 
+         <actions include="start,stop,restart"/>
+         
+
+ 
+         <plugin
+               type="measurement"
+               class="org.hyperic.hq.product.MeasurementPlugin">
+         </plugin>
+ 
+        <metrics
+               include="basic-process-metrics">
+         </metrics>
+
+       <service name="Process">
+
+         <plugin
+               type="autoinventory">
+         </plugin>
+          <config>     
+            <option name="services"
+                  default=""
+                  description="Process Services">
+            </option>
+            <option name="process.id"
+                  default=""				                 
+                  description="Process Id">
+            </option>
+            <option name="process.query"
+                  default=""				                 
+                  description="CEP Mediation Server PTQL Query">
+            </option>
+
+         </config>
+         <plugin
+               type="measurement"
+               class="org.hyperic.hq.product.MeasurementPlugin">
+         </plugin>        
+         <metric
+               indicator="true"
+               units="percentage"
+               name="Availability"
+               collectionType="dynamic"
+               template="sigar:Type=ProcState,Arg=%process.q%:State"
+               category="AVAILABILITY">
+         </metric>
+
+		 &process-metrics;
+
+		</service> 
+       <service name="Probe Service">
+
+         <plugin
+               type="autoinventory">
+         </plugin>
+          <config>     
+            <option name="service.id"
+                  default=""				                 
+                  description="Captool parser id">
+            </option>
+            <option name="process.query"
+                  default=""				                 
+                  description="CEP Mediation Server PTQL Query">
+            </option>
+
+         </config>
+         <plugin
+               type="measurement"
+               class="org.hyperic.hq.product.MeasurementPlugin">
+         </plugin>        
+         <metric
+               indicator="true"
+               units="percentage"
+               name="Availability"
+               collectionType="dynamic"
+               template="sigar:Type=ProcState,Arg=%proc.q%:State"
+               category="AVAILABILITY">
+         </metric>
+		 
+		 &process-metrics;
+
+		</service> 
+
+ 	   </server>
+ </plugin>
+
+ 

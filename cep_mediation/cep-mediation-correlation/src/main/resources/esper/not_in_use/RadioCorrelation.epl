@@ -1,0 +1,868 @@
+IMPORT com.ericsson.cepmediation.correlation.lookup.impl.DefaultLookupService;
+
+create context radio_logical_partition partition by RNC_MODULE_ID,UE_CONTEXT from com.ericsson.cepmediation.apeventbeans.gpeh.GpehBase();
+
+create window RadioSessionWindow.win:keepall() as correlation.CUSTOM_GPEH_SESSION;
+create index imsiIndex on RadioSessionWindow(IMSI hash);
+
+@Priority(10)
+@Name('Session-Closing')
+on correlation.SESSION_END_EVENT as sessionEndEvent
+UPDATE RadioSessionWindow AS rsw
+SET
+       rsw.RRC_DURATION                        = CASE WHEN rsw.RRC_ACTIVITY_ON = true
+                                                    THEN rsw.RRC_DURATION + cast((rsw.SESSION_END-rsw.RRC_CONN_END),int)
+                                                    ELSE rsw.RRC_DURATION
+                                                 END,
+       rsw.RRC_CONN_END                        = CASE WHEN rsw.RRC_ACTIVITY_ON = true 
+                                                    THEN rsw.SESSION_END
+                                                    ELSE rsw.RRC_CONN_END 
+                                                 END,
+       rsw.PS_RAB_DURATION                     = CASE WHEN rsw.RAB_ACTIVITY_ON = true
+                                                    THEN rsw.PS_RAB_DURATION + cast((rsw.SESSION_END-rsw.PS_RAB_ACTIVITY_END_TIME),int)
+                                                    ELSE rsw.PS_RAB_DURATION
+                                                 END,
+       rsw.PS_RAB_ACTIVITY_END_TIME            = CASE WHEN rsw.RAB_ACTIVITY_ON = true
+                                                    THEN rsw.SESSION_END
+                                                    ELSE rsw.PS_RAB_ACTIVITY_END_TIME 
+                                                 END,
+       rsw.CM_DURATION                         = CASE WHEN rsw.CM_START > 0
+                                                    THEN rsw.CM_DURATION + cast((rsw.SESSION_END - rsw.CM_START), int)
+                                                    ELSE rsw.CM_DURATION 
+                                                 END,
+       rsw.ACTIVITY_DURATION                   = case when rsw.ACTIVITY_START > 0
+                                                 then rsw.ACTIVITY_DURATION + cast((rsw.SESSION_END-rsw.ACTIVITY_START),int)
+                                                 else rsw.ACTIVITY_DURATION
+                                                 end,
+       rsw.HS_DURATION                         = case when rsw.HS_START > 0
+                                                 then rsw.HS_DURATION + cast((rsw.SESSION_END-rsw.HS_START),int)
+                                                 else rsw.HS_DURATION
+                                                 end,
+       rsw.EUL_DURATION                        = case when rsw.EUL_START > 0
+                                                 then rsw.EUL_DURATION + cast((rsw.SESSION_END-rsw.EUL_START),int)
+                                                 else rsw.EUL_DURATION
+                                                 end,
+       rsw.ACTIVITY                            = case when rsw.RRC_DURATION > 0
+                                                 then cast((rsw.ACTIVITY_DURATION / rsw.RRC_DURATION), float)
+                                                 else rsw.ACTIVITY
+                                                 end,
+       rsw.HS_RATIO                            = case when rsw.ACTIVITY_DURATION > 0
+                                                 then cast((rsw.HS_DURATION / rsw.ACTIVITY_DURATION), float)
+                                                 else rsw.HS_RATIO
+                                                 end,
+       rsw.EUL_RATIO                           = case when rsw.ACTIVITY_DURATION > 0
+                                                 then cast((rsw.EUL_DURATION / rsw.ACTIVITY_DURATION), float)
+                                                 else rsw.EUL_RATIO
+                                                 end,
+       rsw.HSDSCH_USERS_AVG                    = case when rsw.HSDSCH_USERS_SAMPLES > 0
+                                                 then cast(Math.round((rsw.HSDSCH_USERS_TOTAL / cast(rsw.HSDSCH_USERS_SAMPLES,float)).doubleValue()) ,short)
+                                                 else rsw.HSDSCH_USERS_AVG
+                                                 end,
+       rsw.UL_INTERFERENCE_AVG                 = case when rsw.UL_INTERFERENCE_SAMPLES > 0
+                                                 then cast(Math.round(((10 * Math.log10((rsw.UL_INTERFERENCE_TOTAL / rsw.UL_INTERFERENCE_SAMPLES).doubleValue()))*10.0).doubleValue())/10.0, float)
+                                                 else rsw.UL_INTERFERENCE_AVG
+                                                 end,
+       rsw.DL_NON_HS_TX_POWER_AVG              = case when rsw.DL_NON_HS_TX_POWER_SAMPLES > 0
+                                                 then cast(Math.round((rsw.DL_NON_HS_TX_POWER_TOTAL / rsw.DL_NON_HS_TX_POWER_SAMPLES).doubleValue()), int)
+                                                 else rsw.DL_NON_HS_TX_POWER_AVG
+                                                 end,
+       rsw.CM_USER_CNT                         = case when rsw.CM_USER_SAMPLES > 0
+                                                 then cast(Math.round((rsw.CM_USER_TOTAL / cast(rsw.CM_USER_SAMPLES,float)).doubleValue()), int)
+                                                 else rsw.CM_USER_CNT
+                                                 end,       
+       rsw.ECNO_AVG                               = case when rsw.NUM_VALID_ECNO_SAMPLES > 0
+                                                    then cast(
+                                                       Math.round((10 * 
+                                                                   Math.log10(
+                                                                       (rsw.ECNO_TOTAL/rsw.NUM_VALID_ECNO_SAMPLES).doubleValue()) 
+                                                                   * 2).doubleValue())
+                                                               /2,
+                                                       float)
+                                                    else 0.0f
+                                                    end,    
+       rsw.RSCP_AVG                               = case when rsw.NUM_VALID_RSCP_SAMPLES > 0
+                                                    then cast(
+                                                       Math.round(
+                                                               (cast(
+                                                                   10 * 
+                                                                   Math.log10(
+                                                                       (rsw.RSCP_TOTAL/rsw.NUM_VALID_RSCP_SAMPLES).doubleValue()), 
+                                                               float)).floatValue()
+                                                               ), 
+                                                       short)   
+                                                    else cast(0, short)   
+                                                    end
+where rsw.START_RAB != -1
+   and rsw.EVENT_CNT > 0;
+
+
+@Priority(9)  
+@Name('Session-Enrichment')       
+on correlation.SESSION_END_EVENT as sessionEndEvent
+select rsw.* from RadioSessionWindow as rsw
+where rsw.START_RAB != -1
+   and rsw.EVENT_CNT > 0;
+
+
+@Priority(8)
+@Name('Session-carry-over')
+on correlation.SESSION_END_EVENT as sessionEndEvent
+MERGE RadioSessionWindow AS radio_session_window
+WHERE radio_session_window.RRC_ACTIVITY_ON = true
+   AND EVENT_CNT > 0
+WHEN MATCHED
+        THEN INSERT INTO RadioSessionWindow SELECT
+            CASE WHEN radio_session_window.RAB_ACTIVITY_ON=true
+            THEN radio_session_window.END_RAB
+            ELSE
+            cast(-1, short)
+            END                                         as START_RAB,
+            CASE WHEN radio_session_window.RAB_ACTIVITY_ON=true
+            THEN radio_session_window.END_RAB
+            ELSE
+            cast(-1, short)
+            END                                         as END_RAB,
+            CASE WHEN radio_session_window.RAB_ACTIVITY_ON=true
+            THEN radio_session_window.SESSION_END 
+            ELSE
+            0l
+            END                                         as PS_RAB_ACTIVITY_START_TIME,      
+            CASE WHEN radio_session_window.RAB_ACTIVITY_ON=true
+            THEN radio_session_window.SESSION_END 
+            ELSE
+            0l
+            END                                         as PS_RAB_ACTIVITY_END_TIME,
+            CASE WHEN radio_session_window.CM_START > 0
+            THEN radio_session_window.SESSION_END 
+            ELSE
+            0
+            END                                         as CM_START,
+            radio_session_window.IMSI                   as IMSI,
+            radio_session_window.IMSI_MCC               as IMSI_MCC,
+            radio_session_window.IMSI_MNC               as IMSI_MNC,
+            radio_session_window.HSDPA_UE_CATEGORY      as HSDPA_UE_CATEGORY,
+            radio_session_window.EUL_UE_CATEGORY        as EUL_UE_CATEGORY,
+            radio_session_window.SESSION_END            as DATETIME_ID,         
+            radio_session_window.SESSION_END            as timestamp,
+            radio_session_window.SESSION_END            as RRC_CONN_END,
+            radio_session_window.SESSION_END.
+            plus(SESSION_DURATION_IN_MINUTES minutes)   as SESSION_END,
+            0                                           as RRC_DURATION,
+            0                                           as PS_RAB_DURATION,
+            cast(0,short)                               as PS_RAB_ESTABLISH_CNT,
+            cast(0,short)                               as CS_RAB_ESTABLISH_CNT,
+            cast(0,byte)                                as DROPS_CNT,
+            0                                           as EVENT_CNT,
+            0                                           as HS_CELL_CHANGE_SUC_CNT,
+            0                                           as HS_CELL_CHANGE_ERR_CNT,
+            radio_session_window.END_C_ID               as START_C_ID,
+            radio_session_window.END_C_ID               as END_C_ID,
+            radio_session_window.END_RNC                as START_RNC,
+            radio_session_window.END_RNC                as END_RNC,
+            cast(SESSION_DURATION_IN_SECONDS,short)     as SESSION_DURATION,
+            0                                           as IFHO_EXEC_SUC_CNT,
+            0                                           as IFHO_EXEC_ERR_CNT,
+            0                                           as SOHO_EXEC_SUC_CNT,
+            0                                           as SOHO_EXEC_ERR_CNT,
+            0                                           as IRAT_EXEC_ERR_CNT,
+            0                                           as HS_NO_SELECTION_CNT,
+            radio_session_window.RAB_ACTIVITY_ON        as RAB_ACTIVITY_ON,
+            radio_session_window.RRC_ACTIVITY_ON        as RRC_ACTIVITY_ON,
+            cast(0,byte)                                as RRC_CONNECTION_CNT,
+            0                                           as CM_CNT,
+            0                                           as CM_UL_CNT,
+            0                                           as CM_DL_CNT,
+            0                                           as CM_ULDL_CNT,
+            0                                           as CM_DURATION,
+            0                                            as RRC_MEAS_REP_SAMPLES,
+            0                                            as RRC_SAMPLES_GC_GS,
+            0                                            as RRC_SAMPLES_GC_BS,
+            0                                            as RRC_SAMPLES_BC_GS,
+            0                                            as RRC_SAMPLES_BC_BS,
+            0                                            as ECNO_TOTAL,
+            0                                            as RSCP_TOTAL,
+            0                                            as NUM_VALID_ECNO_SAMPLES,
+            0                                            as NUM_VALID_RSCP_SAMPLES,
+            cast(0,short)                               as CS_REASON_OTHER,
+            cast(0,short)                               as CS_REASON_QUEUE,  
+            cast(0,short)                               as CS_REASON_QOS_DCH,
+            cast(0,short)                               as CS_REASON_MOBILITY_COVERAGE,
+            cast(0,short)                               as CS_REASON_CAPACITY,
+            cast(0,short)                               as CS_REASON_UE_ACTIVITY,
+            cast(0,short)                               as CDS_SUCC_CNT,
+            cast(0,short)                               as CUS_SUCC_CNT,
+            cast(0,short)                               as CDS_ATT_CNT,
+            cast(0,short)                               as CUS_ATT_CNT,
+            0                                           as ACTIVITY_DURATION,
+            0                                           as HS_DURATION,
+            0                                           as EUL_DURATION,
+            case when radio_session_window.HS_START > 0
+            then radio_session_window.SESSION_END
+            else -1
+            end                                         as HS_START,
+            case when radio_session_window.ACTIVITY_START > 0
+            then radio_session_window.SESSION_END
+            else -1
+            end                                         as ACTIVITY_START,
+            case when radio_session_window.EUL_START > 0
+            then radio_session_window.SESSION_END
+            else -1
+            end                                         as EUL_START,
+            0                                           as HSDSCH_USERS_TOTAL,
+            0                                           as HSDSCH_USERS_SAMPLES,
+            0                                           as UL_INTERFERENCE_TOTAL,
+            0                                           as UL_INTERFERENCE_SAMPLES,
+            0                                           as DL_NON_HS_TX_POWER_TOTAL,
+            0                                           as DL_NON_HS_TX_POWER_SAMPLES,
+            0                                           as CM_USER_TOTAL,
+            0                                           as CM_USER_SAMPLES,
+            true                                        as CARRIED_OVER,
+            EVENT_ID_VALUE                              as EVENT_ID;
+
+            
+@Name('Delete-Closed-Sessions')
+@Drop            
+@Priority(7)
+on correlation.SESSION_END_EVENT as sessionEndEvent
+delete from RadioSessionWindow as rsw
+where rsw.SESSION_END<sessionEndEvent.timestamp;
+
+
+@Priority(6)
+context radio_logical_partition 
+insert into start_marker
+select b.IMSI                          as imsi,
+       b.timestamp                     as sessionStartTime,
+       a                               as event
+from pattern [
+                 
+                  every a=com.ericsson.cepmediation.apeventbeans.gpeh.RRC_RRC_CONNECTION_SETUP()
+                     -> (b=com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_IMSI()
+                         and not com.ericsson.cepmediation.apeventbeans.gpeh.RRC_RRC_CONNECTION_SETUP())
+                 
+            ];
+            
+            
+
+@Priority(5)
+on start_marker 
+MERGE RadioSessionWindow AS radio_session_window
+WHERE radio_session_window.IMSI = cast(start_marker.imsi,long)
+    WHEN MATCHED  
+        THEN UPDATE SET
+            radio_session_window.RRC_CONNECTION_CNT  = cast(radio_session_window.RRC_CONNECTION_CNT + 1,byte),
+            radio_session_window.END_C_ID            = start_marker.event.getC_ID_1(),
+            radio_session_window.EVENT_CNT           = radio_session_window.EVENT_CNT+1,
+            radio_session_window.END_RNC             = start_marker.event.RNC_ID_1,
+            radio_session_window.RRC_ACTIVITY_ON     = true,
+            radio_session_window.RRC_CONN_END        = start_marker.event.timestamp 
+    WHEN NOT MATCHED  
+        THEN INSERT INTO RadioSessionWindow SELECT
+            cast(start_marker.imsi,long)                as IMSI,
+            Util.getMcc(cast(start_marker.imsi,long))   as IMSI_MCC,
+            Util.getMnc(cast(start_marker.imsi,long))   as IMSI_MNC,
+            start_marker.sessionStartTime.roundFloor('min').minus((start_marker.sessionStartTime.getMinuteOfHour()%SESSION_DURATION_IN_MINUTES)*ONE_MINUTE_IN_MS)                 as DATETIME_ID,         
+            start_marker.event.timestamp                as timestamp,
+            0l                                          as PS_RAB_ACTIVITY_START_TIME,
+            start_marker.event.timestamp                as RRC_CONN_END,
+            0l                                          as PS_RAB_ACTIVITY_END_TIME,
+            start_marker.sessionStartTime.roundFloor('min').minus((start_marker.sessionStartTime.getMinuteOfHour()%SESSION_DURATION_IN_MINUTES)*ONE_MINUTE_IN_MS).plus(SESSION_DURATION_IN_MINUTES minutes) as SESSION_END,
+            0                                           as RRC_DURATION,
+            0                                           as PS_RAB_DURATION,
+            cast(0,short)                               as PS_RAB_ESTABLISH_CNT,
+            cast(0,short)                               as CS_RAB_ESTABLISH_CNT,
+            cast(0,byte)                                as DROPS_CNT,
+            1                                           as EVENT_CNT,
+            0                                           as HS_CELL_CHANGE_SUC_CNT,
+            0                                           as HS_CELL_CHANGE_ERR_CNT,
+            start_marker.event.getC_ID_1()              as START_C_ID,
+            start_marker.event.getC_ID_1()              as END_C_ID,
+            start_marker.event.RNC_ID_1                 as START_RNC,
+            start_marker.event.RNC_ID_1                 as END_RNC,
+            cast(SESSION_DURATION_IN_SECONDS,short)     as SESSION_DURATION,
+            0                                           as IFHO_EXEC_SUC_CNT,
+            0                                           as IFHO_EXEC_ERR_CNT,
+            0                                           as SOHO_EXEC_SUC_CNT,
+            0                                           as SOHO_EXEC_ERR_CNT,
+            0                                           as IRAT_EXEC_ERR_CNT,
+            0                                           as HS_NO_SELECTION_CNT,
+            radio_session_window.RAB_ACTIVITY_ON        as RAB_ACTIVITY_ON,
+            true                                        as RRC_ACTIVITY_ON,
+            cast(1,byte)                                as RRC_CONNECTION_CNT,
+            0                                           as CM_CNT,
+            0                                           as CM_UL_CNT,
+            0                                           as CM_DL_CNT,
+            0                                           as CM_ULDL_CNT,
+            0                                           as CM_DURATION,
+            0                                           as CM_START,
+            0                                            as RRC_MEAS_REP_SAMPLES,
+            0                                            as RRC_SAMPLES_GC_GS,
+            0                                            as RRC_SAMPLES_GC_BS,
+            0                                            as RRC_SAMPLES_BC_GS,
+            0                                            as RRC_SAMPLES_BC_BS,
+            0                                            as NUM_VALID_ECNO_SAMPLES,
+            0                                            as NUM_VALID_RSCP_SAMPLES,
+            0                                            as ECNO_TOTAL,
+            0                                            as RSCP_TOTAL,
+            cast(0,short)                               as CS_REASON_OTHER,
+            cast(0,short)                               as CS_REASON_QUEUE,  
+            cast(0,short)                               as CS_REASON_QOS_DCH,
+            cast(0,short)                               as CS_REASON_MOBILITY_COVERAGE,
+            cast(0,short)                               as CS_REASON_CAPACITY,
+            cast(0,short)                               as CS_REASON_UE_ACTIVITY,
+            cast(0,short)                               as CDS_SUCC_CNT,
+            cast(0,short)                               as CUS_SUCC_CNT,
+            cast(0,short)                               as CDS_ATT_CNT,
+            cast(0,short)                               as CUS_ATT_CNT,
+            0                                           as ACTIVITY_DURATION,
+            0                                           as HS_DURATION,
+            0                                           as EUL_DURATION,
+            0                                           as HSDSCH_USERS_TOTAL,
+            0                                           as HSDSCH_USERS_SAMPLES,
+            0                                           as UL_INTERFERENCE_TOTAL,
+            0                                           as UL_INTERFERENCE_SAMPLES,
+            0                                           as DL_NON_HS_TX_POWER_TOTAL,
+            0                                           as DL_NON_HS_TX_POWER_SAMPLES,
+            0                                           as CM_USER_TOTAL,
+            0                                           as CM_USER_SAMPLES,
+            EVENT_ID_VALUE                              as EVENT_ID;
+            
+
+@Name('middle')
+@Priority(4) 
+context radio_logical_partition
+insert into enhanced_event
+select  c.IMSI as imsi,
+        b as event
+     from pattern [
+                   every a=com.ericsson.cepmediation.apeventbeans.gpeh.RRC_RRC_CONNECTION_SETUP()
+                     -> (
+                          every b=com.ericsson.cepmediation.apeventbeans.gpeh.GpehBase()
+                        ) while (b.getEventId() != INTERNAL_IMSI_ID and b.getEventId() != RRC_RRC_CONNECTION_SETUP_ID) 
+                     -> ( c=com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_IMSI()
+                          and not com.ericsson.cepmediation.apeventbeans.gpeh.RRC_RRC_CONNECTION_SETUP()
+                        )  
+                ];
+
+
+@Name('after')
+@Priority(3) 
+context radio_logical_partition
+insert into enhanced_event
+select  b.IMSI                          as imsi,
+        c                               as event
+       from pattern [
+                          every(
+                                a=com.ericsson.cepmediation.apeventbeans.gpeh.RRC_RRC_CONNECTION_SETUP()
+                              ->b=com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_IMSI()
+                               ) 
+                               ->
+                               (                                                                     
+                                  every c=com.ericsson.cepmediation.apeventbeans.gpeh.GpehBase(c.getEventId() != INTERNAL_SYSTEM_UTILIZATION_ID
+                                                                                           AND c.getEventId() != INTERNAL_IMSI_ID)
+                               )
+                           while(c.getEventId()!=RRC_RRC_CONNECTION_SETUP_ID)   
+                    ];
+
+@Drop
+@Priority(1)
+on gpeh.INTERNAL_SYSTEM_UTILIZATION as interSysUtil
+update RadioSessionWindow AS rsw
+set
+       rsw.HSDSCH_USERS_TOTAL                  = rsw.HSDSCH_USERS_TOTAL + interSysUtil.getNUMBER_OF_USERS_ASSIGNED_TO_PHYS_HS_CHAN(),
+       rsw.HSDSCH_USERS_SAMPLES                = rsw.HSDSCH_USERS_SAMPLES + 1,
+       rsw.UL_INTERFERENCE_TOTAL               = rsw.UL_INTERFERENCE_TOTAL + cast(Math.pow(10,((-112.1 + 0.1*interSysUtil.getUL_INTERFERENCE())/10.0).doubleValue()), float),
+       rsw.UL_INTERFERENCE_SAMPLES             = rsw.UL_INTERFERENCE_SAMPLES + 1,
+       rsw.DL_NON_HS_TX_POWER_TOTAL            = rsw.DL_NON_HS_TX_POWER_TOTAL + interSysUtil.getDL_NON_HS_TX_POWER(),
+       rsw.DL_NON_HS_TX_POWER_SAMPLES          = rsw.DL_NON_HS_TX_POWER_SAMPLES + 1,
+       rsw.CM_USER_TOTAL                       = rsw.CM_USER_TOTAL + interSysUtil.getNO_OF_CM_USERS(),
+       rsw.CM_USER_SAMPLES                     = rsw.CM_USER_SAMPLES + 1                                                         
+where interSysUtil.getC_ID_1() = rsw.END_C_ID
+   and rsw.RRC_ACTIVITY_ON = true;
+
+@Drop
+@Priority(1)
+expression isServingCell { ee => DefaultLookupService.getInstance().isForServingCell(ee.event.getRNC_ID_1(), ee.event.getC_ID_1(), 
+                                     cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getSCRAMBLING_CODE())}
+                                    
+expression isFreqEvent {ee => cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getMEASUREMENT_TYPE() = 0 
+                           or  cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getMEASUREMENT_TYPE() = 1}                   
+
+
+expression getRscp {ee =>  case when cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getRSCP() < -5
+                        then
+                            BASE_RSCP_VALUE - 5
+                        when cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getRSCP() >= HIGHEST_RSCP_INDEX
+                        then
+                            BASE_RSCP_VALUE + HIGHEST_RSCP_INDEX - 1
+                        else
+                            BASE_RSCP_VALUE + cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getRSCP()
+                        end
+                        }
+
+expression getEcno {ee => case when cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getECNO() < 0 
+                        then
+                            BASE_ECNO_VALUE
+                        when cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getECNO() >= HIGHEST_ECNO_INDEX
+                        then
+                            BASE_ECNO_VALUE + ((HIGHEST_ECNO_INDEX - 1)* 0.5f) 
+                        else
+                            BASE_ECNO_VALUE + (cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getECNO()) * 0.5f
+                        end
+                        }
+
+expression ecnoAndRscpAreSet {ee => cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getRSCP() != -2147483648 
+                                and cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getECNO() != -2147483648}
+
+expression ecnoIsSet {ee => cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getECNO() != -2147483648} 
+
+expression rscpIsSet {ee => cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getRSCP() != -2147483648}
+
+ON enhanced_event AS ee
+    MERGE RadioSessionWindow AS radio_session_window
+    WHERE radio_session_window.IMSI = cast(ee.imsi,long)
+     WHEN MATCHED AND ee.event.getEventId()=INTERNAL_RAB_ESTABLISHMENT_ID
+                  AND Util.containsPsRab(cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_ESTABLISHMENT).getTARGET_CONF())
+         THEN UPDATE SET
+             radio_session_window.PS_RAB_ACTIVITY_START_TIME    = case when radio_session_window.START_RAB=cast(-1,short)
+                                                                  THEN
+                                                                    ee.event.timestamp
+                                                                  ELSE
+                                                                     radio_session_window.PS_RAB_ACTIVITY_START_TIME
+                                                                  END,
+             radio_session_window.PS_RAB_ACTIVITY_END_TIME      = ee.event.timestamp,                                                                 
+             radio_session_window.PS_RAB_ESTABLISH_CNT          = Util.getPsCount(cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_ESTABLISHMENT).getSOURCE_CONF(),
+                                                                                  cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_ESTABLISHMENT).getTARGET_CONF(),
+                                                                                     radio_session_window.PS_RAB_ESTABLISH_CNT),
+             radio_session_window.EVENT_CNT                     = radio_session_window.EVENT_CNT+1,
+             radio_session_window.END_C_ID                      = ee.event.getC_ID_1(),
+             radio_session_window.END_RNC                       = ee.event.RNC_ID_1,
+             radio_session_window.CS_RAB_ESTABLISH_CNT          = Util.getCsCount(cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_ESTABLISHMENT).getSOURCE_CONF(),
+                                                                                  cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_ESTABLISHMENT).getTARGET_CONF(),
+                                                                                     radio_session_window.CS_RAB_ESTABLISH_CNT),
+             radio_session_window.RAB_ACTIVITY_ON               = true,
+             radio_session_window.END_RAB                       = cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_ESTABLISHMENT).getTARGET_CONF(),                                                                        
+             radio_session_window.START_RAB                     = case when radio_session_window.START_RAB=cast(-1,short)
+                                                                  THEN 
+                                                                    cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_ESTABLISHMENT).getTARGET_CONF()
+                                                                  ELSE
+                                                                    radio_session_window.START_RAB  
+                                                                  END,
+            radio_session_window.HSDPA_UE_CATEGORY              = case when cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_ESTABLISHMENT).getHS_DSCH_PHYSICAL_LAYER_CATEGORY() != -1
+                                                                  then cast(cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_ESTABLISHMENT).getHS_DSCH_PHYSICAL_LAYER_CATEGORY(),short)
+                                                                  else radio_session_window.HSDPA_UE_CATEGORY
+                                                                  end,
+            radio_session_window.EUL_UE_CATEGORY                = case when cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_ESTABLISHMENT).getE_DCH_PHYSICAL_LAYER_CATEGORY() != -1
+                                                                  then cast(cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_ESTABLISHMENT).getE_DCH_PHYSICAL_LAYER_CATEGORY(),short)
+                                                                  else radio_session_window.EUL_UE_CATEGORY
+                                                                  end,
+            radio_session_window.ACTIVITY_START                 = case when ACTIVITY_START < 0
+                                                                       and cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_ESTABLISHMENT).getTARGET_CONF() != 4 
+                                                                  then 
+                                                                    ee.event.timestamp 
+                                                                  else 
+                                                                    radio_session_window.ACTIVITY_START
+                                                                  end,
+            radio_session_window.HS_START                       = case when true = Util.isHsdpaBearer(radio_session_window.START_RAB)
+                                                                  then 
+                                                                    ee.event.timestamp
+                                                                  else 
+                                                                    radio_session_window.HS_START
+                                                                  end,
+            radio_session_window.EUL_START                      = case when true = Util.isHsupaBearer(radio_session_window.START_RAB)
+                                                                  then 
+                                                                    ee.event.timestamp
+                                                                  else 
+                                                                    radio_session_window.EUL_START
+                                                                  end
+     WHEN MATCHED  AND ee.event.getEventId()=INTERNAL_RAB_ESTABLISHMENT_ID
+                   AND Util.isCsRabOnly(cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_ESTABLISHMENT).getTARGET_CONF())
+         THEN UPDATE SET
+             radio_session_window.EVENT_CNT                     = radio_session_window.EVENT_CNT+1,
+             radio_session_window.END_C_ID                      = ee.event.getC_ID_1(),
+             radio_session_window.END_RNC                       = ee.event.RNC_ID_1,
+             radio_session_window.CS_RAB_ESTABLISH_CNT          = Util.getCsCount(cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_ESTABLISHMENT).getSOURCE_CONF(),
+                                                                                  cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_ESTABLISHMENT).getTARGET_CONF(),
+                                                                                  radio_session_window.CS_RAB_ESTABLISH_CNT)
+      WHEN MATCHED AND (ee.event.getEventId()=INTERNAL_RAB_RELEASE_ID 
+                   AND radio_session_window.RAB_ACTIVITY_ON = true
+                   AND not Util.containsPsRab(cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_RELEASE).getTARGET_CONF()))
+         THEN UPDATE SET
+             radio_session_window.EVENT_CNT                     = radio_session_window.EVENT_CNT+1,
+             radio_session_window.END_C_ID                      = ee.event.getC_ID_1(),
+             radio_session_window.END_RNC                       = ee.event.RNC_ID_1,
+             radio_session_window.PS_RAB_DURATION               = radio_session_window.PS_RAB_DURATION + cast((ee.event.timestamp-radio_session_window.PS_RAB_ACTIVITY_END_TIME),int),
+             radio_session_window.END_RAB                       = cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_RELEASE).getSOURCE_CONF(),
+             radio_session_window.PS_RAB_ACTIVITY_END_TIME      = ee.event.timestamp,
+             radio_session_window.RAB_ACTIVITY_ON               = false,
+             radio_session_window.ACTIVITY_DURATION             = case when radio_session_window.ACTIVITY_START > 0
+                                                                  then radio_session_window.ACTIVITY_DURATION + cast((ee.event.timestamp - radio_session_window.ACTIVITY_START), int)
+                                                                  else radio_session_window.ACTIVITY_DURATION
+                                                                   end,
+            radio_session_window.ACTIVITY_START                 = -1,
+            radio_session_window.HS_DURATION                    = case when radio_session_window.HS_START > 0
+                                                                  then radio_session_window.HS_DURATION + cast((ee.event.timestamp - radio_session_window.HS_START), int)
+                                                                  else radio_session_window.HS_DURATION
+                                                                   end,
+            radio_session_window.HS_START                       = -1,
+            radio_session_window.EUL_DURATION                   = case when radio_session_window.EUL_START > 0
+                                                                  then radio_session_window.EUL_DURATION + cast(( ee.event.timestamp - radio_session_window.EUL_START), int)
+                                                                  else radio_session_window.EUL_DURATION
+                                                                   end,
+            radio_session_window.EUL_START                      = -1
+     WHEN MATCHED AND ee.event.getEventId()=INTERNAL_RAB_RELEASE_ID
+                  AND radio_session_window.RAB_ACTIVITY_ON = true 
+                  AND Util.containsPsRab(cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_RELEASE).getTARGET_CONF())
+         THEN UPDATE SET
+             radio_session_window.EVENT_CNT                     = radio_session_window.EVENT_CNT+1,
+             radio_session_window.END_C_ID                      = ee.event.getC_ID_1(),
+             radio_session_window.END_RNC                       = ee.event.RNC_ID_1
+      WHEN MATCHED AND ee.event.getEventId()=INTERNAL_SYSTEM_RELEASE_ID
+                   AND radio_session_window.RAB_ACTIVITY_ON = true 
+                   AND not Util.containsPsRab(cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_SYSTEM_RELEASE).getTARGET_CONF())
+         THEN UPDATE SET
+            radio_session_window.EVENT_CNT                      = radio_session_window.EVENT_CNT+1,
+            radio_session_window.END_C_ID                       = ee.event.getC_ID_1(),
+            radio_session_window.END_RNC                        = ee.event.RNC_ID_1,
+            radio_session_window.PS_RAB_DURATION                = radio_session_window.PS_RAB_DURATION + cast((ee.event.timestamp-radio_session_window.PS_RAB_ACTIVITY_END_TIME),int),
+            radio_session_window.END_RAB                        = cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_SYSTEM_RELEASE).getSOURCE_CONF(),
+            radio_session_window.PS_RAB_ACTIVITY_END_TIME       = ee.event.timestamp,
+            radio_session_window.RAB_ACTIVITY_ON                = false,
+            radio_session_window.DROPS_CNT                      = cast((radio_session_window.DROPS_CNT + 1),byte),
+            radio_session_window.ACTIVITY_DURATION              = case when radio_session_window.ACTIVITY_START > 0
+                                                                  then radio_session_window.ACTIVITY_DURATION + cast((ee.event.timestamp - radio_session_window.ACTIVITY_START), int)
+                                                                  else radio_session_window.ACTIVITY_DURATION
+                                                                   end,
+            radio_session_window.ACTIVITY_START                 = -1,
+            radio_session_window.HS_DURATION                    = case when radio_session_window.HS_START > 0
+                                                                  then radio_session_window.HS_DURATION + cast((ee.event.timestamp - radio_session_window.HS_START), int)
+                                                                  else radio_session_window.HS_DURATION
+                                                                   end,
+            radio_session_window.HS_START                       = -1,
+            radio_session_window.EUL_DURATION                   = case when radio_session_window.EUL_START > 0
+                                                                  then radio_session_window.EUL_DURATION + cast(( ee.event.timestamp - radio_session_window.EUL_START), int)
+                                                                  else radio_session_window.EUL_DURATION
+                                                                   end,
+            radio_session_window.EUL_START                      = -1   
+     WHEN MATCHED AND ee.event.getEventId()=INTERNAL_SYSTEM_RELEASE_ID
+            THEN UPDATE SET
+            radio_session_window.EVENT_CNT                      = radio_session_window.EVENT_CNT+1,
+            radio_session_window.END_C_ID                       = ee.event.getC_ID_1(),
+            radio_session_window.END_RNC                        = ee.event.RNC_ID_1,
+            radio_session_window.DROPS_CNT                      = cast((radio_session_window.DROPS_CNT + 1),byte)
+     WHEN MATCHED AND ee.event.getEventId()=RRC_RRC_CONNECTION_RELEASE_COMPLETE_ID
+         THEN UPDATE SET
+             radio_session_window.EVENT_CNT                     = radio_session_window.EVENT_CNT+1,
+             radio_session_window.END_C_ID                      = ee.event.getC_ID_1(),
+             radio_session_window.END_RNC                       = ee.event.RNC_ID_1,
+             radio_session_window.PS_RAB_DURATION               = case when radio_session_window.RAB_ACTIVITY_ON = true 
+                                                                  THEN 
+                                                                    radio_session_window.PS_RAB_DURATION + cast((ee.event.timestamp-radio_session_window.PS_RAB_ACTIVITY_END_TIME),int)
+                                                                  ELSE
+                                                                    radio_session_window.PS_RAB_DURATION
+                                                                  END,
+             radio_session_window.PS_RAB_ACTIVITY_END_TIME      = case when radio_session_window.RAB_ACTIVITY_ON = true 
+                                                                  THEN 
+                                                                    ee.event.timestamp
+                                                                  ELSE
+                                                                    radio_session_window.PS_RAB_ACTIVITY_END_TIME 
+                                                                  END,
+             radio_session_window.CM_DURATION                   = case when radio_session_window.CM_START > 0 
+                                                                  THEN 
+                                                                    radio_session_window.CM_DURATION + cast((ee.event.timestamp - radio_session_window.CM_START), int)  
+                                                                  ELSE
+                                                                    radio_session_window.CM_DURATION 
+                                                                  END,
+             radio_session_window.CM_START                      = 0,
+             radio_session_window.RAB_ACTIVITY_ON               = false,
+             radio_session_window.RRC_ACTIVITY_ON               = false,
+             radio_session_window.RRC_DURATION                  = radio_session_window.RRC_DURATION + cast((ee.event.timestamp-radio_session_window.RRC_CONN_END),int),
+             radio_session_window.RRC_CONN_END                  = ee.event.timestamp,
+             radio_session_window.ACTIVITY_DURATION             = case when radio_session_window.ACTIVITY_START > 0
+                                                                  then radio_session_window.ACTIVITY_DURATION + cast((ee.event.timestamp - radio_session_window.ACTIVITY_START), int)
+                                                                  else radio_session_window.ACTIVITY_DURATION
+                                                                   end,
+            radio_session_window.ACTIVITY_START                 = -1,
+            radio_session_window.HS_DURATION                    = case when radio_session_window.HS_START > 0
+                                                                  then radio_session_window.HS_DURATION + cast((ee.event.timestamp - radio_session_window.HS_START), int)
+                                                                  else radio_session_window.HS_DURATION
+                                                                   end,
+            radio_session_window.HS_START                       = -1,
+            radio_session_window.EUL_DURATION                   = case when radio_session_window.EUL_START > 0
+                                                                  then radio_session_window.EUL_DURATION + cast(( ee.event.timestamp - radio_session_window.EUL_START), int)
+                                                                  else radio_session_window.EUL_DURATION
+                                                                   end,
+            radio_session_window.EUL_START                      = -1
+     WHEN MATCHED AND ee.event.getEventId()=INTERNAL_FAILED_HSDSCH_CELL_CHANGE_ID
+         THEN UPDATE SET
+             radio_session_window.HS_CELL_CHANGE_ERR_CNT        = radio_session_window.HS_CELL_CHANGE_ERR_CNT+1,
+             radio_session_window.EVENT_CNT                     = radio_session_window.EVENT_CNT+1,
+             radio_session_window.END_C_ID                      = ee.event.getC_ID_1(),
+             radio_session_window.END_RNC                       = ee.event.RNC_ID_1
+     WHEN MATCHED AND ee.event.getEventId()=INTERNAL_SUCCESSFUL_HSDSCH_CELL_CHANGE_ID
+         THEN UPDATE SET
+             radio_session_window.HS_CELL_CHANGE_SUC_CNT        = radio_session_window.HS_CELL_CHANGE_SUC_CNT+1,
+             radio_session_window.EVENT_CNT                     = radio_session_window.EVENT_CNT+1,
+             radio_session_window.END_C_ID                      = ee.event.getC_ID_1(),
+             radio_session_window.END_RNC                       = ee.event.RNC_ID_1
+     WHEN MATCHED AND ee.event.getEventId()=INTERNAL_HSDSCH_CELL_SELECTION_NO_CELL_SELECTED_ID
+         THEN UPDATE SET
+             radio_session_window.HS_NO_SELECTION_CNT           = radio_session_window.HS_NO_SELECTION_CNT+1,
+             radio_session_window.EVENT_CNT                     = radio_session_window.EVENT_CNT+1,
+             radio_session_window.END_C_ID                      = ee.event.getC_ID_1(),
+             radio_session_window.END_RNC                       = ee.event.RNC_ID_1
+     WHEN MATCHED AND ee.event.getEventId()=INTERNAL_CMODE_ACTIVATE_ID
+         THEN UPDATE SET
+             radio_session_window.CM_START                      = CASE WHEN radio_session_window.CM_START = 0
+                                                                  THEN
+                                                                      ee.event.timestamp
+                                                                  ELSE
+                                                                      radio_session_window.CM_START
+                                                                  END,
+             radio_session_window.CM_UL_CNT                     = CASE WHEN (cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CMODE_ACTIVATE)).getCM_TYPE() = 2 
+                                                                  THEN 
+                                                                    radio_session_window.CM_UL_CNT + 1
+                                                                  ELSE
+                                                                    radio_session_window.CM_UL_CNT 
+                                                                  END,
+             radio_session_window.CM_DL_CNT                     = CASE WHEN (cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CMODE_ACTIVATE)).getCM_TYPE() = 0 
+                                                                  THEN 
+                                                                    radio_session_window.CM_DL_CNT + 1
+                                                                  ELSE
+                                                                    radio_session_window.CM_DL_CNT 
+                                                                  END,
+             radio_session_window.CM_ULDL_CNT                   = CASE WHEN (cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CMODE_ACTIVATE)).getCM_TYPE() = 1 
+                                                                  THEN 
+                                                                    radio_session_window.CM_ULDL_CNT + 1
+                                                                  ELSE
+                                                                    radio_session_window.CM_ULDL_CNT 
+                                                                  END,
+             radio_session_window.CM_CNT                        = radio_session_window.CM_CNT + 1,
+             radio_session_window.EVENT_CNT                     = radio_session_window.EVENT_CNT+1,
+             radio_session_window.END_C_ID                      = ee.event.getC_ID_1(),
+             radio_session_window.END_RNC                       = ee.event.RNC_ID_1
+     WHEN MATCHED AND ee.event.getEventId()=INTERNAL_CMODE_DEACTIVATE_ID
+         THEN UPDATE SET
+             radio_session_window.CM_DURATION                   = CASE WHEN radio_session_window.CM_START > 0
+                                                                  THEN
+                                                                      radio_session_window.CM_DURATION + cast(( ee.event.timestamp - radio_session_window.CM_START), int)
+                                                                  ELSE 
+                                                                        radio_session_window.CM_DURATION
+                                                                  END,
+             radio_session_window.CM_START                      = 0,
+             radio_session_window.EVENT_CNT                     = radio_session_window.EVENT_CNT+1,
+             radio_session_window.END_C_ID                      = ee.event.getC_ID_1(),
+             radio_session_window.END_RNC                       = ee.event.RNC_ID_1
+    when matched and ee.event.getEventId()=INTERNAL_OUT_HARD_HANDOVER_FAILURE_ID
+        then update set
+            radio_session_window.IRAT_EXEC_ERR_CNT              = case when cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_OUT_HARD_HANDOVER_FAILURE).getPROCEDURE_INDICATOR() in (7,12)
+                                                                  then radio_session_window.IRAT_EXEC_ERR_CNT + 1
+                                                                  else radio_session_window.IRAT_EXEC_ERR_CNT
+                                                                  end,
+            radio_session_window.EVENT_CNT                      = radio_session_window.EVENT_CNT+1,
+            radio_session_window.END_C_ID                       = ee.event.getC_ID_1(),
+            radio_session_window.END_RNC                        = ee.event.RNC_ID_1
+    when matched and ee.event.getEventId()=INTERNAL_IFHO_EXECUTION_ACTIVE_ID
+        then update set
+            radio_session_window.IFHO_EXEC_ERR_CNT              = case when cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_IFHO_EXECUTION_ACTIVE).getRESULT() > 0
+                                                                  then radio_session_window.IFHO_EXEC_ERR_CNT + 1
+                                                                  else radio_session_window.IFHO_EXEC_ERR_CNT
+                                                                  end,
+            radio_session_window.IFHO_EXEC_SUC_CNT              = case when cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_IFHO_EXECUTION_ACTIVE).getRESULT() = 0
+                                                                  then radio_session_window.IFHO_EXEC_SUC_CNT + 1
+                                                                  else radio_session_window.IFHO_EXEC_SUC_CNT
+                                                                  end,
+            radio_session_window.EVENT_CNT                      = radio_session_window.EVENT_CNT+1,
+            radio_session_window.END_C_ID                       = ee.event.getC_ID_1(),
+            radio_session_window.END_RNC                        = ee.event.RNC_ID_1
+    when matched and ee.event.getEventId()=INTERNAL_SOFT_HANDOVER_EXECUTION_ID
+        then update set
+            radio_session_window.SOHO_EXEC_ERR_CNT              = case when cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_SOFT_HANDOVER_EXECUTION).getRESULT() > 0
+                                                                  then radio_session_window.SOHO_EXEC_ERR_CNT + 1
+                                                                  else radio_session_window.SOHO_EXEC_ERR_CNT
+                                                                  end,
+            radio_session_window.SOHO_EXEC_SUC_CNT              = case when cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_SOFT_HANDOVER_EXECUTION).getRESULT() = 0
+                                                                  then radio_session_window.SOHO_EXEC_SUC_CNT + 1
+                                                                  else radio_session_window.SOHO_EXEC_SUC_CNT
+                                                                  end,
+            radio_session_window.EVENT_CNT                      = radio_session_window.EVENT_CNT+1,
+            radio_session_window.END_C_ID                       = ee.event.getC_ID_1(),
+            radio_session_window.END_RNC                        = ee.event.RNC_ID_1
+    WHEN MATCHED AND ee.event.getEventId()=INTERNAL_CHANNEL_SWITCHING_ID
+        THEN UPDATE SET
+            radio_session_window.CS_REASON_OTHER                = CASE WHEN (cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING)).getCHANNEL_SWITCH_REASON() = 6 
+                                                                  THEN 
+                                                                     cast(radio_session_window.CS_REASON_OTHER + 1, short)
+                                                                  ELSE 
+                                                                       radio_session_window.CS_REASON_OTHER
+                                                                  END,
+            radio_session_window.CS_REASON_QUEUE               = CASE WHEN (cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING)).getCHANNEL_SWITCH_REASON() = 2
+                                                                  THEN
+                                                                      cast(radio_session_window.CS_REASON_QUEUE + 1, short)
+                                                                  ELSE 
+                                                                        radio_session_window.CS_REASON_QUEUE
+                                                                  END,
+            radio_session_window.CS_REASON_QOS_DCH             = CASE WHEN (cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING)).getCHANNEL_SWITCH_REASON() in (12, 13)
+                                                                  THEN
+                                                                      cast(radio_session_window.CS_REASON_QOS_DCH + 1, short) 
+                                                                  ELSE 
+                                                                        radio_session_window.CS_REASON_QOS_DCH
+                                                                  END,
+            radio_session_window.CS_REASON_MOBILITY_COVERAGE   = CASE WHEN (cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING)).getCHANNEL_SWITCH_REASON() in (3, 4)
+                                                                  THEN
+                                                                      cast(radio_session_window.CS_REASON_MOBILITY_COVERAGE + 1, short) 
+                                                                  ELSE
+                                                                        radio_session_window.CS_REASON_MOBILITY_COVERAGE
+                                                                  END,
+            radio_session_window.CS_REASON_CAPACITY            = CASE WHEN (cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING)).getCHANNEL_SWITCH_REASON() in (0, 10, 1, 7)
+                                                                  THEN
+                                                                      cast(radio_session_window.CS_REASON_CAPACITY + 1, short)
+                                                                  ELSE
+                                                                      radio_session_window.CS_REASON_CAPACITY
+                                                                  END,
+            radio_session_window.CS_REASON_UE_ACTIVITY         = CASE WHEN (cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING)).getCHANNEL_SWITCH_REASON() in (5, 8, 9)
+                                                                  THEN
+                                                                      cast(radio_session_window.CS_REASON_UE_ACTIVITY +1, short) 
+                                                                  ELSE
+                                                                      radio_session_window.CS_REASON_UE_ACTIVITY
+                                                                  END,
+            radio_session_window.CDS_SUCC_CNT                  = CASE WHEN Util.isDownswitch(ee.event) = true AND (cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING)).getEXCEPTION_CLASS() = 0
+                                                                  THEN cast(radio_session_window.CDS_SUCC_CNT + 1, short) 
+                                                                  ELSE 
+                                                                          radio_session_window.CDS_SUCC_CNT
+                                                                  END,
+            radio_session_window.CUS_SUCC_CNT                  = CASE WHEN Util.isDownswitch(ee.event) = false AND (cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING)).getEXCEPTION_CLASS() = 0
+                                                                  THEN cast(radio_session_window.CUS_SUCC_CNT + 1, short)
+                                                                  ELSE radio_session_window.CUS_SUCC_CNT
+                                                                  END,
+            radio_session_window.CDS_ATT_CNT                   = CASE WHEN Util.isDownswitch(ee.event) = true 
+                                                                  THEN cast(radio_session_window.CDS_ATT_CNT + 1, short) 
+                                                                  ELSE radio_session_window.CDS_ATT_CNT
+                                                                  END,
+            radio_session_window.CUS_ATT_CNT                   = CASE WHEN Util.isDownswitch(ee.event) = false
+                                                                  THEN cast(radio_session_window.CUS_ATT_CNT + 1, short) 
+                                                                  ELSE radio_session_window.CUS_ATT_CNT
+                                                                  END,
+            radio_session_window.ACTIVITY_DURATION             = case when radio_session_window.ACTIVITY_START > 0
+                                                                   then radio_session_window.ACTIVITY_DURATION + cast((ee.event.timestamp - radio_session_window.ACTIVITY_START), int)
+                                                                   else radio_session_window.ACTIVITY_DURATION
+                                                                   end,
+            radio_session_window.ACTIVITY_START                = case when Util.containsPsRab(cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING).getTARGET_CONF())
+                                                                      and cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING).getTARGET_CONF() != 4
+                                                                  then ee.event.timestamp
+                                                                  else -1
+                                                                  end,
+            radio_session_window.HS_DURATION                    = case when radio_session_window.HS_START > 0
+                                                                   then radio_session_window.HS_DURATION + cast(( ee.event.timestamp - radio_session_window.HS_START), int)
+                                                                   else radio_session_window.HS_DURATION
+                                                                   end,
+            radio_session_window.HS_START                       = case when true = Util.isHsdpaBearer(cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING).getTARGET_CONF())
+                                                                   then ee.event.timestamp
+                                                                   else -1
+                                                                   end,
+            radio_session_window.EUL_DURATION                   = case when radio_session_window.EUL_START > 0
+                                                                   then radio_session_window.EUL_DURATION + cast(( ee.event.timestamp - radio_session_window.EUL_START), int)
+                                                                   else radio_session_window.EUL_DURATION
+                                                                   end,
+            radio_session_window.EUL_START                      = case when true = Util.isHsupaBearer(cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING).getTARGET_CONF())
+                                                                   then ee.event.timestamp
+                                                                   else -1
+                                                                   end,
+            radio_session_window.PS_RAB_DURATION                = case when radio_session_window.RAB_ACTIVITY_ON = true 
+                                                                        and not Util.containsPsRab(cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING).getTARGET_CONF())
+                                                                  then 
+                                                                    radio_session_window.PS_RAB_DURATION + cast((ee.event.timestamp-radio_session_window.PS_RAB_ACTIVITY_END_TIME),int)
+                                                                  else
+                                                                    radio_session_window.PS_RAB_DURATION
+                                                                  end,
+            radio_session_window.PS_RAB_ACTIVITY_END_TIME       = case when radio_session_window.RAB_ACTIVITY_ON = true 
+                                                                        and not Util.containsPsRab(cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING).getTARGET_CONF()) 
+                                                                  then 
+                                                                    ee.event.timestamp
+                                                                  else
+                                                                    radio_session_window.PS_RAB_ACTIVITY_END_TIME 
+                                                                  end,
+            radio_session_window.END_RAB                        = case when radio_session_window.RAB_ACTIVITY_ON = true 
+                                                                        and not Util.containsPsRab(cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING).getTARGET_CONF()) 
+                                                                  then 
+                                                                    cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING).getSOURCE_CONF()
+                                                                  else
+                                                                     case when Util.containsPsRab(cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING).getTARGET_CONF()) = true
+                                                                     then cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING).getTARGET_CONF()
+                                                                     else radio_session_window.END_RAB
+                                                                     end
+                                                                  end,
+            radio_session_window.RAB_ACTIVITY_ON                = case when radio_session_window.RAB_ACTIVITY_ON = true 
+                                                                        and not Util.containsPsRab(cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING).getTARGET_CONF()) 
+                                                                  then 
+                                                                    false
+                                                                  else
+                                                                    radio_session_window.RAB_ACTIVITY_ON 
+                                                                  end,
+            radio_session_window.EVENT_CNT                      = radio_session_window.EVENT_CNT+1,
+            radio_session_window.END_C_ID                       = ee.event.getC_ID_1(),
+            radio_session_window.END_RNC                        = ee.event.RNC_ID_1
+    when matched and ee.event.getEventId()=RRC_MEASUREMENT_REPORT_ID
+        then update set
+            radio_session_window.RRC_MEAS_REP_SAMPLES = radio_session_window.RRC_MEAS_REP_SAMPLES + 1,
+            radio_session_window.EVENT_CNT                     = radio_session_window.EVENT_CNT+1,
+            radio_session_window.END_C_ID                      = ee.event.getC_ID_1(),
+            radio_session_window.END_RNC                       = ee.event.RNC_ID_1
+    when matched and ee.event.getEventId()=ASN1_MEASUREMENT_ID
+        then update set         
+            radio_session_window.RRC_SAMPLES_GC_GS               =    case when ecnoAndRscpAreSet(ee) and isFreqEvent(ee) and isServingCell(ee) 
+                                                    and getRscp(ee) >= DefaultLookupService.getInstance().getRSCPThresholdValue() 
+                                                    and getEcno(ee) >= DefaultLookupService.getInstance().getECNOThresholdValue() 
+                                                then
+                                                radio_session_window.RRC_SAMPLES_GC_GS + 1
+                                                else
+                                                radio_session_window.RRC_SAMPLES_GC_GS
+                                                end,
+            radio_session_window.RRC_SAMPLES_GC_BS               =    case when ecnoAndRscpAreSet(ee) and isFreqEvent(ee) and isServingCell(ee) 
+                                                    and getRscp(ee) >=  DefaultLookupService.getInstance().getRSCPThresholdValue() 
+                                                    and getEcno(ee) < DefaultLookupService.getInstance().getECNOThresholdValue() 
+                                                then
+                                                radio_session_window.RRC_SAMPLES_GC_BS + 1
+                                                else
+                                                radio_session_window.RRC_SAMPLES_GC_BS
+                                                end,
+            radio_session_window.RRC_SAMPLES_BC_GS               =    case when ecnoAndRscpAreSet(ee) and isFreqEvent(ee) and isServingCell(ee) 
+                                                    and getRscp(ee) <  DefaultLookupService.getInstance().getRSCPThresholdValue() 
+                                                    and getEcno(ee) >= DefaultLookupService.getInstance().getECNOThresholdValue() 
+                                                then
+                                                radio_session_window.RRC_SAMPLES_BC_GS + 1
+                                                else
+                                                radio_session_window.RRC_SAMPLES_BC_GS
+                                                end,
+            radio_session_window.RRC_SAMPLES_BC_BS               =    case when ecnoAndRscpAreSet(ee) and isFreqEvent(ee) and isServingCell(ee) 
+                                                    and getRscp(ee) <  DefaultLookupService.getInstance().getRSCPThresholdValue() 
+                                                    and getEcno(ee) < DefaultLookupService.getInstance().getECNOThresholdValue() 
+                                                then
+                                                radio_session_window.RRC_SAMPLES_BC_BS + 1
+                                                else
+                                                radio_session_window.RRC_SAMPLES_BC_BS
+                                                end,
+            radio_session_window.ECNO_TOTAL                       =    case when ecnoIsSet(ee)  and isFreqEvent(ee) and isServingCell(ee)
+                                                then 
+                                                radio_session_window.ECNO_TOTAL + cast(Math.pow(10, (getEcno(ee)/10).doubleValue()), float)  
+                                                else
+                                                radio_session_window.ECNO_TOTAL
+                                                end,
+            radio_session_window.NUM_VALID_ECNO_SAMPLES           =    case when ecnoIsSet(ee)  and isFreqEvent(ee) and isServingCell(ee) 
+                                                then 
+                                                NUM_VALID_ECNO_SAMPLES + 1
+                                                else
+                                                NUM_VALID_ECNO_SAMPLES
+                                                end,
+            radio_session_window.RSCP_TOTAL                       =    case when rscpIsSet(ee) and isFreqEvent(ee) and isServingCell(ee) 
+            then 
+                                                radio_session_window.RSCP_TOTAL + cast(Math.pow(10, (getRscp(ee)/10).doubleValue()), float)                                        
+                                                else
+                                                radio_session_window.RSCP_TOTAL
+                                                end,
+            radio_session_window.NUM_VALID_RSCP_SAMPLES           =    case when rscpIsSet(ee)  and isFreqEvent(ee) and isServingCell(ee)
+             then 
+                                                NUM_VALID_RSCP_SAMPLES + 1
+                                                else
+                                                NUM_VALID_RSCP_SAMPLES
+                                                end

@@ -1,0 +1,1425 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pojos that are going to be stored in db. -->
+<persistence xmlns="http://www.ericsson.com/Persistence">
+    <persistent-entity className="GPEH_SESSION" packageName="com.ericsson.cepmediation.apeventbeans.correlation">
+        <columns>
+            <column type="varchar" size="3">IMSI_MCC</column>
+            <column type="varchar" size="3">IMSI_MNC</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="unsignedint">EVENT_CNT</column>
+            <column type="unsignedint">RRC_DURATION</column>
+            <column type="unsignedint">PS_RAB_DURATION</column>
+            <column type="smallint">START_RNC</column>
+            <column type="smallint">END_RNC</column>
+            <column type="unsignedint">START_C_ID</column>
+            <column type="unsignedint">END_C_ID</column>
+            <column type="unsignedint">DISTINCT_CELL_CNT</column> <!-- it is impacting performance and probably we can remove it -->
+            <column type="unsignedint">RRC_MEAS_REP_SAMPLES</column>
+            <column type="unsignedint">RRC_SAMPLES_GC_BS</column>
+            <column type="unsignedint">RRC_SAMPLES_GC_GS</column>
+            <column type="unsignedint">RRC_SAMPLES_BC_BS</column>
+            <column type="unsignedint">RRC_SAMPLES_BC_GS</column>
+            <column type="float">ECNO_AVG</column>
+            <column type="int">RSCP_AVG</column>
+            <column type="smallint">HSDPA_UE_CATEGORY</column>
+            <column type="smallint">EUL_UE_CATEGORY</column>
+            <column type="float">HS_RATIO</column>
+            <column type="float">EUL_RATIO</column>
+            <column type="float">ACTIVITY</column>
+            <column type="float">UL_INTERFERENCE_AVG</column>
+            <column type="unsignedint">DL_NON_HS_TX_POWER_AVG</column>
+            <column type="smallint">HSDSCH_USERS_AVG</column>
+            <column type="smallint">CUS_SUCC_CNT</column><!-- Renamed from CUS_COUNT-->
+            <column type="smallint">CDS_SUCC_CNT</column><!-- Renamed from CDS_COUNT-->
+            <column type="smallint">CS_REASON_UE_ACTIVITY</column>
+            <column type="smallint">CS_REASON_CAPACITY</column>
+            <column type="smallint">CS_REASON_MOBILITY_COVERAGE</column>
+            <column type="smallint">CS_REASON_QOS_DCH</column>
+            <column type="smallint">CS_REASON_QUEUE</column>
+            <column type="smallint">CS_REASON_OTHER</column>
+            <column type="unsignedint">HS_CELL_CHANGE_ERR_CNT</column>
+            <column type="unsignedint">HS_CELL_CHANGE_SUC_CNT</column>
+            <column type="unsignedint">HS_NO_SELECTION_CNT</column>
+            <column type="unsignedint">IRAT_EXEC_ERR_CNT</column>
+            <column type="unsignedint">IFHO_EXEC_SUC_CNT</column>
+            <column type="unsignedint">IFHO_EXEC_ERR_CNT</column>
+            <column type="unsignedint">SOHO_EXEC_SUC_CNT</column>
+            <column type="unsignedint">SOHO_EXEC_ERR_CNT</column>
+            <column type="unsignedint">CM_CNT</column>
+            <column type="unsignedint">CM_DURATION</column>
+            <column type="unsignedint">CM_UL_CNT</column>
+            <column type="unsignedint">CM_DL_CNT</column>
+            <column type="unsignedint">CM_ULDL_CNT</column>
+            <column type="unsignedint">CM_USER_CNT</column>
+            <column type="smallint">START_RAB</column>
+            <column type="smallint">END_RAB</column>
+            <column type="unsignedbigint">IMSI</column>
+            <column type="timestamp">Timestamp</column> <!--New column RRC_CONN_START -->
+            <column type="timestamp">PS_RAB_ACTIVITY_START_TIME</column><!-- NEW PS_RAB_ACTIVITY_START_TIME start time of the first PS RAB-->
+            <column type="tinyint">RRC_CONNECTION_CNT</column><!-- NEW number of rrc connections-->
+            <column type="smallint">PS_RAB_ESTABLISH_CNT</column>
+            <column type="smallint">CS_RAB_ESTABLISH_CNT</column>
+            <column type="smallint">CUS_ATT_CNT</column><!-- # of channel upswitch attempts-->
+            <column type="smallint">CDS_ATT_CNT</column><!-- # of channel downswitch attempts-->
+            <column type="tinyint">DROPS_CNT</column><!-- # of Internal System Releases within a session-->
+            <column type="smallint">SESSION_DURATION</column><!-- NEW session duration in seconds. currently it is 5 minutes -->
+            <column type="timestamp">RRC_CONN_END</column> <!-- NEW end time of rrc cnnection within a session -->
+            <column type="timestamp">PS_RAB_ACTIVITY_END_TIME</column> <!-- NEW start time of PS RAB within a session-->
+            <column type="unsignedbigint">START_HIER3_ID</column> <!-- NEW hash for start_rnc_id -->
+            <column type="unsignedbigint">END_HIER3_ID</column> <!-- NEW hash for end_rnc_id -->
+            <column type="unsignedbigint">START_HIER321_ID</column> <!-- NEW hash for start sac id -->
+            <column type="unsignedbigint">END_HIER321_ID</column> <!-- NEW hash for end sac id -->
+            <column type="unsignedbigint">START_HIER3_CELL_ID</column> <!-- NEW hash for start cell -->
+            <column type="unsignedbigint">END_HIER3_CELL_ID</column> <!-- NEW hash for end cell -->
+            <column type="varchar" size="35">START_CELL_ID</column> <!-- NEW START_CELL_ID -->
+            <column type="varchar" size="35">END_CELL_ID</column> <!-- NEW END_CELL_ID -->
+            <column type="bit">CARRIED_OVER</column>
+            <column type="timestamp" truncateSeconds="true">DATETIME_ID</column><!--MODIFIED:Renamed from: SESSION_START .NEW session start. should be rounded to minutes -->
+            <column type="timestamp" truncateSeconds="true">DATETIME_ID</column><!--EVENT_TIME actually but we will use the same field as DATETIME_ID in the POJO. should be rounded to minutes -->
+        </columns>
+    </persistent-entity>
+
+     <persistent-entity className="SGEH_SESSION" packageName="com.ericsson.cepmediation.apeventbeans.correlation">
+        <columns>
+            <column type="smallint">EVENT_ID</column>
+            <column type="unsignedbigint">IMSI</column>
+            <column type="varchar" size="127">START_APN</column>
+            <column type="varchar" size="127">END_APN</column><!-- NEW For 5 minutes session we need first and last apn. -->
+            <column type="smallint">RAU_ATT_CNT</column>
+            <column type="smallint">RAU_SUC_CNT</column>
+            <column type="smallint">ISRAU_ATT_CNT</column>
+            <column type="smallint">ISRAU_SUC_CNT</column>
+            <column type="varchar" size="128">EVENT_SOURCE_NAME</column>
+            <column type="unsignedint">TAC</column>
+            <column type="unsignedbigint">MSISDN</column>
+            <column type="smallint">SESSION_DURATION</column><!-- session duration in seconds. currently it is 5 minutes -->
+            <column type="timestamp">SGSN_ACTIVITY_START_TIME</column>
+            <column type="timestamp">SGSN_ACTIVITY_LATEST_TIME</column>
+            <column type="timestamp">APN_ACTIVITY_START_TIME</column>
+            <column type="timestamp">APN_ACTIVITY_LATEST_TIME</column>
+            <column type="timestamp" truncateSeconds="true">Timestamp</column> <!-- rounded to minutes, DATETIME_ID-->
+            <column type="timestamp" truncateSeconds="true">Timestamp</column> <!-- rounded to minutes, EVENT_TIME-->
+        </columns>
+    </persistent-entity>
+    <persistent-entity className="EE_VISITED_CELL" packageName="com.ericsson.cepmediation.apeventbeans.correlation">
+        <columns>
+            <column type="unsignedbigint">IMSI</column>
+            <column type="varchar" size="3">IMSI_MCC</column>
+            <column type="varchar" size="3">IMSI_MNC</column>
+            <column type="smallint">RNC_ID</column>
+            <column type="unsignedint">C_ID</column><!--  renamed from cell_id -->
+            <column type="unsignedbigint">HIER3_ID_1</column> <!--  hash for rnc_id_1 -->
+            <column type="unsignedbigint">HIER3_CELL_ID_1</column>
+            <column type="unsignedint">DURATION</column>
+            <column type="unsignedint">RRC_SAMPLES_GC_BS</column>
+            <column type="unsignedint">RRC_SAMPLES_GC_GS</column>
+            <column type="unsignedint">RRC_SAMPLES_BC_BS</column>
+            <column type="unsignedint">RRC_SAMPLES_BC_GS</column>
+            <column type="timestamp" truncateMillis="true">Timestamp</column>
+            <column type="timestamp">Timestamp</column>
+        </columns>
+    </persistent-entity>
+    <persistent-entity className="EE_RRC_MEASUREMENT" packageName="com.ericsson.cepmediation.apeventbeans.correlation">
+        <columns>
+            <column type="smallint">EVENT_ID</column>
+            <column type="unsignedbigint">IMSI</column>
+            <column type="varchar" size="3">IMSI_MCC</column>
+            <column type="varchar" size="3">IMSI_MNC</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="varchar" size="35">CELL_ID_1</column>
+            <column type="varchar" size="35">CELL_ID_2</column>
+            <column type="varchar" size="35">CELL_ID_3</column>
+            <column type="varchar" size="35">CELL_ID_4</column>
+            <column type="unsignedbigint">HIER3_ID_1</column> <!--  hash for rnc_id_1 -->
+            <column type="unsignedbigint">HIER321_ID_1</column> <!-- hash for sac id of c_id_1 -->
+            <column type="unsignedbigint">HIER3_CELL_ID_1</column> <!-- hash for c_id_1 -->
+            <column type="unsignedbigint">HIER3_ID_2</column> <!--  hash for rnc_id_2 -->
+            <column type="unsignedbigint">HIER321_ID_2</column> <!-- hash for sac id of c_id_2 -->
+            <column type="unsignedbigint">HIER3_CELL_ID_2</column> <!-- hash for c_id_2 -->
+            <column type="unsignedbigint">HIER3_ID_3</column> <!--  hash for rnc_id_3 -->
+            <column type="unsignedbigint">HIER321_ID_3</column> <!-- hash for sac id of c_id_3 -->
+            <column type="unsignedbigint">HIER3_CELL_ID_3</column> <!-- hash for c_id_3 -->
+            <column type="unsignedbigint">HIER3_ID_4</column> <!--  hash for rnc_id_4 -->
+            <column type="unsignedbigint">HIER321_ID_4</column> <!-- hash for sac id of c_id_4 -->
+            <column type="unsignedbigint">HIER3_CELL_ID_4</column> <!-- hash for c_id_4 -->
+            <column type="tinyint">MEASUREMENT_TYPE</column>
+            <column type="smallint">TRIGGER_EVENT_ID</column>
+            <column type="int">RSCP</column>
+            <column type="float">ECNO</column>
+            <column type="smallint">SCRAMBLING_CODE</column>
+            <column type="unsignedint">BSIC</column>
+            <column type="tinyint">MEAS_RESULTS_ORDER_NUMBER</column> <!-- Name has changed. Old name is ORDER_NUMBER -->
+            <column type="int">ADDITIONAL_EVENT_ID</column>
+            <column type="tinyint">EVENT_RESULTS_ORDER_NUMBER</column> <!-- New column -->
+            <column type="bit">VALID_MEAS_RESULTS</column> <!-- New column -->
+            <column type="bit">VALID_EVENT_RESULTS</column> <!-- New column -->
+            <column type="timestamp" truncateMillis="true">Timestamp</column>
+            <column type="timestamp">Timestamp</column>
+        </columns>
+    </persistent-entity>
+    <persistent-entity className="TCP_REPORT_ENRICHED" packageName="com.ericsson.cepmediation.apeventbeans.correlation">
+        <columns>
+            <column type="varchar" size="3">IMSI_MCC</column> 
+            <column type="varchar" size="3">IMSI_MNC</column>
+            <column type="unsignedbigint">IMEISV</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar" size="127">START_APN</column>
+            <column type="varchar" size="127">END_APN</column>
+            <column type="unsignedint">DURATION</column>
+            <column type="bit">IS_PARTIAL</column>
+            <column type="bit">DOWNLINK</column>
+            <column type="unsignedbigint">DATA_RECEIVED</column>
+            <column type="unsignedint">THROUGHPUT</column>
+            <column type="unsignedint">PIPE_THROUGHPUT</column>
+            <column type="unsignedint">NONSS_PIPE_THROUGHPUT</column>
+            <column type="unsignedint">CHANNEL_PIPE_THROUGHPUT</column>
+            <column type="float">ALONE_RATIO</column>
+            <column type="unsignedint">MAX_RWIN</column>
+            <column type="unsignedint">SETUP_TIME_TERM</column>
+            <column type="unsignedint">SETUP_TIME_NET</column>
+            <column type="unsignedint">MAX_DATA_PACKET</column>
+            <column type="float">PACKET_LOSS_TERM</column>
+            <column type="float">PACKET_LOSS_NET</column>
+            <column type="unsignedint">CONTENT_TYPE</column>
+            <column type="varchar" size="127">HOST</column>
+            <column type="binary" size="16">UE_IP_ADDRESS</column>
+            <column type="unsignedint">TAC</column>
+            <column type="timestamp">ACTIVITY_START_TIME</column>
+            <column type="unsignedint">ACTIVITY_DURATION</column>
+            <column type="unsignedint">NO_OF_SAMPLES</column>
+            <column type="timestamp">FIVE_MIN_AGG_TIME</column>
+            <column type="binary" size="16">ADDR_TERM</column>
+            <column type="unsignedint">PORT_TERM</column>
+            <column type="binary" size="16">ADDR_SERV</column>
+            <column type="unsignedint">PORT_SERV</column>
+            <column type="varchar" size="10">URI</column>
+            <column type="tinyint">RAT</column>
+            <column type="varchar" size="3">MCC</column>
+            <column type="varchar" size="3">MNC</column>
+            <column type="unsignedint">LAC</column>
+            <column type="smallint">RAC</column>
+            <column type="unsignedint">CID</column>
+            <column type="unsignedint">SAC</column>
+            <column type="binary" size="16">GGSN_ADDR</column>
+            <column type="smallint">ARP</column>
+            <column type="tinyint">DELAY_CLASS</column>
+            <column type="tinyint">RELIABILITY_CLASS</column>
+            <column type="tinyint">PRECEDENCE</column>
+            <column type="varchar" size="20">TRAFFIC_CLASS</column>
+            <column type="tinyint">GTPC_THROUGHPUT</column>
+            <column type="unsignedbigint">GTPC_MAX_UPLINK</column>
+            <column type="unsignedbigint">GTPC_MAX_DOWNLINK</column>
+            <column type="unsignedbigint">GTPC_GBR_UPLINK</column>
+            <column type="unsignedbigint">GTPC_GBR_DOWNLINK</column>
+            <column type="smallint">SDU</column>
+            <column type="tinyint">DT_FLAG</column>
+            <column type="unsignedbigint">HIER3_ID</column>
+            <column type="unsignedbigint">HIER321_ID</column>
+            <column type="unsignedbigint">IMSI</column>
+            <column type="unsignedbigint">MSISDN</column>
+            <column type="timestamp" truncateMillis="true">Timestamp</column>
+            <column type="timestamp">Timestamp</column>
+        </columns>            
+    </persistent-entity>
+    <persistent-entity className="CLASSIFICATION_REPORT_ENRICHED" packageName="com.ericsson.cepmediation.apeventbeans.correlation">
+        <columns>
+            <column type="varchar" size="3">IMSI_MCC</column> 
+            <column type="varchar" size="3">IMSI_MNC</column>
+            <column type="unsignedbigint">IMEISV</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar" size="127">APN</column>
+            <column type="unsignedint">DURATION</column>
+            <column type="unsignedbigint">PACKETS_DOWNLINK</column>
+            <column type="unsignedbigint">PACKETS_UPLINK</column>
+            <column type="unsignedbigint">BYTES_DOWNLINK</column>
+            <column type="unsignedbigint">BYTES_UPLINK</column>
+            <column type="unsignedint">PROTOCOL</column>
+            <column type="unsignedint">FUNCTION</column>
+            <column type="unsignedint">ENCAPSULATION</column>
+            <column type="unsignedint">ENCRYPTION</column>
+            <column type="unsignedint">SERVICE_PROVIDER</column>
+            <column type="unsignedint">CLIENT</column>
+            <column type="binary" size="16">UE_IP_ADDRESS</column>
+            <column type="unsignedint">TAC</column>
+            <column type="timestamp">FIVE_MIN_AGG_TIME</column>
+            <column type="tinyint">RAT</column>
+            <column type="varchar" size="3">MCC</column>
+            <column type="varchar" size="3">MNC</column>
+            <column type="unsignedint">LAC</column>
+            <column type="smallint">RAC</column>
+            <column type="unsignedint">CID</column>
+            <column type="unsignedint">SAC</column>
+            <column type="binary" size="16">ADDR_TERM</column>
+            <column type="unsignedbigint">HIER3_ID</column>
+            <column type="unsignedbigint">HIER321_ID</column>
+            <column type="unsignedbigint">IMSI</column>
+            <column type="unsignedbigint">MSISDN</column>
+            <column type="timestamp" truncateMillis="true">Timestamp</column>
+            <column type="timestamp">Timestamp</column>
+        </columns>
+    </persistent-entity>
+    <persistent-entity className="INTERNAL_OUT_HARD_HANDOVER_FAILURE_ENRICHED" packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="smallint">EVENT_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="smallint">SOURCE_CONF</column>
+            <column type="unsignedint">C_ID_SERV_HSDSCH_CELL</column>
+            <column type="unsignedint">HHO_TARGET_ID_1</column>
+            <column type="unsignedint">HHO_TARGET_ID_2</column>
+            <column type="unsignedint">HHO_TARGET_ID_3</column>
+            <column type="int">HHO_TARGET_ID_4</column>
+            <column type="unsignedint">SOURCE_CONNECTION_PROPERTIES</column>
+            <column type="smallint">TARGET_CONF</column>
+            <column type="unsignedint">TARGET_CONNECTION_PROPERTIES</column>
+            <column type="tinyint">WANTED_CONF</column>
+            <column type="unsignedint">WANTED_CONNECTION_PROPERTIES</column>
+            <column type="tinyint">PROCEDURE_INDICATOR</column>
+            <column type="tinyint">EVALUATION_CASE</column>
+            <column type="smallint">EXCEPTION_CLASS</column>
+            <column type="smallint">CAUSE_VALUE</column>
+            <column type="smallint">EXTENDED_CAUSE_VALUE</column>
+            <column type="tinyint">SEVERITY_INDICATOR</column>
+            <column type="smallint">CRNC_ID_SERV_HSDSCH_CELL</column>
+            <column type="unsignedint">C_ID_1_SECONDARY_SERV_HSDSCH_CELL</column>
+            <column type="unsignedint">SOURCE_CONNECTION_PROPERTIES_EXT</column>
+            <column type="unsignedint">TARGET_CONNECTION_PROPERTIES_EXT</column>
+            <column type="unsignedint">WANTED_CONNECTION_PROPERTIES_EXT</column>
+            <column type="varchar" size="35" enriched="true">CELL_ID_1</column>
+            <column type="varchar" size="35" enriched="true">CELL_ID_2</column>
+            <column type="varchar" size="35" enriched="true">CELL_ID_3</column>
+            <column type="varchar" size="35" enriched="true">CELL_ID_4</column>
+            <column type="unsignedbigint" enriched="true">HIER3_ID_1</column> <!--  hash for rnc_id_1 -->
+            <column type="unsignedbigint" enriched="true">HIER321_ID_1</column> <!-- hash for sac id of c_id_1 -->
+            <column type="unsignedbigint" enriched="true">HIER3_CELL_ID_1</column> <!-- hash for c_id_1 -->
+            <column type="unsignedbigint" enriched="true">HIER3_ID_2</column> <!--  hash for rnc_id_2 -->
+            <column type="unsignedbigint" enriched="true">HIER321_ID_2</column> <!-- hash for sac id of c_id_2 -->
+            <column type="unsignedbigint" enriched="true">HIER3_CELL_ID_2</column> <!-- hash for c_id_2 -->
+            <column type="unsignedbigint" enriched="true">HIER3_ID_3</column> <!--  hash for rnc_id_3 -->
+            <column type="unsignedbigint" enriched="true">HIER321_ID_3</column> <!-- hash for sac id of c_id_3 -->
+            <column type="unsignedbigint" enriched="true">HIER3_CELL_ID_3</column> <!-- hash for c_id_3 -->
+            <column type="unsignedbigint" enriched="true">HIER3_ID_4</column> <!--  hash for rnc_id_4 -->
+            <column type="unsignedbigint" enriched="true">HIER321_ID_4</column> <!-- hash for sac id of c_id_4 -->
+            <column type="unsignedbigint" enriched="true">HIER3_CELL_ID_4</column> <!-- hash for c_id_4 -->
+            <column type="unsignedbigint" enriched="true">THIER3_ID</column> <!--  hash for target bsc (2G) or rnc (3G) -->
+            <column type="unsignedbigint" enriched="true">THIER321_ID</column> <!-- hash for target cell (2G) or sac (3G) -->
+            <column type="unsignedbigint" enriched="true">THIER3_CELL_ID</column> <!-- hash for target cell (3G), NA for 2G -->
+            <column type="float" enriched="true">ECNO_CELL_1</column>
+            <column type="int" enriched="true">RSCP_CELL_1</column>
+            <column type="float" enriched="true">ECNO_CELL_2</column>
+            <column type="int" enriched="true">RSCP_CELL_2</column>
+            <column type="float" enriched="true">ECNO_CELL_3</column>
+            <column type="int" enriched="true">RSCP_CELL_3</column>
+            <column type="float" enriched="true">ECNO_CELL_4</column>
+            <column type="int" enriched="true">RSCP_CELL_4</column>
+            <column type="float" enriched="true">TARGET_CELL_ECNO</column> <!-- DL_QUALITY_MEAS1_TARGET_CELL mapped to db -->
+            <column type="int" enriched="true">TARGET_CELL_RSCP</column> <!-- DL_QUALITY_MEAS2_TARGET_CELL mapped to dbm -->
+            <column type="tinyint" enriched="true">TARGET_CELL_RSSI</column> <!-- DL_QUALITY_MEAS1_TARGET_CELL mapped to db -->
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="varchar" size="3" enriched="true">IMSI_MCC</column> 
+            <column type="varchar" size="3" enriched="true">IMSI_MNC</column>
+            <column type="timestamp" truncateMillis="true">Timestamp</column>
+            <column type="timestamp">Timestamp</column>
+        </columns>
+    </persistent-entity>
+    <persistent-entity className="INTERNAL_SUCCESSFUL_HSDSCH_CELL_CHANGE_ENRICHED" packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="smallint">EVENT_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="smallint">EVENT_TRIGGER</column>
+            <column type="unsignedint">C_ID_SOURCE</column>
+            <column type="smallint">RNC_ID_SOURCE</column>
+            <column type="float" enriched="true">SOURCE_CELL_ECNO</column>
+            <column type="int" enriched="true">SOURCE_CELL_RSCP</column>
+            <column type="unsignedint">C_ID_TARGET</column>
+            <column type="smallint">RNC_ID_TARGET</column>
+            <column type="float" enriched="true">TARGET_CELL_ECNO</column>
+            <column type="int" enriched="true">TARGET_CELL_RSCP</column>
+            <column type="smallint">SOURCE_CONF</column>
+            <column type="smallint">GBR_UL</column>
+            <column type="smallint">GBR_DL</column>
+            <column type="unsignedint">SOURCE_CONNECTION_PROPERTIES</column>
+            <column type="unsignedint">TARGET_CONNECTION_PROPERTIES</column>
+            <column type="unsignedint">SOURCE_C_ID_1_SECONDARY_SERV_HSDSCH_CELL</column>
+            <column type="unsignedint">TARGET_C_ID_1_SECONDARY_SERV_HSDSCH_CELL</column>
+            <column type="unsignedint">SOURCE_CONNECTION_PROPERTIES_EXT</column>
+            <column type="unsignedint">TARGET_CONNECTION_PROPERTIES_EXT</column>
+            <column type="varchar" size="35" enriched="true">CELL_ID_1</column>
+            <column type="varchar" size="35" enriched="true">CELL_ID_2</column>
+            <column type="varchar" size="35" enriched="true">CELL_ID_3</column>
+            <column type="varchar" size="35" enriched="true">CELL_ID_4</column>
+            <column type="unsignedbigint" enriched="true">HIER3_ID_1</column> <!--  hash for rnc_id_1 -->
+            <column type="unsignedbigint" enriched="true">HIER321_ID_1</column> <!-- hash for sac id of c_id_1 -->
+            <column type="unsignedbigint" enriched="true">HIER3_CELL_ID_1</column> <!-- hash for c_id_1 -->
+            <column type="unsignedbigint" enriched="true">HIER3_ID_2</column> <!--  hash for rnc_id_2 -->
+            <column type="unsignedbigint" enriched="true">HIER321_ID_2</column> <!-- hash for sac id of c_id_2 -->
+            <column type="unsignedbigint" enriched="true">HIER3_CELL_ID_2</column> <!-- hash for c_id_2 -->
+            <column type="unsignedbigint" enriched="true">HIER3_ID_3</column> <!--  hash for rnc_id_3 -->
+            <column type="unsignedbigint" enriched="true">HIER321_ID_3</column> <!-- hash for sac id of c_id_3 -->
+            <column type="unsignedbigint" enriched="true">HIER3_CELL_ID_3</column> <!-- hash for c_id_3 -->
+            <column type="unsignedbigint" enriched="true">HIER3_ID_4</column> <!--  hash for rnc_id_4 -->
+            <column type="unsignedbigint" enriched="true">HIER321_ID_4</column> <!-- hash for sac id of c_id_4 -->
+            <column type="unsignedbigint" enriched="true">HIER3_CELL_ID_4</column> <!-- hash for c_id_4 -->
+            <column type="unsignedbigint" enriched="true">THIER3_ID</column> <!--  hash for target bsc (2G) or rnc (3G) -->
+            <column type="unsignedbigint" enriched="true">THIER321_ID</column> <!-- hash for target cell (2G) or sac (3G) -->
+            <column type="unsignedbigint" enriched="true">THIER3_CELL_ID</column> <!-- hash for target cell (3G), NA for 2G -->
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="varchar" size="3" enriched="true">IMSI_MCC</column> 
+            <column type="varchar" size="3" enriched="true">IMSI_MNC</column>
+            <column type="timestamp" truncateMillis="true">Timestamp</column>
+            <column type="timestamp">Timestamp</column>
+        </columns>
+    </persistent-entity>
+    <persistent-entity className="INTERNAL_SYSTEM_UTILIZATION" packageName="com.ericsson.cepmediation.apeventbeans.gpeh">
+        <columns>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="tinyint">TIMESTAMP_HOUR</column>
+            <column type="tinyint">TIMESTAMP_MINUTE</column>
+            <column type="tinyint">TIMESTAMP_SECOND</column>
+            <column type="smallint">TIMESTAMP_MILLISEC</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">RBS_ID</column>
+            <column type="unsignedint">LOCAL_CELL_GROUP_ID</column>
+            <column type="unsignedint">CAPACITY_CREDITS_UL</column>
+            <column type="unsignedint">CAPACITY_CREDITS_DL</column>
+            <column type="smallint">MAX_DL_POWER</column>
+            <column type="unsignedint">CONSUMED_CREDITS_UL</column>
+            <column type="unsignedint">CONSUMED_CREDITS_DL</column>
+            <column type="smallint">DL_TX_POWER</column>
+            <column type="smallint">DL_NON_HS_TX_POWER</column>
+            <column type="smallint">DL_HS_REQ_POWER</column>
+            <column type="smallint">UL_INTERFERENCE</column>
+            <column type="unsignedint">TOTAL_ASE_UL</column>
+            <column type="unsignedint">TOTAL_ASE_DL</column>
+            <column type="smallint">TOTAL_DL_CHAN_CODE_TREE_CONSUMPTION</column>
+            <column type="tinyint">NR_OF_CONNECTIONS_SF8</column>
+            <column type="tinyint">NR_OF_CONNECTIONS_SF16</column>
+            <column type="tinyint">NR_OF_CONNECTIONS_SF32</column>
+            <column type="tinyint">NO_OF_CM_USERS</column>
+            <column type="smallint">NUMBER_OF_USERS_ASSIGNED_TO_PHYS_HS_CHAN</column>
+            <column type="tinyint">NUMBER_OF_EDCH_USERS_IN_SERVING_CELL</column>
+            <column type="smallint">NUMBER_OF_EDCH_USERS_IN_NON_SERVING_CELL</column>
+            <column type="tinyint">NR_OF_CONNECTIONS_SF4_UL</column>
+            <column type="tinyint">NR_OF_CONNECTIONS_SF8_UL</column>
+            <column type="tinyint">NR_OF_CONNECTIONS_SF16_UL</column>
+            <column type="tinyint">NUMBER_OF_MCCH_MICH</column>
+            <column type="tinyint">NUMBER_OF_MTCH_64</column>
+            <column type="tinyint">NUMBER_OF_MTCH_128</column>
+            <column type="tinyint">NUMBER_OF_MTCH_256</column>
+            <column type="tinyint">NUMBER_OF_TTI2EDCH_USERS_IN_SERVING_CELL</column>
+            <column type="tinyint">NUMBER_OF_TTI2EDCH_USERS_IN_NON_SERVING_CELL</column>
+            <column type="smallint">UL_TN_IUB_USAGE</column>
+            <column type="smallint">DL_TN_IUB_USAGE</column>
+            <column type="smallint">NR_OF_OPENED_SF256_FOR_FDPCH_SYSTEM_UTILIZATION</column>
+            <column type="smallint">NR_OF_ALLOCATED_TIMEPOSITIONS_FOR_FDPCH_SYSTEM_UTILIZATION</column>
+            <column type="smallint">EUL_SCHEDULED_RATE</column>
+            <column type="smallint">NUMBER_OF_CONNECTIONS_SF64_UL</column>
+            <column type="smallint">NUMBER_OF_CONNECTIONS_SF128_DL</column>
+            <column type="timestamp" truncateMillis="true">Timestamp</column>
+            <column type="timestamp">Timestamp</column>
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="INTERNAL_START_CONGESTION" packageName="com.ericsson.cepmediation.apeventbeans.gpeh">
+        <columns>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="tinyint">TIMESTAMP_HOUR</column>
+            <column type="tinyint">TIMESTAMP_MINUTE</column>
+            <column type="tinyint">TIMESTAMP_SECOND</column>
+            <column type="smallint">TIMESTAMP_MILLISEC</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="smallint">DL_POWER</column>
+            <column type="smallint">UL_INTERFERENCE</column>
+            <column type="tinyint">PREVIOUS_DOWNLINK_STATE</column>
+            <column type="tinyint">CURRENT_DOWNLINK_STATE</column>
+            <column type="tinyint">PREVIOUS_UPLINK_STATE</column>
+            <column type="tinyint">CURRENT_UPLINK_STATE</column>
+            <column type="tinyint">TD_CARRIER_NO</column>
+            <column type="tinyint">TD_TS_NO</column>
+            <column type="tinyint">PREVIOUS_STATE</column>
+            <column type="tinyint">CURRENT_STATE</column>
+            <column type="timestamp" truncateMillis="true">Timestamp</column>
+            <column type="timestamp">Timestamp</column>
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="INTERNAL_STOP_CONGESTION" packageName="com.ericsson.cepmediation.apeventbeans.gpeh">
+        <columns>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="tinyint">TIMESTAMP_HOUR</column>
+            <column type="tinyint">TIMESTAMP_MINUTE</column>
+            <column type="tinyint">TIMESTAMP_SECOND</column>
+            <column type="smallint">TIMESTAMP_MILLISEC</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="smallint">DL_POWER</column>
+            <column type="smallint">UL_INTERFERENCE</column>
+            <column type="tinyint">PREVIOUS_DOWNLINK_STATE</column>
+            <column type="tinyint">CURRENT_DOWNLINK_STATE</column>
+            <column type="tinyint">PREVIOUS_UPLINK_STATE</column>
+            <column type="tinyint">CURRENT_UPLINK_STATE</column>
+            <column type="tinyint">TD_CARRIER_NO</column>
+            <column type="tinyint">TD_TS_NO</column>
+            <column type="tinyint">PREVIOUS_STATE</column>
+            <column type="tinyint">CURRENT_STATE</column>
+            <column type="timestamp" truncateMillis="true">Timestamp</column>
+            <column type="timestamp">Timestamp</column>
+        </columns>
+    </persistent-entity>
+    <persistent-entity className="INTERNAL_RECORDING_FAULT" packageName="com.ericsson.cepmediation.apeventbeans.gpeh">
+        <columns>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="tinyint">TIMESTAMP_HOUR</column>
+            <column type="tinyint">TIMESTAMP_MINUTE</column>
+            <column type="tinyint">TIMESTAMP_SECOND</column>
+            <column type="smallint">TIMESTAMP_MILLISEC</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="int">RNC_MP_ID</column>
+            <column type="smallint">EVENT_TRIGGER</column>
+            <column type="tinyint">AFFECTED_SCANNER_TYPE</column>
+            <column type="timestamp" truncateMillis="true">Timestamp</column>
+            <column type="timestamp">Timestamp</column>
+        </columns>
+    </persistent-entity>
+    <persistent-entity className="INTERNAL_MP_OVERLOAD" packageName="com.ericsson.cepmediation.apeventbeans.gpeh">
+        <columns>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="tinyint">TIMESTAMP_HOUR</column>
+            <column type="tinyint">TIMESTAMP_MINUTE</column>
+            <column type="tinyint">TIMESTAMP_SECOND</column>
+            <column type="smallint">TIMESTAMP_MILLISEC</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="int">RNC_MP_ID</column>
+            <column type="timestamp" truncateMillis="true">Timestamp</column>
+            <column type="timestamp">Timestamp</column>
+        </columns>
+    </persistent-entity>
+    <persistent-entity className="INTERNAL_SOHO_DS_MISSING_NEIGHBOUR_ENRICHED" packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="smallint">EVENT_TRIGGER</column>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="tinyint">ACTION</column>
+            <column type="smallint">SCRAMBLING_CODE_CELL_1</column>
+            <column type="smallint">SCRAMBLING_CODE_CELL_2</column>
+            <column type="smallint">SCRAMBLING_CODE_CELL_3</column>
+            <column type="smallint">SCRAMBLING_CODE_CELL_4</column>
+            <column type="float" enriched="true">ECNO_CELL_1</column>
+            <column type="float" enriched="true">ECNO_CELL_2</column>
+            <column type="float" enriched="true">ECNO_CELL_3</column>
+            <column type="float" enriched="true">ECNO_CELL_4</column>
+            <column type="int" enriched="true">RSCP_CELL_1</column>
+            <column type="int" enriched="true">RSCP_CELL_2</column>
+            <column type="int" enriched="true">RSCP_CELL_3</column>
+            <column type="int" enriched="true">RSCP_CELL_4</column>
+            <column type="smallint">SCRAMBLING_CODE_TRIGGER_CELL</column>
+            <column type="float" enriched="true">ECNO_TRIGGER_CELL</column>
+            <column type="int" enriched="true">RSCP_TRIGGER_CELL</column>
+            <column type="smallint">SCRAMBLING_CODE_ADDITIONAL_CELL1</column>
+            <column type="float" enriched="true">ECNO_ADDITIONAL_CELL1</column>
+            <column type="int" enriched="true">RSCP_ADDITIONAL_CELL1</column>
+            <column type="smallint">SCRAMBLING_CODE_ADDITIONAL_CELL2</column>
+            <column type="float" enriched="true">ECNO_ADDITIONAL_CELL2</column>
+            <column type="int" enriched="true">RSCP_ADDITIONAL_CELL2</column>
+            <column type="timestamp" truncateMillis="true">Timestamp</column>
+            <column type="timestamp">Timestamp</column>
+        </columns>
+    </persistent-entity>
+    <persistent-entity className="INTERNAL_CALL_SETUP_FAIL_ENRICHED" packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">HIER3_ID_1</column> <!-- HIER3_ID -->
+            <column type="unsignedbigint" attributeExists="false">HIER32_ID</column> <!-- Not populating this attribute in cep -->
+            <column type="unsignedbigint" enriched="true">HIER321_ID_1</column> <!-- HIER321_ID -->
+            <column type="unsignedbigint" enriched="true">HIER3_CELL_ID_1</column> <!-- HIER3_CELL_ID -->
+            <column type="varchar" size="3" enriched="true">IMSI_MCC</column>
+            <column type="varchar" size="3" enriched="true">IMSI_MNC</column>
+             <column type="varchar" size="3" attributeExists="false">MCC</column> 
+             <column type="varchar" size="3" attributeExists="false">MNC</column>
+            <column type="bit" enriched="true">ROAMING</column>
+            <column type="unsignedint" enriched="true">LAC</column>
+            <column type="smallint" enriched="true">RAC</column>
+            <column type="unsignedbigint">IMEISV</column>
+            <column type="unsignedint" enriched="true">TAC</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="unsignedint">UE_CONTEXT</column>
+            <column type="varchar" size="10" func="getStringFromInt">RNC_MODULE_ID</column>
+            <column type="unsignedint">SOURCE_CONF</column>
+            <column type="unsignedint">C_ID_SERV_HSDSCH_CELL</column>
+            <column type="unsignedint">CRNC_ID_SERV_HSDSCH_CELL</column>
+            <column type="unsignedint">TARGET_CONF</column>
+            <column type="unsignedint">WANTED_CONF</column>
+            <column type="tinyint">PROCEDURE_INDICATOR</column>
+            <column type="smallint">EVALUATION_CASE</column>
+            <column type="smallint">EXCEPTION_CLASS</column>
+            <column type="smallint">CAUSE_VALUE</column>
+            <column type="smallint">EXTENDED_CAUSE_VALUE</column>
+            <column type="bit" func="getBooleanFromByte">SEVERITY_INDICATOR</column>
+            <column type="tinyint">TRIGGER_POINT</column>
+            <column type="smallint">UTRAN_RANAP_CAUSE</column>
+            <column type="bit" func="getBooleanFromByte">CN_ID</column>
+            <column type="tinyint">ORIGINATING_STATE</column>
+            <column type="tinyint">RRC_ESTABLISHMENT_CAUSE</column>
+            <column type="tinyint">CELLO_AAL2NCI_REJECT_REASON</column>
+              <column type="tinyint" attributeExists="false">RAN_DISCONNECTION_CODE</column>
+             <column type="tinyint" attributeExists="false">RAN_DISCONNECTION_SUBCODE</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="unsignedint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="unsignedint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="unsignedint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="unsignedint">RNC_ID_4</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="unsignedint">SOURCE_CONNECTION_PROPERTIES</column>
+            <column type="unsignedint">TARGET_CONNECTION_PROPERTIES</column>
+            <column type="unsignedint">WANTED_CONNECTION_PROPERTIES</column>
+            <column type="unsignedint">SOURCE_C_ID_1_SECONDARY_SERV_HSDSCH_CELL</column>
+             <column type="unsignedint" attributeExists="false">RAN_ID_PARAMETER</column>
+             <column type="unsignedint" attributeExists="false">SCRAMBLING_CODE_CELL_1</column>
+             <column type="unsignedint" attributeExists="false">SCRAMBLING_CODE_CELL_2</column>
+            <column type="unsignedint" attributeExists="false">SCRAMBLING_CODE_CELL_3</column>
+            <column type="unsignedint" attributeExists="false">SCRAMBLING_CODE_CELL_4</column>
+            <column type="unsignedint" attributeExists="false">CPICH_EC_NO_CELL_1</column>
+            <column type="unsignedint" attributeExists="false">CPICH_EC_NO_CELL_2</column>
+            <column type="unsignedint" attributeExists="false">CPICH_EC_NO_CELL_3</column>
+            <column type="unsignedint" attributeExists="false">CPICH_EC_NO_CELL_4</column>
+            <column type="unsignedint" attributeExists="false">RSCP_CELL_1</column>
+            <column type="unsignedint" attributeExists="false">RSCP_CELL_2</column>
+            <column type="unsignedint" attributeExists="false">RSCP_CELL_3</column>
+            <column type="unsignedint" attributeExists="false">RSCP_CELL_4</column>
+            <column type="unsignedint" attributeExists="false">UL_INT_CELL1</column>
+            <column type="unsignedint" attributeExists="false">UL_INT_CELL2</column>
+            <column type="unsignedint" attributeExists="false">UL_INT_CELL3</column>
+            <column type="unsignedint" attributeExists="false">UL_INT_CELL4</column>
+            <column type="unsignedint" attributeExists="false">SCRAMBLING_CODE_ADDED_CELL</column>
+            <column type="unsignedint" attributeExists="false">RSCP_CELL_1_ADDED_CELL</column>
+            <column type="unsignedint" attributeExists="false">CPICH_EC_NO_ADDED_CELL</column>
+            <column type="unsignedint" attributeExists="false">GBR_UL</column>
+            <column type="unsignedint" attributeExists="false">GBR_DL</column>
+            <column type="unsignedint" attributeExists="false">CN_RANAP_CAUSE</column>
+            <column type="unsignedint" attributeExists="false">DATA_IN_DL_RLC_BUFFERS</column>
+            <column type="tinyint" enriched="true">PS_RAB_FAIL_CNT</column>
+            <column type="tinyint" enriched="true">CS_RAB_FAIL_CNT</column>
+            <column type="tinyint" enriched="true">MULTI_RAB_FAIL_CNT</column>
+            <column type="unsignedint" enriched="true">FAILED_RAB_TYPE</column>
+            <column type="tinyint" enriched="true">PS_ERR_CNT</column>
+            <column type="tinyint" enriched="true">CS_ERR_CNT</column>
+            <column type="tinyint" enriched="true">MULTI_ERR_CNT</column>
+            <!-- New parameters added in Database -->    
+             <column type="tinyint" attributeExists="false">CELL_UPDATE_CAUSE_VALUE</column>
+            <column type="tinyint" attributeExists="false">AM_RLC_ERROR_INDICATION_SRB2_SRB4</column>
+            <column type="tinyint" attributeExists="false">AM_RLC_ERROR_INDICATION_RB_GREATER_THAN_4</column>
+            <column type="tinyint" attributeExists="false">T314_EXPIRED</column>
+            <column type="tinyint" attributeExists="false">T315_EXPIRED</column>
+            <column type="tinyint" attributeExists="false">RESULT</column>
+            <column type="unsignedint" attributeExists="false">TARGET_C_ID_SECONDARY_SERV_HSDSCH_CELL</column>
+
+            <column type="varchar" size="20">OSS_ID</column>
+             <column type="date" func="getDate">Timestamp</column> <!-- DATE_ID -->
+            <column type="smallint" func="getYear">Timestamp</column> <!-- YEAR_ID -->
+            <column type="tinyint" func="getMonth">Timestamp</column> <!-- MONTH_ID --> 
+            <column type="tinyint" func="getDay">Timestamp</column> <!-- DAY_ID -->
+            <column type="tinyint" func="getHour">Timestamp</column> <!-- HOUR_ID -->
+            <column type="tinyint" func="getMinute">Timestamp</column> <!-- MIN_ID -->
+            <column type="timestamp" truncateMillis="true">Timestamp</column> <!-- DATETIME_ID -->
+            <column type="timestamp">Timestamp</column> <!-- EVENT_TIME -->
+            <column type="smallint">NetworkElementTimezoneOffset</column> <!-- TIMEZONE -->
+            <column type="bit" attributeExists="false">SUSPECTFLAG</column> <!-- Not populating this attribute in cep -->
+            <column type="varchar" size="20">Version</column> 
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint" enriched="true">MSISDN</column>
+            <column type="unsignedint" attributeExists="false">SESSION_ID</column> <!-- Not populating this attribute in cep -->
+            <column type="unsignedint" attributeExists="false">BATCH_ID</column> <!-- Not populating this attribute in cep -->
+             <column type="date" enriched="true" func="getDate">LOCAL_TIMESTAMP</column> <!-- LOCAL_DATE_ID -->            
+        </columns>
+    </persistent-entity>
+    <persistent-entity className="INTERNAL_SYSTEM_RELEASE_ENRICHED" packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">HIER3_ID_1</column> <!-- HIER3_ID -->
+            <column type="unsignedbigint" attributeExists="false">HIER32_ID</column> <!-- Not populating this attribute in cep -->
+            <column type="unsignedbigint" enriched="true">HIER321_ID_1</column> <!-- HIER321_ID -->
+            <column type="unsignedbigint" enriched="true">HIER3_CELL_ID_1</column> <!-- HIER3_CELL_ID -->
+            <column type="varchar" size="3" enriched="true">IMSI_MCC</column>
+            <column type="varchar" size="3" enriched="true">IMSI_MNC</column>
+             <column type="varchar" size="3" attributeExists="false">MCC</column> 
+             <column type="varchar" size="3" attributeExists="false">MNC</column>
+            <column type="bit" enriched="true">ROAMING</column>
+            <column type="unsignedint" enriched="true">LAC</column>
+            <column type="smallint" enriched="true">RAC</column>
+            <column type="unsignedbigint">IMEISV</column>
+            <column type="unsignedint" enriched="true">TAC</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="unsignedint">UE_CONTEXT</column>
+            <column type="varchar" size="10" func="getStringFromInt">RNC_MODULE_ID</column>
+            <column type="unsignedint">SOURCE_CONF</column>
+            <column type="unsignedint">C_ID_SERV_HSDSCH_CELL</column>
+            <column type="unsignedint">CRNC_ID_SERV_HSDSCH_CELL</column>
+            <column type="unsignedint">TARGET_CONF</column>
+            <column type="unsignedint">WANTED_CONF</column>
+            <column type="tinyint">PROCEDURE_INDICATOR</column>
+            <column type="smallint">EVALUATION_CASE</column>
+            <column type="smallint">EXCEPTION_CLASS</column>
+            <column type="smallint">CAUSE_VALUE</column>
+            <column type="smallint">EXTENDED_CAUSE_VALUE</column>
+            <column type="bit" func="getBooleanFromByte">SEVERITY_INDICATOR</column>
+            <column type="tinyint">TRIGGER_POINT</column>
+            <column type="smallint">UTRAN_RANAP_CAUSE</column>
+            <column type="bit" func="getBooleanFromByte">CN_ID</column>
+            <column type="tinyint" attributeExists="false">ORIGINATING_STATE</column>
+            <column type="tinyint" attributeExists="false">RRC_ESTABLISHMENT_CAUSE</column>
+            <column type="tinyint" attributeExists="false">CELLO_AAL2NCI_REJECT_REASON</column>
+              <column type="tinyint">RAN_DISCONNECTION_CODE</column>
+             <column type="tinyint">RAN_DISCONNECTION_SUBCODE</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="unsignedint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="unsignedint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="unsignedint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="unsignedint">RNC_ID_4</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="unsignedint">SOURCE_CONNECTION_PROPERTIES</column>
+            <column type="unsignedint">TARGET_CONNECTION_PROPERTIES</column>
+            <column type="unsignedint">WANTED_CONNECTION_PROPERTIES</column>
+            <column type="unsignedint">SOURCE_C_ID_1_SECONDARY_SERV_HSDSCH_CELL</column>
+             <column type="unsignedint">RAN_ID_PARAMETER</column>
+             <column type="unsignedint">SCRAMBLING_CODE_CELL_1</column>
+             <column type="unsignedint">SCRAMBLING_CODE_CELL_2</column>
+            <column type="unsignedint">SCRAMBLING_CODE_CELL_3</column>
+            <column type="unsignedint">SCRAMBLING_CODE_CELL_4</column>
+            <column type="unsignedint">CPICH_EC_NO_CELL_1</column>
+            <column type="unsignedint">CPICH_EC_NO_CELL_2</column>
+            <column type="unsignedint">CPICH_EC_NO_CELL_3</column>
+            <column type="unsignedint">CPICH_EC_NO_CELL_4</column>
+            <column type="unsignedint">RSCP_CELL_1</column>
+            <column type="unsignedint">RSCP_CELL_2</column>
+            <column type="unsignedint">RSCP_CELL_3</column>
+            <column type="unsignedint">RSCP_CELL_4</column>
+            <column type="unsignedint">UL_INT_CELL1</column>
+            <column type="unsignedint">UL_INT_CELL2</column>
+            <column type="unsignedint">UL_INT_CELL3</column>
+            <column type="unsignedint">UL_INT_CELL4</column>
+            <column type="unsignedint">SCRAMBLING_CODE_ADDED_CELL</column>
+            <column type="unsignedint">RSCP_CELL_1_ADDED_CELL</column>
+            <column type="unsignedint">CPICH_EC_NO_ADDED_CELL</column>
+            <column type="unsignedint">GBR_UL</column>
+            <column type="unsignedint">GBR_DL</column>
+            <column type="unsignedint">CN_RANAP_CAUSE</column>
+            <column type="unsignedint">DATA_IN_DL_RLC_BUFFERS</column>
+            <column type="tinyint" enriched="true">PS_RAB_FAIL_CNT</column>
+            <column type="tinyint" enriched="true">CS_RAB_FAIL_CNT</column>
+            <column type="tinyint" enriched="true">MULTI_RAB_FAIL_CNT</column>
+            <column type="unsignedint" enriched="true">FAILED_RAB_TYPE</column>
+            <column type="tinyint" enriched="true">PS_ERR_CNT</column>
+            <column type="tinyint" enriched="true">CS_ERR_CNT</column>
+            <column type="tinyint" enriched="true">MULTI_ERR_CNT</column>
+            <!-- New parameters added in Database -->    
+             <column type="tinyint" attributeExists="false">CELL_UPDATE_CAUSE_VALUE</column>
+            <column type="tinyint" attributeExists="false">AM_RLC_ERROR_INDICATION_SRB2_SRB4</column>
+            <column type="tinyint" attributeExists="false">AM_RLC_ERROR_INDICATION_RB_GREATER_THAN_4</column>
+            <column type="tinyint" attributeExists="false">T314_EXPIRED</column>
+            <column type="tinyint" attributeExists="false">T315_EXPIRED</column>
+            <column type="tinyint" attributeExists="false">RESULT</column>
+            <column type="unsignedint" attributeExists="false">TARGET_C_ID_SECONDARY_SERV_HSDSCH_CELL</column>
+
+            <column type="varchar" size="20">OSS_ID</column>
+             <column type="date" func="getDate">Timestamp</column> <!-- DATE_ID -->
+            <column type="smallint" func="getYear">Timestamp</column> <!-- YEAR_ID -->
+            <column type="tinyint" func="getMonth">Timestamp</column> <!-- MONTH_ID --> 
+            <column type="tinyint" func="getDay">Timestamp</column> <!-- DAY_ID -->
+            <column type="tinyint" func="getHour">Timestamp</column> <!-- HOUR_ID -->
+            <column type="tinyint" func="getMinute">Timestamp</column> <!-- MIN_ID -->
+            <column type="timestamp" truncateMillis="true">Timestamp</column> <!-- DATETIME_ID -->
+            <column type="timestamp">Timestamp</column> <!-- EVENT_TIME -->
+            <column type="smallint">NetworkElementTimezoneOffset</column> <!-- TIMEZONE -->
+            <column type="bit" attributeExists="false">SUSPECTFLAG</column> <!-- Not populating this attribute in cep -->
+            <column type="varchar" size="20">Version</column> 
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint" enriched="true">MSISDN</column>
+            <column type="unsignedint" attributeExists="false">SESSION_ID</column> <!-- Not populating this attribute in cep -->
+            <column type="unsignedint" attributeExists="false">BATCH_ID</column> <!-- Not populating this attribute in cep -->
+             <column type="date" enriched="true" func="getDate">LOCAL_TIMESTAMP</column> <!-- LOCAL_DATE_ID -->
+        </columns>
+    </persistent-entity>
+    <persistent-entity className="INTERNAL_CALL_REESTABLISHMENT_ENRICHED" packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">HIER3_ID_1</column> <!-- HIER3_ID -->
+            <column type="unsignedbigint" attributeExists="false">HIER32_ID</column> <!-- Not populating this attribute in cep -->
+            <column type="unsignedbigint" enriched="true">HIER321_ID_1</column> <!-- HIER321_ID -->
+            <column type="unsignedbigint" enriched="true">HIER3_CELL_ID_1</column> <!-- HIER3_CELL_ID -->
+            <column type="varchar" size="3" enriched="true">IMSI_MCC</column>
+            <column type="varchar" size="3" enriched="true">IMSI_MNC</column>
+             <column type="varchar" size="3" attributeExists="false">MCC</column>
+             <column type="varchar" size="3" attributeExists="false">MNC</column>
+            <column type="bit" enriched="true">ROAMING</column>
+            <column type="unsignedint" enriched="true">LAC</column>
+            <column type="smallint" enriched="true">RAC</column>
+            <column type="unsignedbigint" attributeExists="false">IMEISV</column>
+            <column type="unsignedint" enriched="true">TAC</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="unsignedint">UE_CONTEXT</column>
+            <column type="varchar" size="10" func="getStringFromInt">RNC_MODULE_ID</column>
+            <column type="unsignedint">SOURCE_CONF</column>
+            <column type="unsignedint">C_ID_SERV_HSDSCH_CELL</column>
+            <column type="unsignedint" attributeExists="false">CRNC_ID_SERV_HSDSCH_CELL</column>
+            <column type="unsignedint">TARGET_CONF</column>
+            <column type="unsignedint">WANTED_CONF</column>
+            <column type="tinyint" attributeExists="false">PROCEDURE_INDICATOR</column>
+            <column type="smallint" attributeExists="false">EVALUATION_CASE</column>
+            <column type="smallint">EXCEPTION_CLASS</column>
+            <column type="smallint">CAUSE_VALUE</column>
+            <column type="smallint">EXTENDED_CAUSE_VALUE</column>
+            <column type="bit" func="getBooleanFromByte">SEVERITY_INDICATOR</column>
+            <column type="tinyint" attributeExists="false">TRIGGER_POINT</column>
+            <column type="smallint" attributeExists="false">UTRAN_RANAP_CAUSE</column>
+            <column type="bit" func="getBooleanFromByte" attributeExists="false">CN_ID</column>
+            <column type="tinyint" attributeExists="false">ORIGINATING_STATE</column>
+            <column type="tinyint" attributeExists="false">RRC_ESTABLISHMENT_CAUSE</column>
+            <column type="tinyint" attributeExists="false">CELLO_AAL2NCI_REJECT_REASON</column>
+              <column type="tinyint" attributeExists="false">RAN_DISCONNECTION_CODE</column>
+             <column type="tinyint" attributeExists="false">RAN_DISCONNECTION_SUBCODE</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="unsignedint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="unsignedint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="unsignedint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="unsignedint">RNC_ID_4</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="unsignedint">SOURCE_CONNECTION_PROPERTIES</column>
+            <column type="unsignedint">TARGET_CONNECTION_PROPERTIES</column>
+            <column type="unsignedint">WANTED_CONNECTION_PROPERTIES</column>
+            <column type="unsignedint">SOURCE_C_ID_1_SECONDARY_SERV_HSDSCH_CELL</column>
+             <column type="unsignedint" attributeExists="false">RAN_ID_PARAMETER</column>
+             <column type="unsignedint" attributeExists="false">SCRAMBLING_CODE_CELL_1</column>
+             <column type="unsignedint" attributeExists="false">SCRAMBLING_CODE_CELL_2</column>
+            <column type="unsignedint" attributeExists="false">SCRAMBLING_CODE_CELL_3</column>
+            <column type="unsignedint" attributeExists="false">SCRAMBLING_CODE_CELL_4</column>
+            <column type="unsignedint" attributeExists="false">CPICH_EC_NO_CELL_1</column>
+            <column type="unsignedint" attributeExists="false">CPICH_EC_NO_CELL_2</column>
+            <column type="unsignedint" attributeExists="false">CPICH_EC_NO_CELL_3</column>
+            <column type="unsignedint" attributeExists="false">CPICH_EC_NO_CELL_4</column>
+            <column type="unsignedint" attributeExists="false">RSCP_CELL_1</column>
+            <column type="unsignedint" attributeExists="false">RSCP_CELL_2</column>
+            <column type="unsignedint" attributeExists="false">RSCP_CELL_3</column>
+            <column type="unsignedint" attributeExists="false">RSCP_CELL_4</column>
+            <column type="unsignedint" attributeExists="false">UL_INT_CELL1</column>
+            <column type="unsignedint" attributeExists="false">UL_INT_CELL2</column>
+            <column type="unsignedint" attributeExists="false">UL_INT_CELL3</column>
+            <column type="unsignedint" attributeExists="false">UL_INT_CELL4</column>
+            <column type="unsignedint" attributeExists="false">SCRAMBLING_CODE_ADDED_CELL</column>
+            <column type="unsignedint" attributeExists="false">RSCP_CELL_1_ADDED_CELL</column>
+            <column type="unsignedint" attributeExists="false">CPICH_EC_NO_ADDED_CELL</column>
+            <column type="unsignedint" attributeExists="false">GBR_UL</column>
+            <column type="unsignedint" attributeExists="false">GBR_DL</column>
+            <column type="unsignedint" attributeExists="false">CN_RANAP_CAUSE</column>
+            <column type="unsignedint" attributeExists="false">DATA_IN_DL_RLC_BUFFERS</column>
+            <column type="tinyint" enriched="true">PS_RAB_FAIL_CNT</column>
+            <column type="tinyint" enriched="true">CS_RAB_FAIL_CNT</column>
+            <column type="tinyint" enriched="true">MULTI_RAB_FAIL_CNT</column>
+            <column type="unsignedint" enriched="true">FAILED_RAB_TYPE</column>
+            <column type="tinyint" enriched="true">PS_ERR_CNT</column>
+            <column type="tinyint" enriched="true">CS_ERR_CNT</column>
+            <column type="tinyint" enriched="true">MULTI_ERR_CNT</column>
+            <!-- New parameters added in Database -->
+             <column type="tinyint">CELL_UPDATE_CAUSE_VALUE</column>
+            <column type="tinyint">AM_RLC_ERROR_INDICATION_SRB2_SRB4</column>
+            <column type="tinyint">AM_RLC_ERROR_INDICATION_RB_GREATER_THAN_4</column>
+            <column type="tinyint">T314_EXPIRED</column>
+            <column type="tinyint">T315_EXPIRED</column>
+            <column type="tinyint">RESULT</column>
+            <column type="unsignedint">TARGET_C_ID_SECONDARY_SERV_HSDSCH_CELL</column>
+
+            <column type="varchar" size="20">OSS_ID</column>
+             <column type="date" func="getDate">Timestamp</column> <!-- DATE_ID -->
+            <column type="smallint" func="getYear">Timestamp</column> <!-- YEAR_ID -->
+            <column type="tinyint" func="getMonth">Timestamp</column> <!-- MONTH_ID -->
+            <column type="tinyint" func="getDay">Timestamp</column> <!-- DAY_ID -->
+            <column type="tinyint" func="getHour">Timestamp</column> <!-- HOUR_ID -->
+            <column type="tinyint" func="getMinute">Timestamp</column> <!-- MIN_ID -->
+            <column type="timestamp" truncateMillis="true">Timestamp</column> <!-- DATETIME_ID -->
+            <column type="timestamp">Timestamp</column> <!-- EVENT_TIME -->
+            <column type="smallint">NetworkElementTimezoneOffset</column> <!-- TIMEZONE -->
+            <column type="bit" attributeExists="false">SUSPECTFLAG</column> <!-- Not populating this attribute in cep -->
+            <column type="varchar" size="20">Version</column>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint" enriched="true">MSISDN</column>
+            <column type="unsignedint" attributeExists="false">SESSION_ID</column> <!-- Not populating this attribute in cep -->
+            <column type="unsignedint" attributeExists="false">BATCH_ID</column> <!-- Not populating this attribute in cep -->
+             <column type="date" enriched="true" func="getDate">LOCAL_TIMESTAMP</column> <!-- LOCAL_DATE_ID -->
+             </columns>
+    </persistent-entity>
+    <persistent-entity className="INTERNAL_SOFT_HANDOVER_EXECUTION_ENRICHED" packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">HIER3_ID</column>
+            <column type="unsignedbigint" attributeExists="false">HIER32_ID</column>
+            <column type="unsignedbigint" enriched="true">HIER321_ID</column>
+            <column type="unsignedbigint" enriched="true">HIER3_CELL_ID</column>
+            <column type="unsignedbigint" enriched="true">THIER3_ID</column>
+            <column type="unsignedbigint" attributeExists="false">THIER32_ID</column>
+            <column type="unsignedbigint" enriched="true">THIER321_ID</column>
+            <column type="unsignedbigint" enriched="true">THIER3_CELL_ID</column>
+            <column type="varchar" size="3" enriched="true">IMSI_MCC</column>
+            <column type="varchar" size="3" enriched="true">IMSI_MNC</column>
+            <column type="varchar" size="3" attributeExists="false">MCC</column>
+            <column type="varchar" size="3" attributeExists="false">MNC</column>
+            <column type="bit" enriched="true">ROAMING</column>
+            <column type="unsignedint" enriched="true">LAC</column>
+            <column type="smallint" enriched="true">RAC</column>
+            <column type="unsignedbigint" enriched="true">IMEISV</column>
+            <column type="unsignedint" enriched="true">TAC</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="unsignedint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="smallint" attributeExists="false">SOURCE_CONF</column>
+            <column type="smallint">EVENT_TRIGGER</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">C_ID_EVALUATED</column>
+            <column type="smallint">RNC_ID_EVALUATED</column>
+            <column type="tinyint">CPICH_EC_NO_EVAL_CELL</column>
+            <column type="smallint">RSCP_EVAL_CELL</column>
+            <column type="tinyint">HANDOVER_TYPE</column>
+            <column type="smallint">RESULT</column>
+            <column type="smallint">FAILURE_REASON</column>
+            <column type="unsignedint">SOURCE_CONNECTION_PROPERTIES</column>
+            <column type="unsignedint">SOURCE_C_ID_1_SECONDARY_SERV_HSDSCH_CELL</column>
+            <column type="tinyint" enriched="true">CATEGORY_ID</column>
+            <column type="tinyint">ANR_INITIATED</column>
+            <column type="varchar" size="20">OSS_ID</column>
+             <column type="date" func="getDate">Timestamp</column> <!-- DATE_ID -->
+            <column type="smallint" func="getYear">Timestamp</column> <!-- YEAR_ID -->
+            <column type="tinyint" func="getMonth">Timestamp</column> <!-- MONTH_ID --> 
+            <column type="tinyint" func="getDay">Timestamp</column> <!-- DAY_ID -->
+            <column type="tinyint" func="getHour">Timestamp</column> <!-- HOUR_ID -->
+            <column type="tinyint" func="getMinute">Timestamp</column> <!-- MIN_ID -->
+            <column type="timestamp" truncateMillis="true">Timestamp</column> <!-- DATETIME_ID -->
+            <column type="timestamp">Timestamp</column> <!-- EVENT_TIME -->
+            <column type="smallint">NetworkElementTimezoneOffset</column> <!-- TIMEZONE -->
+            <column type="bit" attributeExists="false">SUSPECTFLAG</column> <!-- Not populating this attribute in cep -->
+            <column type="varchar" size="20">Version</column>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint" enriched="true">MSISDN</column>
+            <column type="unsignedint" attributeExists="false">SESSION_ID</column>
+            <column type="unsignedint" attributeExists="false">BATCH_ID</column>
+             <column type="date" enriched="true" func="getDate">LOCAL_TIMESTAMP</column> <!-- LOCAL_DATE_ID -->
+        </columns>
+    </persistent-entity>
+    <persistent-entity className="INTERNAL_OUT_HARD_HANDOVER_FAILURE_IFHO_ENRICHED" packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">HIER3_ID_1</column> <!-- HIER3_ID -->
+            <column type="unsignedbigint" attributeExists="false">HIER32_ID</column> <!-- Not populating this attribute in cep -->
+            <column type="unsignedbigint" enriched="true">HIER321_ID_1</column> <!-- HIER321_ID -->
+            <column type="unsignedbigint" enriched="true">HIER3_CELL_ID_1</column> <!-- HIER3_CELL_ID -->
+            <column type="unsignedbigint" enriched="true">THIER3_ID</column>
+            <column type="unsignedbigint" attributeExists="false">THIER32_ID</column> <!-- Not populating this attribute in cep -->
+            <column type="unsignedbigint" enriched="true">THIER321_ID</column>
+            <column type="unsignedbigint" enriched="true">THIER3_CELL_ID</column>
+            <column type="varchar" size="3" enriched="true">IMSI_MCC</column>
+            <column type="varchar" size="3" enriched="true">IMSI_MNC</column>
+            <column type="varchar" size="3" attributeExists="false">MCC</column>
+            <column type="varchar" size="3" attributeExists="false">MNC</column>
+            <column type="bit" enriched="true">ROAMING</column>
+            <column type="unsignedint" enriched="true">LAC</column>
+            <column type="smallint" enriched="true">RAC</column>
+            <column type="unsignedbigint">IMEISV</column>
+            <column type="unsignedint" enriched="true">TAC</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="unsignedint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="smallint">SOURCE_CONF</column>
+            <column type="smallint" attributeExists="false">EVENT_TRIGGER</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">C_ID_SERV_HSDSCH_CELL</column>
+            <column type="tinyint">CPICH_EC_NO_CELL_1</column>
+            <column type="smallint">RSCP_CELL_1</column>
+            <column type="tinyint">CPICH_EC_NO_CELL_2</column>
+            <column type="smallint">RSCP_CELL_2</column>
+            <column type="tinyint">CPICH_EC_NO_CELL_3</column>
+            <column type="smallint">RSCP_CELL_3</column>
+            <column type="tinyint">CPICH_EC_NO_CELL_4</column>
+            <column type="smallint">RSCP_CELL_4</column>
+            <column type="unsignedint">HHO_TARGET_ID_1</column> <!-- PLMN_TARGET_ID -->
+            <column type="unsignedint">HHO_TARGET_ID_2</column> <!-- LAC_TARGET_ID -->
+            <column type="unsignedint">HHO_TARGET_ID_3</column> <!-- C_TARGET_ID -->
+            <column type="smallint">TARGET_CONF</column>
+            <column type="tinyint">PROCEDURE_INDICATOR</column>
+            <column type="tinyint">EVALUATION_CASE</column>
+            <column type="smallint">EXCEPTION_CLASS</column>
+            <column type="smallint">CAUSE_VALUE</column>
+            <column type="smallint">EXTENDED_CAUSE_VALUE</column> <!-- SUB_CAUSE_VALUE -->
+            <column type="tinyint">SEVERITY_INDICATOR</column>
+            <column type="smallint">CRNC_ID_SERV_HSDSCH_CELL</column>
+            <column type="unsignedint">C_ID_1_SECONDARY_SERV_HSDSCH_CELL</column> <!-- C_ID_1_SS_HSDSCH_CELL -->
+            <column type="unsignedint">SOURCE_CONNECTION_PROPERTIES</column>
+            <column type="int">HHO_TARGET_ID_4</column> <!-- RNC_TARGET_ID -->
+            <column type="unsignedint">TARGET_CONNECTION_PROPERTIES</column>
+            <column type="tinyint" attributeExists="false">CPICH_EC_NU_FREQ_CELL</column> <!-- use DL_QUALITY_MEAS1_TARGET_CELL?  -->
+            <column type="smallint" attributeExists="false">RSCP_NU_FREQ_CELL</column> <!-- use DL_QUALITY_MEAS2_TARGET_CELL?  -->
+            <column type="tinyint" enriched="true">CATEGORY_ID</column>
+            <column type="varchar" size="20">OSS_ID</column>
+             <column type="date" func="getDate">Timestamp</column> <!-- DATE_ID -->
+            <column type="smallint" func="getYear">Timestamp</column> <!-- YEAR_ID -->
+            <column type="tinyint" func="getMonth">Timestamp</column> <!-- MONTH_ID -->
+            <column type="tinyint" func="getDay">Timestamp</column> <!-- DAY_ID -->
+            <column type="tinyint" func="getHour">Timestamp</column> <!-- HOUR_ID -->
+            <column type="tinyint" func="getMinute">Timestamp</column> <!-- MIN_ID -->
+            <column type="timestamp" truncateMillis="true">Timestamp</column> <!-- DATETIME_ID -->
+            <column type="timestamp">Timestamp</column> <!-- EVENT_TIME -->
+            <column type="smallint">NetworkElementTimezoneOffset</column> <!-- TIMEZONE -->
+            <column type="bit" attributeExists="false">SUSPECTFLAG</column> <!-- Not populating this attribute in cep -->
+            <column type="varchar" size="20">Version</column> <!-- NE_VERSION -->
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint" enriched="true">MSISDN</column>
+            <column type="unsignedint" attributeExists="false">SESSION_ID</column> <!-- Not populating this attribute in cep -->
+            <column type="unsignedint" attributeExists="false">BATCH_ID</column> <!-- Not populating this attribute in cep -->
+             <column type="date" enriched="true" func="getDate">LOCAL_TIMESTAMP</column> <!-- LOCAL_DATE_ID -->
+        </columns>
+    </persistent-entity>
+    <persistent-entity className="INTERNAL_OUT_HARD_HANDOVER_FAILURE_IRAT_ENRICHED" packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">HIER3_ID_1</column> <!-- HIER3_ID -->
+            <column type="unsignedbigint" attributeExists="false">HIER32_ID</column> <!-- Not populating this attribute in cep -->
+            <column type="unsignedbigint" enriched="true">HIER321_ID_1</column> <!-- HIER321_ID -->
+            <column type="unsignedbigint" enriched="true">HIER3_CELL_ID_1</column> <!-- HIER3_CELL_ID -->
+            <column type="unsignedbigint" enriched="true">THIER3_ID</column>
+            <column type="unsignedbigint" attributeExists="false">THIER32_ID</column> <!-- Not populating this attribute in cep -->
+            <column type="unsignedbigint" enriched="true">THIER321_ID</column>
+            <column type="unsignedbigint" enriched="true">THIER3_CELL_ID</column>
+            <column type="varchar" size="3" enriched="true">IMSI_MCC</column>
+            <column type="varchar" size="3" enriched="true">IMSI_MNC</column>
+            <column type="varchar" size="3" attributeExists="false">MCC</column>
+            <column type="varchar" size="3" attributeExists="false">MNC</column>
+            <column type="bit" enriched="true">ROAMING</column>
+            <column type="unsignedint" enriched="true">LAC</column>
+            <column type="smallint" enriched="true">RAC</column>
+            <column type="unsignedbigint">IMEISV</column>
+            <column type="unsignedint" enriched="true">TAC</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="unsignedint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="smallint">SOURCE_CONF</column>
+            <column type="smallint" attributeExists="false">EVENT_TRIGGER</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">C_ID_SERV_HSDSCH_CELL</column>
+            <column type="tinyint">CPICH_EC_NO_CELL_1</column>
+            <column type="smallint">RSCP_CELL_1</column>
+            <column type="tinyint">CPICH_EC_NO_CELL_2</column>
+            <column type="smallint">RSCP_CELL_2</column>
+            <column type="tinyint">CPICH_EC_NO_CELL_3</column>
+            <column type="smallint">RSCP_CELL_3</column>
+            <column type="tinyint">CPICH_EC_NO_CELL_4</column>
+            <column type="smallint">RSCP_CELL_4</column>
+            <column type="unsignedint">HHO_TARGET_ID_1</column> <!-- PLMN_TARGET_ID -->
+            <column type="unsignedint">HHO_TARGET_ID_2</column> <!-- LAC_TARGET_ID -->
+            <column type="unsignedint">HHO_TARGET_ID_3</column> <!-- C_TARGET_ID -->
+            <column type="tinyint">DL_QUALITY_MEAS1_TARGET_CELL</column> <!-- RSSI -->
+            <column type="smallint">TARGET_CONF</column>
+            <column type="tinyint">PROCEDURE_INDICATOR</column>
+            <column type="tinyint">EVALUATION_CASE</column>
+            <column type="smallint">EXCEPTION_CLASS</column>
+            <column type="smallint">CAUSE_VALUE</column>
+            <column type="smallint">EXTENDED_CAUSE_VALUE</column> <!-- SUB_CAUSE_VALUE -->
+            <column type="tinyint">SEVERITY_INDICATOR</column>
+            <column type="smallint">CRNC_ID_SERV_HSDSCH_CELL</column>
+            <column type="unsignedint">C_ID_1_SECONDARY_SERV_HSDSCH_CELL</column> <!-- C_ID_1_SS_HSDSCH_CELL -->
+            <column type="tinyint" enriched="true">CATEGORY_ID</column>
+            <column type="varchar" size="20">OSS_ID</column>
+             <column type="date" func="getDate">Timestamp</column> <!-- DATE_ID -->
+            <column type="smallint" func="getYear">Timestamp</column> <!-- YEAR_ID -->
+            <column type="tinyint" func="getMonth">Timestamp</column> <!-- MONTH_ID -->
+            <column type="tinyint" func="getDay">Timestamp</column> <!-- DAY_ID -->
+            <column type="tinyint" func="getHour">Timestamp</column> <!-- HOUR_ID -->
+            <column type="tinyint" func="getMinute">Timestamp</column> <!-- MIN_ID -->
+            <column type="timestamp" truncateMillis="true">Timestamp</column> <!-- DATETIME_ID -->
+            <column type="timestamp">Timestamp</column> <!-- EVENT_TIME -->
+            <column type="smallint">NetworkElementTimezoneOffset</column> <!-- TIMEZONE -->
+            <column type="bit" attributeExists="false">SUSPECTFLAG</column> <!-- Not populating this attribute in cep -->
+            <column type="varchar" size="20">Version</column> <!-- NE_VERSION -->
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint" enriched="true">MSISDN</column>
+            <column type="unsignedint" attributeExists="false">SESSION_ID</column> <!-- Not populating this attribute in cep -->
+            <column type="unsignedint" attributeExists="false">BATCH_ID</column> <!-- Not populating this attribute in cep -->
+             <column type="date" enriched="true" func="getDate">LOCAL_TIMESTAMP</column> <!-- LOCAL_DATE_ID -->
+        </columns>
+    </persistent-entity>
+    <persistent-entity className="INTERNAL_FAILED_HSDSCH_CELL_CHANGE_ENRICHED" packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">>
+        <columns>
+            <column type="unsignedbigint" enriched="true">HIER3_ID</column>
+            <column type="unsignedbigint" attributeExists="false">HIER32_ID</column>
+            <column type="unsignedbigint" enriched="true">HIER321_ID</column>
+            <column type="unsignedbigint" enriched="true">HIER3_CELL_ID</column>
+            <column type="unsignedbigint" enriched="true">THIER3_ID</column>
+            <column type="unsignedbigint" attributeExists="false">THIER32_ID</column>
+            <column type="unsignedbigint" enriched="true">THIER321_ID</column>
+            <column type="unsignedbigint" enriched="true">THIER3_CELL_ID</column>
+            <column type="varchar" size="3" enriched="true">IMSI_MCC</column>
+            <column type="varchar" size="3" enriched="true">IMSI_MNC</column>
+            <column type="varchar" size="3" attributeExists="false">MCC</column>
+            <column type="varchar" size="3" attributeExists="false">MNC</column>
+            <column type="bit" enriched="true">ROAMING</column>
+            <column type="unsignedint" enriched="true">LAC</column>
+            <column type="smallint" enriched="true">RAC</column>
+            <column type="unsignedbigint" enriched="true">IMEISV</column>
+            <column type="unsignedint" enriched="true">TAC</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="unsignedint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="smallint">SOURCE_CONF</column>
+            <column type="smallint">EVENT_TRIGGER</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">C_ID_SOURCE</column>
+            <column type="smallint">RNC_ID_SOURCE</column>
+            <column type="tinyint">CPICH_EC_NO_SOURCE_CELL</column>
+            <column type="smallint">CPICH_RSCP_SOURCE_CELL</column>
+            <column type="unsignedint">C_ID_TARGET</column>
+            <column type="smallint">RNC_ID_TARGET</column>
+            <column type="tinyint">CPICH_EC_NO_TARGET_CELL</column>
+            <column type="smallint">CPICH_RSCP_TARGET_CELL</column>
+            <column type="smallint">FAILURE_REASON</column>
+            <column type="smallint">GBR_UL</column>
+            <column type="smallint">GBR_DL</column>
+            <column type="unsignedint">SOURCE_CONNECTION_PROPERTIES</column>
+            <column type="unsignedint">SOURCE_C_ID_1_SECONDARY_SERV_HSDSCH_CELL</column>
+            <column type="unsignedint">TARGET_C_ID_1_SECONDARY_SERV_HSDSCH_CELL</column>
+            <column type="smallint" attributeExists="false">UARFCN_SOURCE</column>
+            <column type="smallint" attributeExists="false">UARFCN_TARGET</column>
+            <column type="smallint" attributeExists="false">PATHLOSS</column>
+            <column type="tinyint" attributeExists="false">UL_SYNC_STATUS_RLS1</column>
+            <column type="tinyint" enriched="true">CATEGORY_ID</column>
+            <column type="varchar" size="20">OSS_ID</column>
+            <column type="date" func="getDate">Timestamp</column> <!-- DATE_ID -->
+            <column type="smallint" func="getYear">Timestamp</column> <!-- YEAR_ID -->
+            <column type="tinyint" func="getMonth">Timestamp</column> <!-- MONTH_ID -->
+            <column type="tinyint" func="getDay">Timestamp</column> <!-- DAY_ID -->
+            <column type="tinyint" func="getHour">Timestamp</column> <!-- HOUR_ID -->
+            <column type="tinyint" func="getMinute">Timestamp</column> <!-- MIN_ID -->
+            <column type="timestamp" truncateMillis="true">Timestamp</column> <!-- DATETIME_ID -->
+            <column type="timestamp">Timestamp</column> <!-- EVENT_TIME -->
+            <column type="smallint">NetworkElementTimezoneOffset</column> <!-- TIMEZONE -->
+            <column type="bit" attributeExists="false">SUSPECTFLAG</column> <!-- Not populating this attribute in cep -->
+            <column type="varchar" size="20">Version</column>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint" enriched="true">MSISDN</column>
+            <column type="unsignedint" attributeExists="false">SESSION_ID</column>
+            <column type="unsignedint" attributeExists="false">BATCH_ID</column>
+            <column type="date" enriched="true" func="getDate">LOCAL_TIMESTAMP</column> <!-- LOCAL_DATE_ID -->
+        </columns>
+    </persistent-entity>
+    <persistent-entity className="INTERNAL_HSDSCH_CELL_SELECTION_NO_CELL_SELECTED_ENRICHED" packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">>
+        <columns>
+            <column type="unsignedbigint" enriched="true">HIER3_ID</column>
+            <column type="unsignedbigint" attributeExists="false">HIER32_ID</column>
+            <column type="unsignedbigint" enriched="true">HIER321_ID</column>
+            <column type="unsignedbigint" enriched="true">HIER3_CELL_ID</column>
+            <column type="unsignedbigint" enriched="true">THIER3_ID</column>
+            <column type="unsignedbigint" attributeExists="false">THIER32_ID</column>
+            <column type="unsignedbigint" enriched="true">THIER321_ID</column>
+            <column type="unsignedbigint" enriched="true">THIER3_CELL_ID</column>
+            <column type="varchar" size="3" enriched="true">IMSI_MCC</column>
+            <column type="varchar" size="3" enriched="true">IMSI_MNC</column>
+            <column type="varchar" size="3" attributeExists="false">MCC</column>
+            <column type="varchar" size="3" attributeExists="false">MNC</column>
+            <column type="bit" enriched="true">ROAMING</column>
+            <column type="unsignedint" enriched="true">LAC</column>
+            <column type="smallint" enriched="true">RAC</column>
+            <column type="unsignedbigint" enriched="true">IMEISV</column>
+            <column type="unsignedint" enriched="true">TAC</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="unsignedint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="smallint">SOURCE_CONF</column>
+            <column type="smallint" attributeExists="false">EVENT_TRIGGER</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint" attributeExists="false">C_ID_SOURCE</column>
+            <column type="smallint" attributeExists="false">RNC_ID_SOURCE</column>
+            <column type="tinyint" attributeExists="false">CPICH_EC_NO_SOURCE_CELL</column>
+            <column type="smallint" attributeExists="false">CPICH_RSCP_SOURCE_CELL</column>
+            <column type="unsignedint">C_ID_TARGET</column>
+            <column type="smallint">RNC_ID_TARGET</column>
+            <column type="tinyint" attributeExists="false">CPICH_EC_NO_TARGET_CELL</column>
+            <column type="smallint" attributeExists="false">CPICH_RSCP_TARGET_CELL</column>
+            <column type="smallint">FAILURE_REASON</column>
+            <column type="smallint" attributeExists="false">GBR_UL</column>
+            <column type="smallint" attributeExists="false">GBR_DL</column>
+            <column type="unsignedint">SOURCE_CONNECTION_PROPERTIES</column>
+            <column type="unsignedint">SOURCE_C_ID_1_SECONDARY_SERV_HSDSCH_CELL</column>
+            <column type="unsignedint" attributeExists="false">TARGET_C_ID_1_SECONDARY_SERV_HSDSCH_CELL</column>
+            <column type="smallint">UARFCN_SOURCE</column>
+            <column type="smallint">UARFCN_TARGET</column>
+            <column type="smallint">PATHLOSS</column>
+            <column type="tinyint">UL_SYNC_STATUS_RLS1</column>
+            <column type="tinyint" enriched="true">CATEGORY_ID</column>
+            <column type="varchar" size="20">OSS_ID</column>
+            <column type="date" func="getDate">Timestamp</column> <!-- DATE_ID -->
+            <column type="smallint" func="getYear">Timestamp</column> <!-- YEAR_ID -->
+            <column type="tinyint" func="getMonth">Timestamp</column> <!-- MONTH_ID -->
+            <column type="tinyint" func="getDay">Timestamp</column> <!-- DAY_ID -->
+            <column type="tinyint" func="getHour">Timestamp</column> <!-- HOUR_ID -->
+            <column type="tinyint" func="getMinute">Timestamp</column> <!-- MIN_ID -->
+            <column type="timestamp" truncateMillis="true">Timestamp</column> <!-- DATETIME_ID -->
+            <column type="timestamp">Timestamp</column> <!-- EVENT_TIME -->
+            <column type="smallint">NetworkElementTimezoneOffset</column> <!-- TIMEZONE -->
+            <column type="bit" attributeExists="false">SUSPECTFLAG</column> <!-- Not populating this attribute in cep -->
+            <column type="varchar" size="20">Version</column>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint" enriched="true">MSISDN</column>
+            <column type="unsignedint" attributeExists="false">SESSION_ID</column>
+            <column type="unsignedint" attributeExists="false">BATCH_ID</column>
+            <column type="date" enriched="true" func="getDate">LOCAL_TIMESTAMP</column> <!-- LOCAL_DATE_ID -->
+        </columns>
+    </persistent-entity>
+    <persistent-entity className="INTERNAL_IFHO_EXECUTION_ACTIVE_ENRICHED" packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">>
+        <columns>
+            <column type="unsignedbigint" enriched="true">HIER3_ID</column>
+            <column type="unsignedbigint" attributeExists="false">HIER32_ID</column>
+            <column type="unsignedbigint" enriched="true">HIER321_ID</column>
+            <column type="unsignedbigint" enriched="true">HIER3_CELL_ID</column>
+            <column type="unsignedbigint" enriched="true">THIER3_ID</column>
+            <column type="unsignedbigint" attributeExists="false">THIER32_ID</column>
+            <column type="unsignedbigint" enriched="true">THIER321_ID</column>
+            <column type="unsignedbigint" enriched="true">THIER3_CELL_ID</column>
+            <column type="varchar" size="3" enriched="true">IMSI_MCC</column>
+            <column type="varchar" size="3" enriched="true">IMSI_MNC</column>
+            <column type="varchar" size="3" attributeExists="false">MCC</column>
+            <column type="varchar" size="3" attributeExists="false">MNC</column>
+            <column type="bit" enriched="true">ROAMING</column>
+            <column type="unsignedint" enriched="true">LAC</column>
+            <column type="smallint" enriched="true">RAC</column>
+            <column type="unsignedbigint" enriched="true">IMEISV</column>
+            <column type="unsignedint" enriched="true">TAC</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="unsignedint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="smallint">SOURCE_CONF</column>
+            <column type="smallint">EVENT_TRIGGER</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint" attributeExists="false">C_ID_SERV_HSDSCH_CELL</column>
+            <column type="tinyint" attributeExists="false">CPICH_EC_NO_CELL_1</column>
+            <column type="smallint" attributeExists="false">RSCP_CELL_1</column>
+            <column type="tinyint" attributeExists="false">CPICH_EC_NO_CELL_2</column>
+            <column type="smallint" attributeExists="false">RSCP_CELL_2</column>
+            <column type="tinyint" attributeExists="false">CPICH_EC_NO_CELL_3</column>
+            <column type="smallint" attributeExists="false">RSCP_CELL_3</column>
+            <column type="tinyint" attributeExists="false">CPICH_EC_NO_CELL_4</column>
+            <column type="smallint" attributeExists="false">RSCP_CELL_4</column>
+            <column type="unsignedint" attributeExists="false">PLMN_TARGET_ID</column>
+            <column type="unsignedint" attributeExists="false">LAC_TARGET_ID</column>
+            <column type="unsignedint">C_ID_NU_FREQ</column>
+            <column type="smallint" attributeExists="false">TARGET_CONF</column>
+            <column type="tinyint" attributeExists="false">PROCEDURE_INDICATOR</column>
+            <column type="tinyint" attributeExists="false">EVALUATION_CASE</column>
+            <column type="smallint" attributeExists="false">EXCEPTION_CLASS</column>
+            <column type="smallint">RESULT</column>
+            <column type="smallint">FAILURE_REASON</column>
+            <column type="tinyint" attributeExists="false">SEVERITY_INDICATOR</column>
+            <column type="smallint" attributeExists="false">CRNC_ID_SERV_HSDSCH_CELL</column>
+            <column type="unsignedint" attributeExists="false">C_ID_1_SS_HSDSCH_CELL</column>
+            <column type="unsignedint">SOURCE_CONNECTION_PROPERTIES</column>
+            <column type="int" enriched="true">RNC_ID_NU_FREQ_INT</column>
+            <column type="unsignedint">TARGET_CONNECTION_PROPERTIES</column>
+            <column type="tinyint">CPICH_EC_NU_FREQ_CELL</column>
+            <column type="smallint">RSCP_NU_FREQ_CELL</column>
+            <column type="tinyint" enriched="true">CATEGORY_ID</column>
+            <column type="varchar" size="20">OSS_ID</column>
+            <column type="date" func="getDate">Timestamp</column> <!-- DATE_ID -->
+            <column type="smallint" func="getYear">Timestamp</column> <!-- YEAR_ID -->
+            <column type="tinyint" func="getMonth">Timestamp</column> <!-- MONTH_ID -->
+            <column type="tinyint" func="getDay">Timestamp</column> <!-- DAY_ID -->
+            <column type="tinyint" func="getHour">Timestamp</column> <!-- HOUR_ID -->
+            <column type="tinyint" func="getMinute">Timestamp</column> <!-- MIN_ID -->
+            <column type="timestamp" truncateMillis="true">Timestamp</column> <!-- DATETIME_ID -->
+            <column type="timestamp">Timestamp</column> <!-- EVENT_TIME -->
+            <column type="smallint">NetworkElementTimezoneOffset</column> <!-- TIMEZONE -->
+            <column type="bit" attributeExists="false">SUSPECTFLAG</column> <!-- Not populating this attribute in cep -->
+            <column type="varchar" size="20">Version</column>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint" enriched="true">MSISDN</column>
+            <column type="unsignedint" attributeExists="false">SESSION_ID</column>
+            <column type="unsignedint" attributeExists="false">BATCH_ID</column>
+            <column type="date" enriched="true" func="getDate">LOCAL_TIMESTAMP</column> <!-- LOCAL_DATE_ID -->
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RAB_ESTABLISH_RNC_AGGR" packageName="com.ericsson.cepmediation.apeventbeans.correlation">
+        <columns>
+            <column type="unsignedbigint">HIER3_ID</column>
+            <column type="unsignedbigint">CALLS_CS_ALL</column>
+            <column type="unsignedbigint">CALLS_PS_ALL</column>
+            <column type="unsignedbigint">CALLS_MR_ALL</column>
+            <column type="unsignedbigint">CS_SUC</column>
+            <column type="unsignedbigint">PS_SUC</column>
+            <column type="unsignedbigint">MR_SUC</column>
+            <column type="tinyint">INR_ACTIVATED</column>
+            <column type="tinyint">INR_RECEIVED</column>
+            <column type="date" func="getDate">Timestamp</column> <!-- DATE_ID -->
+            <column type="smallint" func="getYear">Timestamp</column> <!-- YEAR_ID -->
+            <column type="tinyint" func="getMonth">Timestamp</column> <!-- MONTH_ID -->
+            <column type="tinyint" func="getDay">Timestamp</column> <!-- DAY_ID -->
+            <column type="tinyint" func="getHour">Timestamp</column> <!-- HOUR_ID -->
+            <column type="tinyint" func="getMinute">Timestamp</column> <!-- MIN_ID -->
+            <column type="timestamp">Timestamp</column> <!-- DATETIME_ID -->
+            <column type="bit">VALID</column>
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RAB_ESTABLISH_CELL_AGGR" packageName="com.ericsson.cepmediation.apeventbeans.correlation">
+        <columns>
+            <column type="unsignedbigint">HIER3_ID</column>
+            <column type="unsignedbigint">HIER3_CELL_ID</column>
+            <column type="unsignedbigint">CALLS_CS_ALL</column>
+            <column type="unsignedbigint">CALLS_PS_ALL</column>
+            <column type="unsignedbigint">CALLS_MR_ALL</column>
+            <column type="unsignedbigint">CS_SUC</column>
+            <column type="unsignedbigint">PS_SUC</column>
+            <column type="unsignedbigint">MR_SUC</column>
+            <column type="tinyint">INR_ACTIVATED</column>
+            <column type="tinyint">INR_RECEIVED</column>
+            <column type="date" func="getDate">Timestamp</column> <!-- DATE_ID -->
+            <column type="smallint" func="getYear">Timestamp</column> <!-- YEAR_ID -->
+            <column type="tinyint" func="getMonth">Timestamp</column> <!-- MONTH_ID -->
+            <column type="tinyint" func="getDay">Timestamp</column> <!--DAY_ID -->
+            <column type="tinyint" func="getHour">Timestamp</column> <!-- HOUR_ID -->
+            <column type="tinyint" func="getMinute">Timestamp</column> <!-- MIN_ID -->
+            <column type="timestamp">Timestamp</column> <!-- DATETIME_ID -->
+            <column type="bit">VALID</column>
+        </columns>
+    </persistent-entity>
+
+</persistence>

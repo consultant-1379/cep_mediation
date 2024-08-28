@@ -1,0 +1,69 @@
+IMPORT com.ericsson.cepmediation.correlation.lookup.impl.DefaultLookupService;
+
+create context radio_logical_partition partition by RNC_MODULE_ID,UE_CONTEXT from com.ericsson.cepmediation.apeventbeans.gpeh.GpehBase();
+                    
+create window RadioSessionWindow.win:keepall() as correlation.GPEH_SESSION;
+
+create window visited_cell.win:keepall() as correlation.VISITED_CELL;
+
+create constant variable int SESSION_DURATION_IN_SECONDS = 300;
+create constant variable int SESSION_DURATION_IN_MINUTES = 5;
+create constant variable short EVENT_ID_VALUE = 20000;
+create constant variable int ONE_MINUTE_IN_MS = 60000;
+create constant variable int ECNO_THRESHOLD = DefaultLookupService.getInstance().getECNOThresholdValue();
+create constant variable int RSCP_THRESHOLD = DefaultLookupService.getInstance().getRSCPThresholdValue();
+
+@Priority(10)           
+@Name('Visited-Cell-Output')
+on pattern [every a=correlation.DUMP_VISITED_CELLS()]
+select * from visited_cell;
+
+@Priority(9)  
+@Name('Session-Enrichment')                                    
+on pattern [every a=com.ericsson.cepmediation.apeventbeans.gpeh.GpehBase()]
+select rsw.* from RadioSessionWindow as rsw
+where rsw.START_RAB != -1
+   and rsw.EVENT_CNT > 0
+   and rsw.END_RNC = a.RNC_ID_1
+   and rsw.SESSION_END<a.timestamp;
+
+          
+
+@Name('after')
+@Priority(4) 
+context radio_logical_partition
+insert into enhanced_event
+select  b.IMSI                          as imsi,  
+        c                               as event
+       from pattern [
+                          every(
+                                a=com.ericsson.cepmediation.apeventbeans.gpeh.RRC_RRC_CONNECTION_SETUP()
+                              ->b=com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_IMSI()
+                               ) 
+                               ->
+                               (                                                                     
+                                  every c=com.ericsson.cepmediation.apeventbeans.gpeh.GpehBase(c.type !='INTERNAL_SYSTEM_UTILIZATION'
+                                                                                            OR c.type !='INTERNAL_IMSI')
+                               )
+                           while(c.type !='RRC_RRC_CONNECTION_SETUP')   
+                    ];      
+            
+@Name('Visited-Cell-Inserts')                    
+@Priority(1)
+@Audit
+on enhanced_event as ee
+	MERGE visited_cell as visited_cell_window	
+	WHERE visited_cell_window.IMSI = cast(ee.imsi,long)
+WHEN MATCHED and visited_cell_window.CELL_ID != ee.event.getC_ID_1() and visited_cell_window.LATEST_CELL = true 
+	THEN INSERT into visited_cell		
+		select ee.event.getC_ID_1() as CELL_ID,
+		cast(ee.imsi,long) as IMSI,					
+		true as LATEST_CELL		
+	THEN UPDATE SET 
+		visited_cell.LATEST_CELL = false		
+		
+WHEN NOT MATCHED 
+	THEN INSERT into visited_cell		
+		select ee.event.getC_ID_1() as CELL_ID,
+		cast(ee.imsi,long) as IMSI,
+		true as LATEST_CELL;

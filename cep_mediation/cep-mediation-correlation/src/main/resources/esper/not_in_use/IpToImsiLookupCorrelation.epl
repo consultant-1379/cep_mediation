@@ -1,0 +1,99 @@
+// Declare the name for the module
+module IpToImsiLookupCorrelation;
+
+// Imports
+import com.ericsson.perfmon.eventbeans.celltrace.*;
+import com.ericsson.perfmon.eventbeans.ctum.*;
+import com.ericsson.perfmon.eventbeans.ebm.*;
+import com.ericsson.cepmediation.correlation.support.Util;
+import com.ericsson.cepmediation.correlation.support.Test;
+
+@Name('select-LOG_EVENT')
+@Description('Select all LOG_EVENT events for storage')
+//@Audit
+select * from correlation.LOG_EVENT.win:length(1);
+
+@Name('IpToImsi-create-window')
+@Description('Create a window for handling TCP_REPORT events. The events timeout after 15 minutes, after giving sufficient time for any detach which may occur in the next ROP')
+//@Audit
+create window IpToImsi.win:time(15 min) as correlation.IP_TO_IMSI_LOOKUP;
+
+@Name('AttachTable-create-window')
+@Description('Create a window for handling l_attach events. This maintains a Map of IMSI to IpAddress from the L_ATTACH Events.')
+create window AttachTable.win:keepall() (IP String, IMSI String, timestamp Long, DETACHED Boolean, DETACH_TIME Long);
+	
+@Name('ImsiLookup-L_ATTACH')
+@Description('Handle L_ATTACH event. This adds the IMSI and IP address to the AttachTable Map')
+//@Audit
+on ebm.L_ATTACH as att
+	merge AttachTable as lookup
+	where att.UEID_IMSI = lookup.IMSI 
+	when matched and att.PDN_INFO_PAA_IPV4 is not null
+		then update set   // update the previous attach entry, changing the IP Address and timestamp
+			lookup.timestamp = att.timestamp, 
+			lookup.IP = att.PDN_INFO_PAA_IPV4, 
+			lookup.DETACHED = false,
+			lookup.DETACH_TIME = att.timestamp
+	when not matched and att.PDN_INFO_PAA_IPV4 is not null  //completely new IMSI, so add new entry
+		then insert select
+			att.timestamp     										as timestamp,
+			att.PDN_INFO_PAA_IPV4									as IP,
+			att.UEID_IMSI											as IMSI,
+			false 													as DETACHED,
+			att.timestamp											as DETACH_TIME;
+	
+			
+@Name('IpToImsi-L_ATTACH-AFTER-TCP')
+@Description('Handles the case where the attach comes after the TCP Report. Update the IMSI in existing incomplete records')
+//@Audit
+on ebm.L_ATTACH as att
+	merge IpToImsi ipWin
+	where ipWin.IMSI is null and att.PDN_INFO_PAA_IPV4 = ipWin.IP and att.timestamp <= ipWin.timestamp
+	 when matched
+		then update set 
+			IMSI = att.UEID_IMSI;
+		
+@Name('ImsiLookup-handle-L_DETACH')
+@Description('Handle L_DETACH event. This marks the entries in the AttachTable for later tidy up.  Must first wait for any possible TCP_REPORTs with an earlier time in the next ROP')
+//@Audit
+on ebm.L_DETACH as detach
+	update AttachTable as attach
+	set DETACHED = true, DETACH_TIME = current_timestamp
+	where detach.UEID_IMSI = attach.IMSI and detach.timestamp > attach.timestamp;
+
+@Name('ImsiLookup-L_DETACH-from-IpToImsi-Window')
+@Description('Handle L_DETACH event. Delete all entries from the IpToImsi window where the TCP Report entry comes after the detach event')
+//@Audit
+on ebm.L_DETACH as detach
+	delete from IpToImsi as ipWin
+	where ipWin.IMSI = detach.UEID_IMSI and ipWin.timestamp > detach.timestamp;
+	
+	
+@Name('AttachTable-flush-window')
+@Description('Delete entries from the AttachTable')
+//@Audit
+on pattern [every timer:interval(60 sec)]
+	delete from AttachTable as attach
+	where (attach.DETACHED)
+	and current_timestamp - attach.DETACH_TIME > 3000000; // 5 minutes which is the Staple output interval, so could get TCP events 5 minutes after the detach.	
+//had to change to 3000000 from 300000 as TCP_REPORTS not loading quick enough.
+
+		
+
+@Name('TCP_REPORT-Correlation')
+@Description('Handle TCP_REPORT event. Search for a IMSI with matching IP Address and younger timestamp')
+//@Audit
+insert into correlation.IP_TO_IMSI_LOOKUP select 
+	'IP_TO_IMSI_LOOKUP'       	as name,
+	'na'						as subNetwork,
+	'na'	            		as ne,
+	'na'				       	as version,
+	tcp.ADDR_TERM				as IP, 
+	tcp.timestamp 				as timestamp, 
+	(select IMSI from AttachTable() as attach where tcp.ADDR_TERM = attach.IP and attach.timestamp <= tcp.timestamp) as IMSI	
+	from bearer_plane.TCP_REPORT as tcp;
+	
+insert into IpToImsi select * from correlation.IP_TO_IMSI_LOOKUP;
+
+
+	

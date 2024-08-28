@@ -1,0 +1,324 @@
+<eventspecification xmlns="http://www.ericsson.com/PmEvents">
+	<general>
+		<docno>TBD</docno>
+		<revision>PA1</revision>
+		<date>2011-11-07</date>
+		<author>Liam Fallon</author>
+		<ffv>1</ffv>
+		<fiv>1</fiv>
+		<revisionhistory>
+			<revisionhistoryelem>
+				<revision>PA1</revision>
+				<comment>2011-11-07, LMI/LXR/SH Liam Fallon</comment>
+			</revisionhistoryelem>
+		</revisionhistory>
+		<protocols>
+			<protocol>
+				<name>WEB</name>
+				<specification>EAB-11:054275</specification>
+				<version>PA3</version>
+			</protocol>
+			<protocol>
+				<name>VOD</name>
+				<specification>EAB-11:054274</specification>
+				<version>PA3</version>
+			</protocol>
+			<protocol>
+				<name>FT</name>
+				<specification>EAB-11:054273</specification>
+				<version>PA3</version>
+			</protocol>
+		</protocols>
+	</general>
+	<!-- Note: <extracolumns> and <extracolumn> are tags used to add extra columns 
+		at the beginning of an event table. These columns are added by the parser. -->
+	<extracolumns>
+		<extracolumn type="TIMESTAMP">EVENT_TIME</extracolumn>
+		<extracolumn type="TEXT">SUBNET_NAME</extracolumn>
+		<extracolumn type="TEXT">NE_NAME</extracolumn>
+		<extracolumn type="TEXT">EVENT_NAME</extracolumn>
+		<extracolumn type="TEXT">EVENT_VERSION</extracolumn>
+	</extracolumns>
+
+	<parametertypes>
+		<parametertype>
+			<name>SESSION_ID</name>
+			<type>UINT</type>
+			<description>A unique identifier for this session in the system</description>
+			<numberofbytes>4</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>2147483647</high>
+			</range>
+		</parametertype>
+
+		<parametertype>
+			<name>MESSAGE_SEQUENCE_NO</name>
+			<type>UINT</type>
+			<description>The sequence number of this session record in reporting on a particular session ID</description>
+			<numberofbytes>4</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>2147483647</high>
+			</range>
+		</parametertype>
+
+		<parametertype>
+			<name>DURATION</name>
+			<type>UINT</type>
+			<description>Time values are always expressed as
+			millisecond long values, even if they are specified as being in
+			seconds in the S-KPI definition documents.</description>
+			<numberofbytes>4</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>2147483647</high>
+			</range>
+		</parametertype>
+
+		<parametertype>
+			<name>IMSI</name>
+			<type>TBCD</type>
+			<description>International Mobile Subscriber Identity</description>
+			<detaileddescription>
+				5-15 digits, TBCD (Telephony Binary Coded
+				Decimal), each digit
+				represented by 4 bits.Padded with '1111' for
+				each unused digit up to
+				a total length of 8 octets/16 digits.For more
+				information see:3GPP
+				TS 23.003 (ch 2.2) for the composition and TS
+				29.060 (ch 7.7.2) for
+				the coding.
+      		</detaileddescription>
+			<numberofbytes>8</numberofbytes>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+
+		<parametertype>
+			<name>MSISDN</name>
+			<type>TBCD</type>
+			<description>Mobile Subscriber Integrated Services Digital Network Number</description>
+			<numberofbytes>9</numberofbytes>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+
+		<parametertype>
+			<name>RAT</name>
+			<type>ENUM</type>
+			<description>Radio Access Type, either GSM or WCDMA</description>
+			<numberofbytes>1</numberofbytes>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+			<enumeration>
+				<enum internal="GSM" value="0">GSM</enum>
+				<enum internal="WCDMA" value="1">WCDMA</enum>
+				<enum internal="LTE" value="2">LTE</enum>
+			</enumeration>
+		</parametertype>
+
+		<parametertype>
+			<name>IMEISV</name>
+			<type>TBCD</type>
+			<description>International Mobile Equipment Identity Software Version
+			</description>
+			<detaileddescription>
+				3 sets of digits, 8, 6, and 2 digits
+				respectively. TBCD (Telephony
+				Binary Coded Decimal), each digit
+				represented by 4 bits.Padded with
+				'1111' for each unused digit upto a
+				total length of 8 octets/16
+				digits. A value of all zeros indicates
+				that IMEISV is not available.
+			</detaileddescription>
+			<numberofbytes>8</numberofbytes>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+
+		<parametertype>
+			<name>GLOBAL_CELL_ID</name>
+			<type>UINT</type>
+			<description>Identity of the cell, defined in MOM (eNB ID (20 bits) +
+				Cell ID (8 bits)</description>
+			<numberofbytes>4</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>2147483647</high>
+			</range>
+			<comment>ECGI, E-UTRAN Cell Global Identifier. The eNB ID part will
+				not be set in iteration 9. From Cell Trace 10/1022-HRB105500</comment>
+		</parametertype>
+
+		<parametertype>
+			<name>APN</name>
+			<type>STRING</type>
+			<description>Access Point Name</description>
+			<numberofbytes>256</numberofbytes>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+
+		<parametertype>
+			<name>NSAPI</name>
+			<type>UINT</type>
+			<description>Network Service Access Point Identifier</description>
+			<numberofbytes>1</numberofbytes>
+			<range>
+				<low>5</low>
+				<high>15</high>
+			</range>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+
+		<parametertype>
+			<name>IPV4</name>
+			<type>IPADDRESS</type>
+			<description>IP address V4</description>
+			<numberofbytes>4</numberofbytes>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+
+		<parametertype>
+			<name>IPV6</name>
+			<type>IPADDRESSV6</type>
+			<description>IP address V6</description>
+			<numberofbytes>16</numberofbytes>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+
+		<parametertype>
+			<name>TIMESTAMP</name>
+			<type>TIMESTAMP</type>
+			<description>A time stamp</description>
+			<numberofbytes>4</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>2147483647</high>
+			</range>
+		</parametertype>
+
+		<parametertype>
+			<name>PERCENTAGE</name>
+			<type>UINT</type>
+			<description>All percentages are typed as integer percentage values
+			to four decimal places for ease of implementation. For example 98.2463%
+			is encoded as 982463</description>
+			<numberofbytes>4</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>2147483647</high>
+			</range>
+		</parametertype>
+
+		<parametertype>
+			<name>THROUGHPUT</name>
+			<type>UINT</type>
+			<description>Throughput values are always expressed
+			as Kbits/Second long values, even if they are specified as
+			being in Mbits/Second in the S-KPI definition documents.
+			</description>
+			<numberofbytes>8</numberofbytes>
+		</parametertype>
+
+		<parametertype>
+			<name>MEAN_OPINION_SCORE</name>
+			<type>ENUM</type>
+			<description>Result of the Event Procedure</description>
+			<numberofbytes>1</numberofbytes>
+			<enumeration>
+				<enum internal="POOR" value="1">POOR</enum>
+				<enum internal="FAIRLY_POOR" value="2">FAIRLY_POOR</enum>
+				<enum internal="ACCEPTABLE" value="3">ACCEPTABLE</enum>
+				<enum internal="FAIRLY_GOOD" value="4">FAIRLY_GOOD</enum>
+				<enum internal="GOOD" value="5">GOOD</enum>
+			</enumeration>
+		</parametertype>
+
+	</parametertypes>
+
+	<structuretypes/>
+
+	<!-- Note: Events or parameters can be removed from parsing by adding the 
+		attribute "ignore" to the event or parameter definition. To ignore an event: 
+		<event ignore="true"> To ignore a parameter in an event: <param ignore="true"> -->
+	<events>
+		<event>
+			<name>FILE_TRANSFER_S_KPI</name>
+			<id>8000</id>
+			<comment>This event reports a file transfer S KPI</comment>
+			<elements>
+				<param type="SESSION_ID">SESSION_ID</param>
+				<param type="MESSAGE_SEQUENCE_NO">MESSAGE_SEQUENCE_NO</param>
+				<param type="IMSI">IMSI</param>
+				<param type="MSISDN">MSISDN</param>
+				<param type="RAT">RAT</param>
+				<param type="IMEISV">IMEI</param>
+				<param type="GLOBAL_CELL_ID">CELL_ID</param>
+				<param type="APN">APN</param>
+				<param type="NSAPI">NSAPI</param>
+				<param type="IPV4">UE_ADDR_V4</param>
+				<param type="IPV6">UE_ADDR_V6</param>
+				<param type="TIMESTAMP">TIME_PERIOD_START</param>
+				<param type="TIMESTAMP">TIME_PERIOD_END</param>
+				<param type="PERCENTAGE">FT_ACCESSIBILITY_DOWNLOAD</param>
+				<param type="PERCENTAGE">FT_ACCESSIBILITY_UPLOAD</param>
+				<param type="PERCENTAGE">FT_RETAINABILITY_DOWNLOAD</param>
+				<param type="PERCENTAGE">FT_RETAINABILITY_UPLOAD</param>
+				<param type="DURATION">FT_INTEGRITY_ACCESS_TIME_DOWNLOAD</param>
+				<param type="DURATION">FT_INTEGRITY_ACCESS_TIME_UPLOAD</param>
+				<param type="THROUGHPUT">FT_INTEGRITY_DOWNLOAD_MEAN_THROUGHPUT</param>
+				<param type="THROUGHPUT">FT_INTEGRITY_UPLOAD_MEAN_THROUGHPUT</param>
+			</elements>
+		</event>
+		<event>
+			<name>VIDEO_ON_DEMAND_S_KPI</name>
+			<id>8001</id>
+			<comment>This event reports a file transfer S KPI</comment>
+			<elements>
+				<param type="SESSION_ID">SESSION_ID</param>
+				<param type="MESSAGE_SEQUENCE_NO">MESSAGE_SEQUENCE_NO</param>
+				<param type="IMSI">IMSI</param>
+				<param type="MSISDN">MSISDN</param>
+				<param type="RAT">RAT</param>
+				<param type="IMEISV">IMEI</param>
+				<param type="GLOBAL_CELL_ID">CELL_ID</param>
+				<param type="APN">APN</param>
+				<param type="NSAPI">NSAPI</param>
+				<param type="IPV4">UE_ADDR_V4</param>
+				<param type="IPV6">UE_ADDR_V6</param>
+				<param type="TIMESTAMP">TIME_PERIOD_START</param>
+				<param type="TIMESTAMP">TIME_PERIOD_END</param>
+				<param type="PERCENTAGE">VOD_ACCESSIBILITY</param>
+				<param type="PERCENTAGE">VOD_RETAINABILITY</param>
+				<param type="DURATION">VOD_INTEGRITY_ACCESS_TIME</param>
+				<param type="PERCENTAGE">VOD_INTEGRITY_FREEZE_RATE</param>
+				<param type="MEAN_OPINION_SCORE">VOD_INTEGRITY_QUALITY</param>
+			</elements>
+		</event>
+		<event>
+			<name>WEB_BROWSING_S_KPI</name>
+			<id>8002</id>
+			<comment>This event reports a file transfer S KPI</comment>
+			<elements>
+				<param type="SESSION_ID">SESSION_ID</param>
+				<param type="MESSAGE_SEQUENCE_NO">MESSAGE_SEQUENCE_NO</param>
+				<param type="IMSI">IMSI</param>
+				<param type="MSISDN">MSISDN</param>
+				<param type="RAT">RAT</param>
+				<param type="IMEISV">IMEI</param>
+				<param type="GLOBAL_CELL_ID">CELL_ID</param>
+				<param type="APN">APN</param>
+				<param type="NSAPI">NSAPI</param>
+				<param type="IPV4">UE_ADDR_V4</param>
+				<param type="IPV6">UE_ADDR_V6</param>
+				<param type="TIMESTAMP">TIME_PERIOD_START</param>
+				<param type="TIMESTAMP">TIME_PERIOD_END</param>
+				<param type="PERCENTAGE">WEBB_ACCESSIBILITY</param>
+				<param type="PERCENTAGE">WEBB_RETAINABILITY</param>
+				<param type="DURATION">WEBB_INTEGRITY_ACCESS_TIME</param>
+				<param type="MEAN_OPINION_SCORE">WEBB_INTEGRITY_DOWNLOADTIME_MOS_DISTRIBUTION</param>
+			</elements>
+		</event>
+	</events>
+</eventspecification>
+
+  

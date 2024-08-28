@@ -1,0 +1,1182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<eventspecification xmlns="http://www.ericsson.com/PmEvents">
+	<general>
+		<docno>LMI-11:0000</docno>
+		<revision>PA1</revision>
+		<date>2011-07-22</date>
+		<author>Liam Fallon</author>
+		<ffv>1</ffv>
+		<fiv>1</fiv>
+		<revisionhistory>
+			<revisionhistoryelem>
+				<revision>PA1</revision>
+				<comment>2011-07-22, LMI/LXR/SH Liam Fallon</comment>
+			</revisionhistoryelem>
+		</revisionhistory>
+		<protocols>
+			<protocol>
+				<name>RRC</name>
+				<specification>36.331</specification>
+				<version>9.2.0</version>
+			</protocol>
+			<protocol>
+				<name>S1AP</name>
+				<specification>36.413</specification>
+				<version>9.2.0</version>
+			</protocol>
+			<protocol>
+				<name>X2AP</name>
+				<specification>36.423</specification>
+				<version>9.2.0</version>
+			</protocol>
+		</protocols>
+	</general>
+	<!-- Note: <extracolumns> and <extracolumn> are tags used to add extra columns 
+		at the beginning of an event table. These columns are added by the parser. -->
+	<extracolumns>
+		<extracolumn type="TIMESTAMP">EVENT_TIME</extracolumn>
+		<extracolumn type="TEXT">SUBNET_NAME</extracolumn>
+		<extracolumn type="TEXT">NE_NAME</extracolumn>
+		<extracolumn type="TEXT">EVENT_NAME</extracolumn>
+		<extracolumn type="TEXT">EVENT_VERSION</extracolumn>
+	</extracolumns>
+	<parametertypes>
+		<parametertype>
+			<name>BOOLEAN</name>
+			<type>BOOLEAN</type>
+			<description>A boolean value</description>
+			<numberofbytes>1</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>1</high>
+			</range>
+		</parametertype>
+		<parametertype>
+			<name>UINT_1</name>
+			<type>UINT</type>
+			<description>Generic 1 byte unsigned integer</description>
+			<numberofbytes>1</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>255</high>
+			</range>
+		</parametertype>
+		<parametertype>
+			<name>UINT_2</name>
+			<type>UINT</type>
+			<description>Generic 2 byte unsigned integer</description>
+			<numberofbytes>2</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>32000</high>
+			</range>
+		</parametertype>
+		<parametertype>
+			<name>UINT_4</name>
+			<type>UINT</type>
+			<description>Generic 4 byte unsigned integer</description>
+			<numberofbytes>4</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>2147483647</high>
+			</range>
+		</parametertype>
+		<parametertype>
+			<name>UINT_8</name>
+			<type>UINT</type>
+			<description>Generic 8 byte unsigned integer</description>
+			<numberofbytes>8</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>9223372036854775807</high>
+			</range>
+		</parametertype>
+		<parametertype>
+			<name>GENERIC_FLOAT</name>
+			<type>FLOAT</type>
+			<description>Generic float</description>
+			<numberofbytes>4</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>NAME_3</name>
+			<type>STRING</type>
+			<description>Generic name</description>
+			<numberofbytes>3</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>NAME_32</name>
+			<type>STRING</type>
+			<description>Generic name</description>
+			<numberofbytes>32</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>NAME_127</name>
+			<type>STRING</type>
+			<description>Generic name</description>
+			<numberofbytes>127</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>NAME_128</name>
+			<type>STRING</type>
+			<description>Generic name</description>
+			<numberofbytes>128</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>NAME_256</name>
+			<type>STRING</type>
+			<description>Generic name</description>
+			<numberofbytes>256</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>TIMESTAMP</name>
+			<type>TIMESTAMP</type>
+			<description>A time stamp</description>
+			<numberofbytes>4</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>2147483647</high>
+			</range>
+		</parametertype>
+		<parametertype>
+			<name>SESSION_DURATION</name>
+			<type>FLOAT</type>
+			<description>The duration of a session in seconds</description>
+			<numberofbytes>4</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>IPV4</name>
+			<type>IPADDRESS</type>
+			<description>IP address V4</description>
+			<numberofbytes>4</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>IPV4STRING</name>
+			<type>STRING</type>
+			<description>IP address V4</description>
+			<numberofbytes>256</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>PORT</name>
+			<type>UINT</type>
+			<description>A TCP or UDP port</description>
+			<numberofbytes>4</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>65535</high>
+			</range>
+		</parametertype>
+		<parametertype>
+			<name>TRANSMISSION_DIRECTION</name>
+			<type>ENUM</type>
+			<description>The direction in which a packet was travelling
+			</description>
+			<numberofbytes>1</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>1</high>
+			</range>
+			<enumeration>
+				<enum internal="UE_TO_NETWORK" value="0" />
+				<enum internal="NETWORK_TO_UE" value="1" />
+			</enumeration>
+		</parametertype>
+		<parametertype>
+			<name>DATA_BYTES</name>
+			<type>UINT</type>
+			<description>The amount of bytes transmitted</description>
+			<numberofbytes>4</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>2147483647</high>
+			</range>
+		</parametertype>
+		<parametertype>
+			<name>PACKETS</name>
+			<type>UINT</type>
+			<description>The amount of packets transmitted</description>
+			<numberofbytes>4</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>2147483647</high>
+			</range>
+		</parametertype>
+		<parametertype>
+			<name>THROUGHPUT</name>
+			<type>UINT</type>
+			<description>Throughput values are always expressed
+				as Kbits/Second
+				long values, even if they are specified as
+				being in Mbits/Second in
+				the S-KPI definition documents.
+			</description>
+			<numberofbytes>8</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>ALONE_RATIO</name>
+			<type>FLOAT</type>
+			<description>The ratio of the traffic on this session to the total
+				traffic
+			</description>
+			<numberofbytes>8</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>RWIN_SIZE</name>
+			<type>UINT</type>
+			<description>Receiver window size [bytes]</description>
+			<numberofbytes>4</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>2147483647</high>
+			</range>
+		</parametertype>
+		<parametertype>
+			<name>ROUND_TRIP_TIME</name>
+			<type>FLOAT</type>
+			<description> Partial RTT upon connection setup (-1 if not measured
+				[SYN or SYN ACK is retransmitted]) [s]
+			</description>
+			<numberofbytes>8</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>PACKET_SIZE</name>
+			<type>UINT</type>
+			<description>IP data packet size [bytes]</description>
+			<numberofbytes>4</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>2147483647</high>
+			</range>
+		</parametertype>
+		<parametertype>
+			<name>PACKET_LOSS_RATIO</name>
+			<type>FLOAT</type>
+			<description>The ratio of packets lost to the total packets carried
+			</description>
+			<numberofbytes>8</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>CONTENT_TYPE</name>
+			<type>STRING</type>
+			<description>The type of content being carried in the session
+			</description>
+			<numberofbytes>256</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>HOST</name>
+			<type>STRING</type>
+			<description>The network host with which this session is being
+				carried out
+			</description>
+			<numberofbytes>256</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>URI</name>
+			<type>STRING</type>
+			<description>The URI of the network host with which this session is
+				being carried out
+			</description>
+			<numberofbytes>256</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>REBUFFERING_TIME</name>
+			<type>FLOAT</type>
+			<description>An amount of time spent with rebuffering during a FLV
+				stream
+			</description>
+			<numberofbytes>8</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>REBUFFERING_NUM</name>
+			<type>UINT</type>
+			<description>The total number of rebuffering events during the FLV
+				stream
+			</description>
+			<numberofbytes>4</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>65536</high>
+			</range>
+		</parametertype>
+		<parametertype>
+			<name>TERMINATION_CAUSE</name>
+			<type>STRING</type>
+			<description>The reason this session terminated</description>
+			<numberofbytes>256</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>CODEC</name>
+			<type>STRING</type>
+			<description>The type of codec used on this session</description>
+			<numberofbytes>256</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>AUDIO_RATE</name>
+			<type>FLOAT</type>
+			<description>The audio rate in KHz</description>
+			<numberofbytes>8</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>AUDIO_TYPE</name>
+			<type>STRING</type>
+			<description>The type of audio used on this session</description>
+			<numberofbytes>256</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>QOE_NUM</name>
+			<type>UINT</type>
+			<description>The number of QoE measurements in a session
+			</description>
+			<numberofbytes>4</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>65536</high>
+			</range>
+		</parametertype>
+		<parametertype>
+			<name>QOE</name>
+			<type>FLOAT</type>
+			<description>The estimated QoE value on this session</description>
+			<numberofbytes>8</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>QOE_TIME</name>
+			<type>FLOAT</type>
+			<description>The relative start time in a session for which a QoE
+				value was calculated
+			</description>
+			<numberofbytes>8</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>QOE_DURATION</name>
+			<type>FLOAT</type>
+			<description>The duration in a session for which a QoE value was
+				calculated
+			</description>
+			<numberofbytes>8</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>QOE_SEQUENCE_NUM</name>
+			<type>UINT</type>
+			<description>The sequence number of a QoE measurement in a session
+			</description>
+			<numberofbytes>4</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>65536</high>
+			</range>
+		</parametertype>
+		<parametertype>
+			<name>IMSI</name>
+			<type>TBCD</type>
+			<description>International Mobile Subscriber Identity</description>
+			<detaileddescription>
+				5-15 digits, TBCD (Telephony Binary Coded
+				Decimal), each digit
+				represented by 4 bits.Padded with '1111' for
+				each unused digit up to
+				a total length of 8 octets/16 digits.For more
+				information see:3GPP
+				TS 23.003 (ch 2.2) for the composition and TS
+				29.060 (ch 7.7.2) for
+				the coding.
+			</detaileddescription>
+			<numberofbytes>8</numberofbytes>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+		<parametertype>
+			<name>IMEISV</name>
+			<type>TBCD</type>
+			<description>International Mobile Equipment Identity Software Version
+			</description>
+			<numberofbytes>8</numberofbytes>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+		<parametertype>
+			<name>RAT</name>
+			<type>ENUM</type>
+			<description>Radio Access Type, either GSM, WCDMA or LTE
+			</description>
+			<numberofbytes>1</numberofbytes>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+			<enumeration>
+				<enum internal="GSM" value="0">GSM</enum>
+				<enum internal="WCDMA" value="1">WCDMA</enum>
+				<enum internal="LTE" value="2">LTE</enum>
+			</enumeration>
+		</parametertype>
+		<parametertype>
+			<name>APN</name>
+			<type>STRING</type>
+			<description>Access Point Name</description>
+			<numberofbytes>256</numberofbytes>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+		<parametertype>
+			<name>PROTOCOL</name>
+			<type>STRING</type>
+			<description>The type of protocol detected on a sesison</description>
+			<numberofbytes>256</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>FUNCTION</name>
+			<type>STRING</type>
+			<description>The type of function detected on a sesison</description>
+			<numberofbytes>256</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>ENCAPSULATION</name>
+			<type>STRING</type>
+			<description>The type of encapsulation detected on a sesison
+			</description>
+			<numberofbytes>256</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>ENCRYPTION</name>
+			<type>STRING</type>
+			<description>The type of encryption detected on a sesison
+			</description>
+			<numberofbytes>256</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>ENCRYPTION</name>
+			<type>STRING</type>
+			<description>The type of encryption detected on a sesison
+			</description>
+			<numberofbytes>256</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>SERVICE_PROVIDER</name>
+			<type>STRING</type>
+			<description>The service provider detected on a sesison</description>
+			<numberofbytes>256</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>CLIENT</name>
+			<type>STRING</type>
+			<description>The type of client detected on a sesison</description>
+			<numberofbytes>256</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>MCC</name>
+			<type>IBCD</type>
+			<description>Mobile Country Code. The MCC identifies uniquely the
+				country of domicile of the mobile subscriber
+			</description>
+			<numberofbytes>2</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>1023</high>
+			</range>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+		<parametertype>
+			<name>MNC</name>
+			<type>IBCD</type>
+			<description>Mobile Network Code. The MNC identifies the home PLMN of
+				the mobile subscriber.
+			</description>
+			<numberofbytes>2</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>1023</high>
+			</range>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+		<parametertype>
+			<name>STR_MCC</name>
+			<type>STRING</type>
+			<description>string format of MCC value</description>
+			<numberofbytes>3</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>STR_MNC</name>
+			<type>STRING</type>
+			<description>string format of MNC value</description>
+			<numberofbytes>3</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>LAC</name>
+			<type>UINT</type>
+			<description>Location Area Code</description>
+			<numberofbytes>4</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>65535</high>
+			</range>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+		<parametertype>
+			<name>RAC</name>
+			<type>UINT</type>
+			<description>Routing Area Code</description>
+			<numberofbytes>2</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>255</high>
+			</range>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+		<parametertype>
+			<name>CI</name>
+			<type>UINT</type>
+			<description>Cell Identity</description>
+			<numberofbytes>4</numberofbytes>
+			<range>
+				<low>1</low>
+				<high>65535</high>
+			</range>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+		<parametertype>
+			<name>SAC</name>
+			<type>UINT</type>
+			<description>Service Area Code</description>
+			<numberofbytes>4</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>65535</high>
+			</range>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+		<parametertype>
+			<name>PDN_CAUSE</name>
+			<type>STRING</type>
+			<description>The PDN Cause</description>
+			<numberofbytes>256</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>PDP_TYPE</name>
+			<type>STRING</type>
+			<description>The Type of Packet Data Protocol</description>
+			<numberofbytes>256</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>CAUSE</name>
+			<type>STRING</type>
+			<description>The Type of Packet Data Protocol</description>
+			<numberofbytes>256</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>MSISDN</name>
+			<type>TBCD</type>
+			<description>Mobile Subscriber Integrated Services Digital Network
+				Number
+			</description>
+			<numberofbytes>9</numberofbytes>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+		<parametertype>
+			<name>NSAPI</name>
+			<type>UINT</type>
+			<description>Network Service Access Point Identifier</description>
+			<numberofbytes>4</numberofbytes>
+			<range>
+				<low>5</low>
+				<high>15</high>
+			</range>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+		<parametertype>
+			<name>ARP</name>
+			<type>UINT</type>
+			<description>Allocation and Rentention Priority</description>
+			<numberofbytes>4</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>DELAY_CLASS</name>
+			<type>UINT</type>
+			<description>Delay class</description>
+			<numberofbytes>4</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>RELIABILITY_CLASS</name>
+			<type>UINT</type>
+			<description>Reliability class</description>
+			<numberofbytes>4</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>PRECEDENCE</name>
+			<type>UINT</type>
+			<description>Precedence</description>
+			<numberofbytes>4</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>TRAFFIC_CLASS</name>
+			<type>STRING</type>
+			<description>The Traffic Class</description>
+			<numberofbytes>256</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>SDU</name>
+			<type>UINT</type>
+			<description>Service Data Unit</description>
+			<numberofbytes>4</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>DT_FLAG</name>
+			<type>UINT</type>
+			<description>DT FLAG</description>
+			<numberofbytes>4</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>MOS_VALUES</name>
+			<type>FLOAT</type>
+			<description>list of MOS values calculated for 30s timeslots
+			</description>
+			<numberofbytes>8</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>AVERAGE_MOS_TOTAL</name>
+			<type>FLOAT</type>
+			<description>session average MOS
+			</description>
+			<numberofbytes>8</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>AVERAGE_MOS_EXCL</name>
+			<type>FLOAT</type>
+			<description>session average MOS excluding the without first 30s
+				(because of the distorting effect of initial buffering)
+			</description>
+			<numberofbytes>8</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>MOS_NUMBER</name>
+			<type>UINT</type>
+			<description>number of 30s MOS reports
+			</description>
+			<numberofbytes>4</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>MOS_TIMESTAMPS</name>
+			<type>FLOAT</type>
+			<description>list of transport timestamps when the 30s MOS reports
+				were calculated (pointing to the beginning to the 30s period)
+			</description>
+			<numberofbytes>8</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>MOS_DURATION</name>
+			<type>FLOAT</type>
+			<description>transport duration of the 30s MOS periods
+			</description>
+			<numberofbytes>8</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>ECGI</name>
+			<type>UINT</type>
+			<description>The EUTRAN global cell identity
+			</description>
+			<numberofbytes>4</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>DEFAULT_BEARER_ID</name>
+			<type>UINT</type>
+			<description>The id of the default bearer
+			</description>
+			<numberofbytes>4</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>MME_ADDR</name>
+			<type>IPADDRESS</type>
+			<description>The s1-U arddress</description>
+			<numberofbytes>4</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>MME_TEID</name>
+			<type>UINT</type>
+			<description>The S1-u TEID/GRE key</description>
+			<numberofbytes>8</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>SGW_C_ADDR</name>
+			<type>IPADDRESS</type>
+			<description>The sgw C arddress</description>
+			<numberofbytes>4</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>SGW_C_TEID</name>
+			<type>UINT</type>
+			<description>The sgw C TEID</description>
+			<numberofbytes>8</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>SGW_TEID</name>
+			<type>UINT</type>
+			<description>The sgw TEID</description>
+			<numberofbytes>8</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>ENB_ADDER</name>
+			<type>IPADDRESS</type>
+			<description>The E node B arddress</description>
+			<numberofbytes>4</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>ENB_TEID</name>
+			<type>UINT</type>
+			<description>The E node B TEID</description>
+			<numberofbytes>8</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>SREQ_FLAG</name>
+			<type>UINT</type>
+			<description>The SREQ Flag</description>
+			<numberofbytes>4</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>PAGING_FLAG</name>
+			<type>UINT</type>
+			<description>The Paging Flag</description>
+			<numberofbytes>4</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>UPDATE_CAUSE</name>
+			<type>UINT</type>
+			<description>The cause code value of an update message</description>
+			<numberofbytes>4</numberofbytes>
+		</parametertype>
+	</parametertypes>
+	
+	
+	<structuretypes>
+		<structuretype>
+			<name>MOS_VALUES</name>
+			<elements>
+				<param type="MOS_VALUES">MOS_VALUES</param>
+			</elements>
+		</structuretype>
+		<structuretype>
+			<name>MOS_TIMESTAMPS</name>
+			<elements>
+				<param type="MOS_TIMESTAMPS">MOS_TIMESTAMPS</param>
+			</elements>
+		</structuretype>
+		<structuretype>
+			<name>MOS_DURATION</name>
+			<elements>
+				<param type="MOS_DURATION">MOS_DURATION</param>
+			</elements>
+		</structuretype>
+		<structuretype>
+			<name>QOE</name>
+			<elements>
+				<param type="QOE">QOE</param>
+				<param type="QOE_TIME">QOE_TIME</param>
+				<param type="QOE_DURATION">QOE_DURATION</param>
+			</elements>
+		</structuretype>
+		<structuretype>
+			<name>CGI</name>
+			<elements>
+				<param type="STR_MCC">MCC</param>
+				<param type="STR_MNC">MNC</param>
+				<param type="LAC">LAC</param>
+				<param type="CI">CI</param>
+			</elements>
+		</structuretype>
+		<structuretype>
+			<name>SAI</name>
+			<elements>
+				<param type="STR_MCC">MCC</param>
+				<param type="STR_MNC">MNC</param>
+				<param type="LAC">LAC</param>
+				<param type="SAC">SAC</param>
+			</elements>
+		</structuretype>
+		<structuretype>
+			<name>RAI</name>
+			<elements>
+				<param type="STR_MCC">MCC</param>
+				<param type="STR_MNC">MNC</param>
+				<param type="LAC">LAC</param>
+				<param type="RAC">RAC</param>
+			</elements>
+		</structuretype>
+	</structuretypes>
+	<!-- Note: Events or parameters can be removed from parsing by adding the 
+		attribute "ignore" to the event or parameter definition. To ignore an event: 
+		<event ignore="true"> To ignore a parameter in an event: <param ignore="true"> -->
+	<events>
+		<event>
+			<name>TCP_REPORT</name>
+			<id>18000</id>
+			<comment>This event is reported by a probe for a TCP TA session
+			</comment>
+			<elements>
+				<param type="SESSION_DURATION">DURATION</param>
+				<param type="IPV4STRING">ADDR_TERM</param>
+				<param type="PORT">PORT_TERM</param>
+				<param type="IPV4STRING">ADDR_SERV</param>
+				<param type="PORT">PORT_SERV</param>
+				<param type="TRANSMISSION_DIRECTION">DIRECTION</param>
+				<param type="DATA_BYTES">DATA_RECEIVED</param>
+				<param type="THROUGHPUT">THROUGHPUT</param>
+				<param type="THROUGHPUT">PIPE_THROUGHPUT</param>
+				<param type="THROUGHPUT">NONSS_PIPE_THROUGHPUT</param>
+				<param type="THROUGHPUT">CHANNEL_PIPE_THROUGHPUT</param>
+				<param type="ALONE_RATIO">ALONE_RATIO</param>
+				<param type="RWIN_SIZE">MAX_RWIN</param>
+				<param type="ROUND_TRIP_TIME">SETUP_TIME_TERM</param>
+				<param type="ROUND_TRIP_TIME">SETUP_TIME_NET</param>
+				<param type="PACKET_SIZE">MAX_DATA_PACKET</param>
+				<param type="PACKET_LOSS_RATIO">PACKET_LOSS_TERM</param>
+				<param type="PACKET_LOSS_RATIO">PACKET_LOSS_NET</param>
+				<param type="CONTENT_TYPE">CONTENT_TYPE</param>
+				<param type="HOST">HOST</param>
+				<param type="URI">URI</param>
+				<!-- The following are the GTP-C enriched values -->
+				<param type="PDN_CAUSE">PDN_CAUSE</param>
+				<param type="PDP_TYPE">PDP_TYPE</param>
+				<param type="RAT">RAT</param>
+				<param type="CAUSE">CAUSE</param>
+				<param type="MCC">MCC</param>
+				<param type="MNC">MNC</param>
+				<param type="LAC">LAC</param>
+				<param type="RAC">RAC</param>
+				<param type="CI">CID</param>
+				<param type="SAC">SAC</param>
+				<param type="IMSI">IMSI</param>
+				<param type="IMEISV">IMEISV</param>
+				<param type="IPV4STRING">GGSN_ADDRESS</param>
+				<param type="APN">APN</param>
+				<param type="MSISDN">MSISDN</param>
+				<param type="NSAPI">NSAPI</param>
+				<param type="IPV4STRING">UE_ADDRESS</param>
+				<param type="ARP">ARP</param>
+				<param type="DELAY_CLASS">DELAY_CLASS</param>
+				<param type="RELIABILITY_CLASS">RELIABILITY_CLASS</param>
+				<param type="PRECEDENCE">PRECEDENCE</param>
+				<param type="TRAFFIC_CLASS">TRAFFIC_CLASS</param>
+				<param type="THROUGHPUT">GTPC_THROUGHPUT</param>
+				<param type="PACKETS">GTPC_MAX_UPLINK</param>
+				<param type="PACKETS">GTPC_MAX_DOWNLINK</param>
+				<param type="PACKETS">GTPC_GBR_UPLINK</param>
+				<param type="PACKETS">GTPC_GBR_DOWNLINK</param>
+				<param type="SDU">SDU</param>
+				<param type="DT_FLAG">DT_FLAG</param>
+				<!-- The following fields have been included for the gtpc_v2 standard Michael Lawless 3GPP 29274-b30 -->
+<!-- 					<param type="ECGI">ECGI</param>	
+				<param type="DEFAULT_BEARER_ID">DEFAULT_BEARER_ID</param>
+		       	<param type="MME_ADDR">MME_ADDR</param>	
+		       	<param type="MME_TEID">MME_TEID</param>	
+		       	<param type="SGW_C_ADDR">SGW_C_ADDR</param>		
+		       	<param type="SGW_C_TEID">SGW_C_TEID</param>		
+		       	<param type="SGW_TEID">SGW_D_TEID</param>		
+		       	<param type="ENB_ADDER">ENB_ADDR</param>		
+		       	<param type="ENB_TEID">ENB_TEID</param>		
+		       	<param type="SREQ_FLAG">SREQ_FLAG</param>		
+		       	<param type="PAGING_FLAG">PAGING_FLAG</param>
+		       	<param type="TIMESTAMP">TIME_UPDATE_REQUEST</param>
+		       	<param type="TIMESTAMP">TIME_UPDATE_RESPONSE</param>
+		       	<param type="UPDATE_CAUSE">UPDATE_CAUSE</param> -->
+			</elements>
+		</event>
+		<event>
+			<name>TCP_REPORT_PARTIAL</name>
+			<id>18001</id>
+			<comment>This event is reported by a probe for a TCP TA session
+			</comment>
+			<elements>
+				<param type="SESSION_DURATION">DURATION</param>
+				<param type="IPV4STRING">ADDR_TERM</param>
+				<param type="PORT">PORT_TERM</param>
+				<param type="IPV4STRING">ADDR_SERV</param>
+				<param type="PORT">PORT_SERV</param>
+				<param type="TRANSMISSION_DIRECTION">DIRECTION</param>
+				<param type="DATA_BYTES">DATA_RECEIVED</param>
+				<param type="THROUGHPUT">THROUGHPUT</param>
+				<param type="THROUGHPUT">PIPE_THROUGHPUT</param>
+				<param type="THROUGHPUT">NONSS_PIPE_THROUGHPUT</param>
+				<param type="THROUGHPUT">CHANNEL_PIPE_THROUGHPUT</param>
+				<param type="ALONE_RATIO">ALONE_RATIO</param>
+				<param type="RWIN_SIZE">MAX_RWIN</param>
+				<param type="ROUND_TRIP_TIME">SETUP_TIME_TERM</param>
+				<param type="ROUND_TRIP_TIME">SETUP_TIME_NET</param>
+				<param type="PACKET_SIZE">MAX_DATA_PACKET</param>
+				<param type="PACKET_LOSS_RATIO">PACKET_LOSS_TERM</param>
+				<param type="PACKET_LOSS_RATIO">PACKET_LOSS_NET</param>
+				<param type="CONTENT_TYPE">CONTENT_TYPE</param>
+				<param type="HOST">HOST</param>
+				<param type="URI">URI</param>
+				<!-- The following are the GTP-C enriched values -->
+				<param type="PDN_CAUSE">PDN_CAUSE</param>
+				<param type="PDP_TYPE">PDP_TYPE</param>
+				<param type="RAT">RAT</param>
+				<param type="CAUSE">CAUSE</param>
+				<param type="STR_MCC">MCC</param>
+				<param type="STR_MNC">MNC</param>
+				<param type="LAC">LAC</param>
+				<param type="RAC">RAC</param>
+				<param type="CI">CID</param>
+				<param type="SAC">SAC</param>
+				<param type="IMSI">IMSI</param>
+				<param type="IMEISV">IMEISV</param>
+				<param type="IPV4STRING">GGSN_ADDRESS</param>
+				<param type="APN">APN</param>
+				<param type="MSISDN">MSISDN</param>
+				<param type="NSAPI">NSAPI</param>
+				<param type="IPV4STRING">UE_ADDRESS</param>
+				<param type="ARP">ARP</param>
+				<param type="DELAY_CLASS">DELAY_CLASS</param>
+				<param type="RELIABILITY_CLASS">RELIABILITY_CLASS</param>
+				<param type="PRECEDENCE">PRECEDENCE</param>
+				<param type="TRAFFIC_CLASS">TRAFFIC_CLASS</param>
+				<param type="THROUGHPUT">GTPC_THROUGHPUT</param>
+				<param type="PACKETS">GTPC_MAX_UPLINK</param>
+				<param type="PACKETS">GTPC_MAX_DOWNLINK</param>
+				<param type="PACKETS">GTPC_GBR_UPLINK</param>
+				<param type="PACKETS">GTPC_GBR_DOWNLINK</param>
+				<param type="SDU">SDU</param>
+				<param type="DT_FLAG">DT_FLAG</param>
+				
+				<!-- The following fields have been included for the gtpc_v2 standard Michael Lawless 3GPP 29274-b30 -->
+<!-- 				<param type="ECGI">ECGI</param>
+				<param type="DEFAULT_BEARER_ID">DEFAULT_BEARER_ID</param>
+		       	<param type="MME_ADDR">MME_ADDR</param>	
+		       	<param type="MME_TEID">MME_TEID</param>	
+		       	<param type="SGW_C_ADDR">SGW_C_ADDR</param>		
+		       	<param type="SGW_C_TEID">SGW_C_TEID</param>		
+		       	<param type="SGW_TEID">SGW_D_TEID</param>		
+		       	<param type="ENB_ADDER">ENB_ADDR</param>		
+		       	<param type="ENB_TEID">ENB_TEID</param>		
+		       	<param type="SREQ_FLAG">SREQ_FLAG</param>		
+		       	<param type="PAGING_FLAG">PAGING_FLAG</param>
+		       	<param type="TIMESTAMP">TIME_UPDATE_REQUEST</param>
+		       	<param type="TIMESTAMP">TIME_UPDATE_RESPONSE</param>
+		       	<param type="UPDATE_CAUSE">UPDATE_CAUSE</param> -->
+			</elements>
+		</event>
+		<event>
+			<name>FLASH_VIDEO_REPORT</name>
+			<id>18002</id>
+			<comment>This event is reported by a probe for a TCP Flash Video
+				session
+			</comment>
+			<elements>
+				<param type="SESSION_DURATION">DURATION</param>
+				<param type="IPV4STRING">ADDR_TERM</param>
+				<param type="PORT">PORT_TERM</param>
+				<param type="IPV4STRING">ADDR_SERV</param>
+				<param type="PORT">PORT_SERV</param>
+				<param type="DATA_BYTES">DATA_RECEIVED</param>
+				<param type="THROUGHPUT">MEDIA_RATE</param>
+				<param type="THROUGHPUT">RATE</param>
+				<param type="REBUFFERING_TIME">INITIAL_REBUFFERING_TIME</param>
+				<param type="REBUFFERING_NUM">REBUFFERING_NUM</param>
+				<param type="REBUFFERING_TIME">REBUFFERING_TIME</param>
+				<param type="TERMINATION_CAUSE">TERMINATION_CAUSE</param>
+				<param type="CODEC">VIDEO_CODEC</param>
+				<param type="CODEC">AUDIO_CODEC</param>
+				<param type="AUDIO_RATE">AUDIO_RATE</param>
+				<param type="AUDIO_TYPE">AUDIO_TYPE</param>
+				<param type="TRANSMISSION_DIRECTION">DIRECTION</param>
+				<param type="ALONE_RATIO">ALONE_RATIO</param>
+				<param type="RWIN_SIZE">MAX_RWIN</param>
+				<param type="ROUND_TRIP_TIME">SETUP_TIME_TERM</param>
+				<param type="ROUND_TRIP_TIME">SETUP_TIME_NET</param>
+				<param type="PACKET_SIZE">MAX_DATA_PACKET</param>
+				<param type="PACKET_LOSS_RATIO">PACKET_LOSS_TERM</param>
+				<param type="PACKET_LOSS_RATIO">PACKET_LOSS_NET</param>
+				<struct seqmaxlen="60" type="MOS_VALUES">MOS_VALUES</struct>
+				<param type="MOS_VALUES">AVERAGE_MOS_TOTAL</param>
+				<param type="AVERAGE_MOS_EXCL">AVERAGE_MOS_EXCL</param>
+				<param type="MOS_NUMBER">MOS_NUMBER</param>
+				<struct seqmaxlen="60" type="MOS_TIMESTAMPS">MOS_TIMESTAMPS</struct>
+				<struct seqmaxlen="60" type="MOS_DURATION">MOS_DURATION</struct>
+				<!-- The following are the GTP-C enriched values -->
+				<param type="PDN_CAUSE">PDN_CAUSE</param>
+				<param type="PDP_TYPE">PDP_TYPE</param>
+				<param type="RAT">RAT</param>
+				<param type="CAUSE">CAUSE</param>
+				<param type="MCC">MCC</param>
+				<param type="MNC">MNC</param>
+				<param type="LAC">LAC</param>
+				<param type="RAC">RAC</param>
+				<param type="CI">CID</param>
+				<param type="SAC">SAC</param>
+				<param type="IMSI">IMSI</param>
+				<param type="IMEISV">IMEISV</param>
+				<param type="IPV4STRING">GGSN_ADDRESS</param>
+				<param type="APN">APN</param>
+				<param type="MSISDN">MSISDN</param>
+				<param type="NSAPI">NSAPI</param>
+				<param type="IPV4STRING">UE_ADDRESS</param>
+				<param type="ARP">ARP</param>
+				<param type="DELAY_CLASS">DELAY_CLASS</param>
+				<param type="RELIABILITY_CLASS">RELIABILITY_CLASS</param>
+				<param type="PRECEDENCE">PRECEDENCE</param>
+				<param type="TRAFFIC_CLASS">TRAFFIC_CLASS</param>
+				<param type="THROUGHPUT">GTPC_THROUGHPUT</param>
+				<param type="PACKETS">GTPC_MAX_UPLINK</param>
+				<param type="PACKETS">GTPC_MAX_DOWNLINK</param>
+				<param type="PACKETS">GTPC_GBR_UPLINK</param>
+				<param type="PACKETS">GTPC_GBR_DOWNLINK</param>
+				<param type="SDU">SDU</param>
+				<param type="DT_FLAG">DT_FLAG</param>
+				
+				<!-- The following fields have been included for the gtpc_v2 standard Michael Lawless 3GPP 29274-b30 -->
+<!-- 				<param type="ECGI">ECGI</param>	
+				<param type="DEFAULT_BEARER_ID">DEFAULT_BEARER_ID</param>
+		       	<param type="MME_ADDR">MME_ADDR</param>	
+		       	<param type="MME_TEID">MME_TEID</param>	
+		       	<param type="SGW_C_ADDR">SGW_C_ADDR</param>		
+		       	<param type="SGW_C_TEID">SGW_C_TEID</param>		
+		       	<param type="SGW_TEID">SGW_D_TEID</param>		
+		       	<param type="ENB_ADDER">ENB_ADDR</param>		
+		       	<param type="ENB_TEID">ENB_TEID</param>		
+		       	<param type="SREQ_FLAG">SREQ_FLAG</param>		
+		       	<param type="PAGING_FLAG">PAGING_FLAG</param>
+		       	<param type="TIMESTAMP">TIME_UPDATE_REQUEST</param>
+		       	<param type="TIMESTAMP">TIME_UPDATE_RESPONSE</param>
+		       	<param type="UPDATE_CAUSE">UPDATE_CAUSE</param> -->
+			</elements>
+		</event>
+		<event>
+			<name>FLASH_VIDEO_REPORT_PARTIAL</name>
+			<id>18003</id>
+			<comment>This event is reported by a probe for a TCP Flash Video
+				session
+			</comment>
+			<elements>
+				<param type="SESSION_DURATION">DURATION</param>
+				<param type="IPV4STRING">ADDR_TERM</param>
+				<param type="PORT">PORT_TERM</param>
+				<param type="IPV4STRING">ADDR_SERV</param>
+				<param type="PORT">PORT_SERV</param>
+				<param type="DATA_BYTES">DATA_RECEIVED</param>
+				<param type="THROUGHPUT">MEDIA_RATE</param>
+				<param type="THROUGHPUT">RATE</param>
+				<param type="REBUFFERING_TIME">INITIAL_REBUFFERING_TIME</param>
+				<param type="REBUFFERING_NUM">REBUFFERING_NUM</param>
+				<param type="REBUFFERING_TIME">REBUFFERING_TIME</param>
+				<param type="TERMINATION_CAUSE">TERMINATION_CAUSE</param>
+				<param type="CODEC">VIDEO_CODEC</param>
+				<param type="CODEC">AUDIO_CODEC</param>
+				<param type="AUDIO_RATE">AUDIO_RATE</param>
+				<param type="AUDIO_TYPE">AUDIO_TYPE</param>
+				<param type="TRANSMISSION_DIRECTION">DIRECTION</param>
+				<param type="ALONE_RATIO">ALONE_RATIO</param>
+				<param type="RWIN_SIZE">MAX_RWIN</param>
+				<param type="ROUND_TRIP_TIME">SETUP_TIME_TERM</param>
+				<param type="ROUND_TRIP_TIME">SETUP_TIME_NET</param>
+				<param type="PACKET_SIZE">MAX_DATA_PACKET</param>
+				<param type="PACKET_LOSS_RATIO">PACKET_LOSS_TERM</param>
+				<param type="PACKET_LOSS_RATIO">PACKET_LOSS_NET</param>
+				<param type="QOE_SEQUENCE_NUM">QOE_SEQUENCE_NUM</param>
+				<param type="QOE">QOE</param>
+				<!-- The following are the GTP-C enriched values -->
+				<param type="PDN_CAUSE">PDN_CAUSE</param>
+				<param type="PDP_TYPE">PDP_TYPE</param>
+				<param type="RAT">RAT</param>
+				<param type="CAUSE">CAUSE</param>
+				<param type="STR_MCC">MCC</param>
+				<param type="STR_MNC">MNC</param>
+				<param type="LAC">LAC</param>
+				<param type="RAC">RAC</param>
+				<param type="CI">CID</param>
+				<param type="SAC">SAC</param>
+				<param type="IMSI">IMSI</param>
+				<param type="IMEISV">IMEISV</param>
+				<param type="IPV4STRING">GGSN_ADDRESS</param>
+				<param type="APN">APN</param>
+				<param type="MSISDN">MSISDN</param>
+				<param type="NSAPI">NSAPI</param>
+				<param type="IPV4STRING">UE_ADDRESS</param>
+				<param type="ARP">ARP</param>
+				<param type="DELAY_CLASS">DELAY_CLASS</param>
+				<param type="RELIABILITY_CLASS">RELIABILITY_CLASS</param>
+				<param type="PRECEDENCE">PRECEDENCE</param>
+				<param type="TRAFFIC_CLASS">TRAFFIC_CLASS</param>
+				<param type="THROUGHPUT">GTPC_THROUGHPUT</param>
+				<param type="PACKETS">GTPC_MAX_UPLINK</param>
+				<param type="PACKETS">GTPC_MAX_DOWNLINK</param>
+				<param type="PACKETS">GTPC_GBR_UPLINK</param>
+				<param type="PACKETS">GTPC_GBR_DOWNLINK</param>
+				<param type="SDU">SDU</param>
+				<param type="DT_FLAG">DT_FLAG</param>
+				
+				<!-- The following fields have been included for the gtpc_v2 standard Michael Lawless 3GPP 29274-b30 -->
+<!-- 				<param type="ECGI">ECGI</param>	
+				<param type="DEFAULT_BEARER_ID">DEFAULT_BEARER_ID</param>
+		       	<param type="MME_ADDR">MME_ADDR</param>	
+		       	<param type="MME_TEID">MME_TEID</param>	
+		       	<param type="SGW_C_ADDR">SGW_C_ADDR</param>		
+		       	<param type="SGW_C_TEID">SGW_C_TEID</param>		
+		       	<param type="SGW_TEID">SGW_D_TEID</param>		
+		       	<param type="ENB_ADDER">ENB_ADDR</param>		
+		       	<param type="ENB_TEID">ENB_TEID</param>		
+		       	<param type="SREQ_FLAG">SREQ_FLAG</param>		
+		       	<param type="PAGING_FLAG">PAGING_FLAG</param>
+		       	<param type="TIMESTAMP">TIME_UPDATE_REQUEST</param>
+		       	<param type="TIMESTAMP">TIME_UPDATE_RESPONSE</param>
+		       	<param type="UPDATE_CAUSE">UPDATE_CAUSE</param> -->
+			</elements>
+		</event>
+
+		<event>
+			<name>CLASSIFICATION_REPORT</name>
+			<id>18010</id>
+			<comment>This event is a classification report on a probed session
+			</comment>
+			<elements>
+				<param type="TIMESTAMP">PERIOD_START</param>
+				<param type="TIMESTAMP">PERIOD_END</param>
+				<param type="IMSI">IMSI</param>
+				<param type="IMEISV">IMEISV</param>
+				<param type="APN">APN</param>
+				<param type="RAT">RAT</param>
+				<struct type="CGI">CGI</struct>
+				<struct type="SAI">SAI</struct>
+				<struct type="RAI">RAI</struct>
+				<param type="IPV4STRING">ADDR_TERM</param>
+				<param type="PACKETS">PACKETS_DOWNLINK</param>
+				<param type="PACKETS">PACKETS_UPLINK</param>
+				<param type="DATA_BYTES">BYTES_DOWNLINK</param>
+				<param type="DATA_BYTES">BYTES_UPLINK</param>
+				<param type="PROTOCOL">PROTOCOL</param>
+				<param type="FUNCTION">FUNCTION</param>
+				<param type="ENCAPSULATION">ENCAPSULATION</param>
+				<param type="ENCRYPTION">ENCRYPTION</param>
+				<param type="SERVICE_PROVIDER">SERVICE_PROVIDER</param>
+				<param type="CLIENT">CLIENT</param>
+				<!-- The following are the GTP-C enriched values -->
+				<param type="PDN_CAUSE">PDN_CAUSE</param>
+				<param type="PDP_TYPE">PDP_TYPE</param>
+				<param type="CAUSE">CAUSE</param>
+				<param type="IPV4STRING">GGSN_ADDRESS</param>
+				<param type="MSISDN">MSISDN</param>
+				<param type="NSAPI">NSAPI</param>
+				<param type="IPV4STRING">UE_ADDRESS</param>
+				<param type="ARP">ARP</param>
+				<param type="DELAY_CLASS">DELAY_CLASS</param>
+				<param type="RELIABILITY_CLASS">RELIABILITY_CLASS</param>
+				<param type="PRECEDENCE">PRECEDENCE</param>
+				<param type="TRAFFIC_CLASS">TRAFFIC_CLASS</param>
+				<param type="THROUGHPUT">GTPC_THROUGHPUT</param>
+				<param type="PACKETS">GTPC_MAX_UPLINK</param>
+				<param type="PACKETS">GTPC_MAX_DOWNLINK</param>
+				<param type="PACKETS">GTPC_GBR_UPLINK</param>
+				<param type="PACKETS">GTPC_GBR_DOWNLINK</param>
+				<param type="SDU">SDU</param>
+				<param type="DT_FLAG">DT_FLAG</param>
+				<!-- The following fields have been included for the gtpc_v2 standard Michael Lawless 3GPP 29274-b30 -->
+<!-- 				<param type="ECGI">ECGI</param>	
+				<param type="DEFAULT_BEARER_ID">DEFAULT_BEARER_ID</param>
+		       	<param type="MME_ADDR">MME_ADDR</param>	
+		       	<param type="MME_TEID">MME_TEID</param>	
+		       	<param type="SGW_C_ADDR">SGW_C_ADDR</param>		
+		       	<param type="SGW_C_TEID">SGW_C_TEID</param>		
+		       	<param type="SGW_TEID">SGW_D_TEID</param>		
+		       	<param type="ENB_ADDER">ENB_ADDR</param>		
+		       	<param type="ENB_TEID">ENB_TEID</param>		
+		       	<param type="SREQ_FLAG">SREQ_FLAG</param>		
+		       	<param type="PAGING_FLAG">PAGING_FLAG</param>
+		       	<param type="TIMESTAMP">TIME_UPDATE_REQUEST</param>
+		       	<param type="TIMESTAMP">TIME_UPDATE_RESPONSE</param>
+		       	<param type="UPDATE_CAUSE">UPDATE_CAUSE</param> -->
+			</elements>
+		</event>
+
+	</events>
+</eventspecification>

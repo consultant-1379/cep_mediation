@@ -1,0 +1,243 @@
+create window RadioSessionWindow.win:keepall() as RadioSesion;
+
+
+
+create schema RADIO_SESSION_START_MARKER as (imsi                    string,
+			                                 switch_type             string,
+			                                 timestamp               long,
+			                                 actual_start_time       long,
+											 actual_end_time         long,
+			                                 session_start           long,
+			                                 session_end             long,
+					                         ueContext               short,
+						                     rncModuleId             byte,
+						                     rncId				     int,
+			                                 start_cell_Id           int,
+			                                 end_rnc                 int
+			                                );    
+
+create schema ENHANCED_RADIO_EVENT as (timestamp        long,
+									   imsi             string,
+									   switch_type      string,
+									   ue               short,
+									   mId              byte,
+									   rncId            int,
+									   sessionId        long,
+									   cellId           int,
+									   result           int,
+									   event_type       string,
+									   enhancement_type string);  
+
+@Priority(5)
+@Name('RADIO_SESSION')									   
+on pattern [every a=com.ericsson.cepmediation.apeventbeans.gpeh.GpehBase()]
+select rsw.* from RadioSessionWindow as rsw
+where rsw.endTime<a.timestamp;
+ 
+ 
+
+on pattern [every a=com.ericsson.cepmediation.apeventbeans.gpeh.GpehBase()]
+delete from RadioSessionWindow as rsw
+where rsw.endTime<a.timestamp;
+
+ 
+			     		
+@Priority(10)
+insert into RADIO_SESSION_START_MARKER (imsi,switch_type,timestamp,actual_start_time,actual_end_time,session_start,session_end,ueContext,rncModuleId,rncId,start_cell_Id,end_rnc)
+select b.IMSI 					       as imsi,
+       'PS'                            as switch_type,
+       a.timestamp                     as timestamp,
+       a.timestamp                     as actual_start_time,
+       a.timestamp                     as actual_end_time,
+       a.timestamp.roundFloor('min').minus
+       ((a.timestamp.getMinuteOfHour()%5)*60000)   
+                                       as session_start,
+       
+       a.timestamp.roundFloor('min').minus
+       ((a.timestamp.getMinuteOfHour()%5)*60000).
+       plus(5 minutes)				   as session_end,
+       a.UE_CONTEXT				       as ueContext,
+       b.RNC_MODULE_ID                 as rncModuleId,
+       b.RNC_ID_1                      as rncId,
+       a.getC_ID_1()       	           as start_cell_Id,
+       b.RNC_ID_1                      as end_rnc
+from pattern [
+                every a=com.ericsson.cepmediation.apeventbeans.gpeh.RRC_RRC_CONNECTION_SETUP()
+             -> b=com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_IMSI(b.UE_CONTEXT   = a.UE_CONTEXT,
+						                                                    b.RNC_MODULE_ID = a.RNC_MODULE_ID,
+						                                                    b.RNC_ID_1 = a.RNC_ID_1,
+						                                                    b.timestamp > a.timestamp)
+            ];	
+            
+@Priority(9) 
+ON RADIO_SESSION_START_MARKER AS start_marker
+	MERGE RadioSessionWindow AS radio_session_window
+	WHERE radio_session_window.imsi = start_marker.imsi
+	  AND start_marker.timestamp.between(radio_session_window.startTime,radio_session_window.endTime)
+	  AND start_marker.switch_type = radio_session_window.switchType
+	WHEN MATCHED  
+		THEN UPDATE SET
+			radio_session_window.endCellId     		= start_marker.start_cell_Id
+	WHEN NOT MATCHED  
+        THEN INSERT INTO RadioSessionWindow SELECT
+         	start_marker.imsi 				            as imsi,
+         	'PS'					                    as switchType,
+         	start_marker.actual_start_time              as actualStartTime,
+         	start_marker.actual_end_time                as actualEndTime,
+         	start_marker.session_start                  as startTime,
+			start_marker.session_end		            as endTime,
+			start_marker.ueContext   	              	as ueContext,
+			start_marker.rncModuleId         	     	as rncModuleId,
+			start_marker.rncId                          as rncId,
+			1					      				    as totalEventCount,
+			0					                        as hsCellChangeSuccessfulCount,
+			start_marker.start_cell_Id    			    as startCellId,
+			start_marker.start_cell_Id    			    as endCellId,
+			0l                           			    as duration,
+			0                                           as ifhoExecSuccessfulCount,
+			0                                           as ifhoExecErrorCount;            
+
+ 
+			
+@Priority(5)		
+@Name('ENHANCED MIDDLE EVENTS BETWEEN CONNECTION SET_UP AND INTERNAL_IMSI')
+insert into ENHANCED_RADIO_EVENT(timestamp,imsi,switch_type,ue,mId,rncId,sessionId,cellId,result,event_type,enhancement_type)
+select b.timestamp            as timestamp,
+       c.IMSI                 as imsi,
+       'PS'                   as switch_type,
+       a.UE_CONTEXT           as ue,
+       a.RNC_MODULE_ID        as mId,
+       a.RNC_ID_1             as rncId,
+       b.sessionId            as sessionId,
+       b.getC_ID_1()          as cellId,
+       0                      as result,
+       b.type                 as event_type,
+       'middle'               as enhancement_type
+       from  pattern[
+                       every a=com.ericsson.cepmediation.apeventbeans.gpeh.RRC_RRC_CONNECTION_SETUP()
+		             ->every b=com.ericsson.cepmediation.apeventbeans.gpeh.GpehBase(b.UE_CONTEXT = a.UE_CONTEXT,
+											                                        b.RNC_MODULE_ID = a.RNC_MODULE_ID, 
+											                                        b.timestamp > a.timestamp,
+					                                               		            b.type != 'INTERNAL_SYSTEM_UTILIZATION')
+		                       and not com.ericsson.cepmediation.apeventbeans.gpeh.RRC_RRC_CONNECTION_SETUP()
+		                       and not com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_IMSI()
+		             ->c=com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_IMSI(b.UE_CONTEXT = a.UE_CONTEXT,
+										                                           b.RNC_MODULE_ID = a.RNC_MODULE_ID, 
+						                   										   c.timestamp > b.timestamp)
+						  	                                                              
+                    ];	
+
+@Name('ENHANCED INTERNAL_IMSI')    
+@Priority(3)                 
+insert into ENHANCED_RADIO_EVENT(timestamp,imsi,switch_type,ue,mId,rncId,sessionId,cellId,result,event_type,enhancement_type)
+select a.timestamp            as timestamp,
+       a.IMSI                 as imsi,
+       'PS'                   as switch_type,
+       a.UE_CONTEXT           as ue,
+       a.RNC_MODULE_ID        as mId,
+       a.RNC_ID_1             as rncId,
+       a.sessionId            as sessionId,
+       a.getC_ID_1()          as cellId,
+       0                      as result,
+       a.type                 as event_type,
+       'imsi'                 as enhancement_type
+       from  pattern[
+                      every a=com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_IMSI                                                          
+                    ];        
+                               						   
+                               						   
+@Name('ENHANCED with RAB and IMSI EVENTS AFTER INTERNAL_IMSI')    
+@Priority(1) 
+insert into ENHANCED_RADIO_EVENT(timestamp,imsi,switch_type,ue,mId,rncId,sessionId,cellId,result,event_type,enhancement_type)
+select d.timestamp            as timestamp,
+       b.IMSI                 as imsi,
+       'PS'			          as switch_type,
+       a.UE_CONTEXT           as ue,
+       a.RNC_MODULE_ID        as mId,
+       a.RNC_ID_1             as rncId,
+       d.sessionId            as sessionId,
+       d.getC_ID_1()          as cellId,
+       0                      as result,
+       d.type                 as event_type,
+       'enhanced_after_imsi'  as enhancement_type
+	   from pattern [
+	        	   every (      a=com.ericsson.cepmediation.apeventbeans.gpeh.RRC_RRC_CONNECTION_SETUP()
+	             	         -> b=com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_IMSI(b.UE_CONTEXT = a.UE_CONTEXT,
+												                                            b.RNC_MODULE_ID = a.RNC_MODULE_ID, 
+												                                            b.timestamp>a.timestamp)
+				             -> c=com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_ESTABLISHMENT(b.UE_CONTEXT   = a.UE_CONTEXT,
+												                                                         b.RNC_MODULE_ID = a.RNC_MODULE_ID,
+												                                                         b.timestamp > a.timestamp)
+			              )
+	     		   ->every d=com.ericsson.cepmediation.apeventbeans.gpeh.GpehBase(b.UE_CONTEXT   = a.UE_CONTEXT,
+					                                               		          b.RNC_MODULE_ID = a.RNC_MODULE_ID,
+					                                               		          b.timestamp > a.timestamp,
+					                                               		          d.type != 'INTERNAL_SYSTEM_UTILIZATION')
+                              and not com.ericsson.cepmediation.apeventbeans.gpeh.RRC_RRC_CONNECTION_SETUP()
+                              and not com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_ESTABLISHMENT()
+                              and not com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_SYSTEM_RELEASE() 
+                              and not com.ericsson.cepmediation.apeventbeans.gpeh.RRC_RRC_CONNECTION_RELEASE_COMPLETE()
+                              and not com.ericsson.cepmediation.apeventbeans.gpeh.RANAP_IU_RELEASE_COMMAND()                                             		          
+                    ];	 
+@Name('For each enhanced event update RADIO Session')                                
+ON ENHANCED_RADIO_EVENT AS ere
+	MERGE RadioSessionWindow AS rsw
+	WHERE rsw.imsi = ere.imsi 
+	  AND ere.timestamp.between(rsw.startTime,rsw.endTime)
+	  AND ere.switch_type = rsw.switchType
+	  WHEN NOT MATCHED
+	     THEN INSERT INTO RadioSessionWindow SELECT
+         	ere.imsi 				                               as imsi,
+         	ere.switch_type                                        as switchType,
+         	ere.timestamp                       				   as actualStartTime,
+			ere.timestamp		               				       as actualEndTime,
+         	ere.timestamp.roundFloor('min').minus
+       		((ere.timestamp.getMinuteOfHour()%5)*60000)   
+            							                           as startTime,
+       
+       		ere.timestamp.roundFloor('min').minus
+       		((ere.timestamp.getMinuteOfHour()%5)*60000).
+       		plus(5 minutes)										   as endTime,
+         	
+			ere.ue          	                      			   as ueContext,
+			ere.mId                  	             			   as rncModuleId,
+			ere.rncId                                              as rncId,
+			1					      							   as totalEventCount,
+			0					                                   as hsCellChangeSuccessfulCount,
+			ere.cellId				    				           as startCellId,
+			ere.cellId    		 					               as endCellId,
+			0l                           				           as duration,
+			0                                                      as ifhoExecSuccessfulCount,
+			0                                                      as ifhoExecErrorCount
+	  WHEN MATCHED AND ere.event_type='INTERNAL_SUCCESSFUL_HSDSCH_CELL_CHANGE'
+	     THEN UPDATE SET
+	         rsw.hsCellChangeSuccessfulCount    = rsw.hsCellChangeSuccessfulCount+1,
+	         rsw.totalEventCount       = rsw.totalEventCount+1,
+			 rsw.duration              = rsw.duration.plus(ere.timestamp-rsw.actualEndTime),
+			 rsw.actualEndTime         = ere.timestamp,
+			 rsw.endCellId             = ere.cellId
+	  WHEN MATCHED AND ere.event_type='IFHO_EXECUTION_ACTIVE'
+	     THEN UPDATE SET
+	         rsw.ifhoExecSuccessfulCount  = case when ere.result=0 
+	         								 THEN 
+											    rsw.ifhoExecSuccessfulCount+1 
+											 ELSE 
+											    rsw.ifhoExecSuccessfulCount 
+											 END,
+			 rsw.ifhoExecErrorCount		   = case when ere.result>0 	
+			                                 THEN 
+											    rsw.ifhoExecErrorCount+1 
+											 ELSE
+											    rsw.ifhoExecErrorCount
+                                             END,
+	         rsw.hsCellChangeSuccessfulCount    = rsw.hsCellChangeSuccessfulCount+1,
+	         rsw.totalEventCount       = rsw.totalEventCount+1,
+			 rsw.duration              = rsw.duration.plus(ere.timestamp-rsw.actualEndTime),
+			 rsw.actualEndTime         = ere.timestamp,
+			 rsw.endCellId             = ere.cellId
+	  WHEN MATCHED
+	     THEN UPDATE SET
+	         rsw.totalEventCount       = rsw.totalEventCount+1,
+			 rsw.duration              = rsw.duration.plus(ere.timestamp-rsw.actualEndTime),
+			 rsw.actualEndTime       = ere.timestamp,
+			 rsw.endCellId             = ere.cellId;

@@ -1,0 +1,68 @@
+This file contains internal agreements about way of working for cep-mediation. It is updated in ad-hoc manner.
+
+1. Code conventions
+
+Code should be formatted with Ericsson_CodeTemplate_Modified_For_Cep.xml. Modifications to offical eniq events format are:
+-line length is 160 instead of 120
+-final modifier is not added automatically
+
+To import the formatting file go to Window>Preferences then Java>CodeStyle>Formatter. Click Import and select the file.
+
+Also we try to follow official oracle code convetions as described in codeconventions-150003.pdf.
+
+Comments like the one below should be avoided:
+
+    /**
+     * @return the fileServerData
+     */
+    public FileServerData getFileServerData() {
+        return fileServerData;
+    }
+
+    /**
+     * @param fileServerData the fileServerData to set
+     */
+    public void setFileServerData(FileServerData fileServerData) {
+        this.fileServerData = fileServerData;
+    }
+
+Also avoid one line methods as these make code fragmented and more difficult to read.
+
+2. Junit
+
+Unit tests for all classes should be implemented. 
+
+Currently there are two common design problems in our code base related to unit testing:
+
+-some methods are declared public instead of private so that they can be invoked from test classes
+
+-setters/getters are defined for some private fields so that their value can be mocked in test classes
+
+To avoid these probs(as it is ruining the design of our system) two classes have been created:                                                                                                
+PrivateFieldAccessor.java and PrivateMethodCaller.java
+
+3. Commiting
+
+A) Both JIRA number AND text description should be in the commit msg
+B) After commit check that Jenkins build is passing and there are no test failures
+C) Submit for code review
+
+4. Pull with rebase
+
+This is prefered over the pure pull to keep history flat. Here is a command line way of doing it
+git pull --rebase
+ 
+If git complains about uncommited changes and I do not want to commit them:
+git stash
+ 
+Now rebase succeeds:
+git pull --rebase
+ 
+Fix conflicts if there are such and do:
+ git add <file_with_conflict_resolved>
+ 
+Then finish the rebase:
+git rebase --continue
+ 
+Re-apply the stashed changes and resolve conflicts if there are such:
+git stash apply

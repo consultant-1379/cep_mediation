@@ -1,0 +1,180 @@
+group EventClassMap;
+
+/**
+ * The main template that generates the class
+ */
+main(schema, schemaType, event, parameter) ::= <<
+package com.ericsson.cepmediation.apeventbeans.<schema>;
+
+/**
+ * This class is as java bean that holds a single <event> event for schema <schema>
+ * 
+ * This code is generated using java string templates
+ * see http://www.stringtemplate.org
+ */
+
+import java.io.Serializable;
+import java.util.Iterator;
+
+import com.ericsson.cepmediation.base.meta.schema.Event;
+import com.ericsson.cepmediation.base.meta.schema.EventParameter;
+import com.ericsson.cepmediation.base.util.DataConverters;
+import com.ericsson.cepmediation.base.util.XDataConverters;
+
+@SuppressWarnings("serial")
+public class <event> extends com.ericsson.cepmediation.apeventbeans.<schemaType>.<event> implements Serializable,Cloneable {
+    /**
+     * Define a default constructor
+     */
+    public <event>() {
+        super();
+    }
+     
+    /**
+     * Define a constructor for the base properties
+     * @param timestamp
+     * @param ne
+     * @param name
+     * @param version
+     */
+    public <event>(long timestamp, String subNetwork, String ne, String name, String version) {
+        super(timestamp, subNetwork, ne, name, version);
+    }
+
+     /**
+     * Set the data of the <event> event from a byte array, this method is generated from
+     * the XML schema for the <event> event
+     * @param event The <event> event for which data is to be set
+     * @param data The byte array
+     * @param offset The offset in the array to start at
+     */
+    public void setData(final Event event, final byte[] data, int offset) {
+        // get an iterator to iterate over the parameters
+	    Iterator\<EventParameter\> parameterIterator = event.getParameterList().iterator();
+	    EventParameter parameter = null;
+	
+	    // Set the parameter data one after another
+    	<parameter:createSetData()>
+    }
+
+    /**
+     * Set the data of the <event> event from a byte array, this method is generated from
+     * the XML schema for the <event> event
+     * @param event The <event> event for which data is to be set
+     * @param data The byte array
+     * @param offset The offset in the array to start at
+     */
+    public byte[] getData(final Event event) {
+        // get an iterator to iterate over the parameters
+	    Iterator\<EventParameter\> parameterIterator = event.getParameterList().iterator();
+	    EventParameter parameter = null;
+	    
+	    byte[] data = new byte[1024];
+	    int offset = 0;
+	
+	    // get the parameter data one after another
+    	<parameter:createGetData()>
+    	
+    	
+    	<parameter:createOffsetForMessageContent()>
+    	
+    	byte[] xdata = new byte[offset];
+    	System.arraycopy(data, 0, xdata, 0, offset);
+    	return xdata;
+    }
+}
+>>
+
+/**
+ * The template to create getData statements
+ */
+createGetData(parameter) ::= <<
+	parameter = parameterIterator.next();
+    <if (parameter.arrayElements)>
+	offset -= <parameter.rewindOffset>;
+    for (int i = 0; i \< <length(parameter.arrayElements)>; i++) {
+        <parameter:createArrayGetData()>
+    }
+    <else>
+    <parameter:createNormalGetData()>
+    <endif>
+    
+>>
+
+/**
+ * The template to create getData statements
+ */
+createArrayGetData(parameter) ::= <<
+    offset += <parameter.startSkip>;
+	<if (parameter.bits)>
+    XDataConverters.<parameter.encodeDataMethod>(<parameter.name>[i],data,offset,parameter.getNumberOfBytes(), <parameter.bits>, parameter);
+	<else>
+    XDataConverters.<parameter.encodeDataMethod>(<parameter.name>[i],data, offset, parameter.isUseValid(), parameter.getNumberOfBytes(), parameter);
+    <endif>
+    offset += parameter.getNumberOfBytes() + <parameter.endSkip>;
+>>
+
+createOffsetForMessageContent(parameter) ::=<<
+<if (parameter.contains)>
+ 	if (parameter.isUseValid()) {
+			offset++;
+	}
+	offset += MESSAGE_LENGTH;
+<endif>
+>>
+
+
+/**
+ * The template to create getData statements
+ */
+createNormalGetData(parameter) ::= <<
+	<if (parameter.bits)>
+    XDataConverters.<parameter.encodeDataMethod>(<parameter.name>,data,offset,parameter.getNumberOfBytes(), <parameter.bits>,parameter);
+	<else>
+    XDataConverters.<parameter.encodeDataMethod>(<parameter.name>,data, offset, parameter.isUseValid(), parameter.getNumberOfBytes(),parameter);
+    <endif>
+    offset = adjustOffset(parameter, offset);    
+>>
+
+
+
+/**
+ * The template to create setData statements
+ */
+createSetData(parameter) ::= <<
+	parameter = parameterIterator.next();
+    <if (parameter.arrayElements)>
+	offset -= <parameter.rewindOffset>;
+    for (int i = 0; i \< <length(parameter.arrayElements)>; i++) {
+        <parameter:createArraySetData()>
+    }
+    <else>
+    <parameter:createNormalSetData()>
+    <endif>
+    
+>>
+
+/**
+ * The template to create setData statements
+ */
+createArraySetData(parameter) ::= <<
+    offset += <parameter.startSkip>;
+	<if (parameter.bits)>
+    <parameter.name>[i] = (<parameter.type>)DataConverters.<parameter.decodeDataMethod>(data, offset, parameter.getNumberOfBytes(), <parameter.bits>);
+	<else>
+    <parameter.name>[i] = (<parameter.type>)DataConverters.<parameter.decodeDataMethod>(data, offset, parameter.isUseValid(), parameter.getNumberOfBytes());
+    <endif>
+    offset += parameter.getNumberOfBytes() + <parameter.endSkip>;
+>>
+
+/**
+ * The template to create setData statements
+ */
+createNormalSetData(parameter) ::= <<
+	<if (parameter.bits)>
+    <parameter.name> = (<parameter.type>)DataConverters.<parameter.decodeDataMethod>(data, offset, parameter.getNumberOfBytes(), <parameter.bits>);
+	<else>
+    <parameter.name> = (<parameter.type>)DataConverters.<parameter.decodeDataMethod>(data, offset, parameter.isUseValid(), parameter.getNumberOfBytes());
+    <endif>
+    offset = adjustOffset(parameter, offset);    
+>>

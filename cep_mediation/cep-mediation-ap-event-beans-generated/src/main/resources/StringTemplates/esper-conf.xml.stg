@@ -1,0 +1,38 @@
+group EsperConfig;
+
+/**
+ * The main template that generates the class
+ */
+main(event) ::= <<
+\<?xml version="1.0" encoding="UTF-8"?\>
+\<esper-configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://www.espertech.com/schema/esper"
+    xsi:noNamespaceSchemaLocation="esper-configuration-4-0.xsd"\>
+
+    \<engine-settings\>
+        \<defaults\>
+            \<logging>
+                \<execution-path enabled="false"/\>
+                \<timer-debug enabled="false"/\>
+                \<query-plan enabled="false"/\>
+                \<jdbc enabled="false"/\>
+            \</logging\>
+        \</defaults\>
+    \</engine-settings\>
+     \<event-type name="gpeh.InternalGpehSession" class="com.ericsson.cepmediation.correlation.enrichment.InternalGpehSession"\>
+         \<legacy-type copy-method="cloneMe" accessor-style="javabean" code-generation="enabled" property-resolution-style="case_insensitive"/\>
+     \</event-type\>
+    
+
+    <event:createConfig()>
+
+\</esper-configuration\>   
+>>
+
+/**
+ * The template to create the configuration data for an event
+ */
+createConfig(event) ::= <<
+	\<event-type name="<event.schemaType>.<event.name>" class="com.ericsson.cepmediation.apeventbeans.<event.schemaType>.<event.name>" /\>
+
+>>

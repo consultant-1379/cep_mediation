@@ -1,0 +1,85 @@
+%define install_dir /opt/ericsson/cep-mediation
+chmod -R 755 $RPM_BUILD_ROOT%{install_dir}
+
+# Check if a soft link for latest version of cep-mediation already exists
+if [ -L "/opt/ericsson/cep-mediation/cep-mediation" ]; then
+     rm /opt/ericsson/cep-mediation/cep-mediation
+fi
+
+# Add soft link for latest version of cep-mediation
+ln -s `ls /opt/ericsson/cep-mediation | grep '^cep-mediation*' | sort | tail -1` /opt/ericsson/cep-mediation/cep-mediation
+
+# Check if a soft link for the cep-mediation start-stop init.d script exists
+if [ -L "/etc/init.d/cep-mediation" ]; then
+     rm /etc/init.d/cep-mediation
+fi
+
+# Add soft link for the cep-mediation start-stop init.d script
+ln -s /opt/ericsson/cep-mediation/cep-mediation/bin/cep-mediation /etc/init.d
+
+# Make directories for files from OSS
+if [ -e "/var/opt/ericsson/cep-mediation/output" ]; then
+    echo File directory "/var/opt/ericsson/cep-mediation/output" already exists
+else
+     mkdir -p /var/opt/ericsson/cep-mediation/output
+    echo File directory "/var/opt/ericsson/cep-mediation/output" created
+fi
+
+# Set ownership of temporary directory
+chown -R dcuser:dc5000 /var/opt/ericsson/cep-mediation
+
+# Make logging directory
+if [ -e "/var/log/ericsson/cep-mediation" ]; then
+    echo log directory "/var/log/ericsson/cep-mediation" already exists
+else
+     mkdir -p /var/log/ericsson/cep-mediation
+     chown -R dcuser:dc5000 /var/log/ericsson/cep-mediation
+    echo log directory "/var/log/ericsson/cep-mediation" created
+fi
+
+# Changing ownership of cep_mediation directory
+if [ -e "/opt/ericsson/cep-mediation" ]; then
+    chown -R dcuser:dc5000 /opt/ericsson/cep-mediation
+    echo Changed ownership of directory "/opt/ericsson/cep-mediation" to dcuser:dc5000
+fi
+
+# Changing ownership of cep_mediation directory
+if [ -e "/opt/ericsson/cep-mediation/cep-mediation/etc/rnc-config" ]; then
+ echo directory "/opt/ericsson/cep-mediation/cep-mediation/etc/rnc-config" already exists
+ else
+mkdir -p /opt/ericsson/cep-mediation/cep-mediation/etc/rnc-config
+    chown -R dcuser:dc5000 /opt/ericsson/cep-mediation/cep-mediation/etc/rnc-config
+    echo Changed ownership of directory "/opt/ericsson/cep-mediation/cep-mediation/etc/rnc-config" to dcuser:dc5000
+    if [ -e "/opt/ericsson/cep-mediation/cep-mediation/etc/rrc-config" ]; then
+       directory="/opt/ericsson/cep-mediation/cep-mediation/etc/rrc-config"
+       number_of_files=$(ls $directory | wc -l)
+       if [ $number_of_files != 0 ]; then
+          mv /opt/ericsson/cep-mediation/cep-mediation/etc/rrc-config/* /opt/ericsson/cep-mediation/cep-mediation/etc/rnc-config/
+       fi
+       rm -rf /opt/ericsson/cep-mediation/cep-mediation/etc/rrc-config
+    fi
+fi
+
+# Set the CEP Mediation init.d script and levels on which CEP Mediation should be started
+chkconfig --add cep-mediation
+
+# Encrypt password in network_elements.xml
+FILE=/opt/ericsson/cep-mediation/cep-mediation/cep_previous_version
+if [ -s $FILE ]
+then
+ENCRYPTION_VERSION=R2D44_EC36
+PRE_VERSION=`grep ERICcep $FILE | awk '{split($0,array,"-")} END{print array[3]}' |  awk '{split($0,array,".")} END{print array[1]}'`
+if [ -z != $PRE_VERSION ]
+then
+if [ $PRE_VERSION \< $ENCRYPTION_VERSION ]
+then
+/opt/ericsson/cep-mediation/cep-mediation/bin/./encrypt_config_file.sh
+fi
+fi
+rm -f $FILE
+fi
+
+# Clean legacy files from the input folder, if there are such
+if [ "$1" = "2" ]; then
+     /opt/ericsson/cep-mediation/cep-mediation/bin/./clean_legacy_files.sh
+fi

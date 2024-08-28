@@ -1,0 +1,3 @@
+In order to avoid problem compiling generated Java classes due to too long
+package names, before complication replace all instances of string 
+"NotCriticalExtensions" with "NCE" in ASN files.

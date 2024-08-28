@@ -1,0 +1,612 @@
+// Declare the name for the module
+module InitAttachCorrelation;
+
+// Imports
+import com.ericsson.perfmon.eventbeans.celltrace.*;
+import com.ericsson.perfmon.eventbeans.ctum.*;
+import com.ericsson.perfmon.eventbeans.ebm.*;
+import com.ericsson.cepmediation.correlation.support.Util;
+import com.ericsson.cepmediation.correlation.support.Test;
+
+create variable long rrcRrcConnectionSetupCompleateTimeStamp;
+
+
+@Name('select-LOG_EVENT')
+@Description('Select all LOG_EVENT events for storage')
+//@Audit
+select * from correlation.LOG_EVENT.win:length(1);
+
+@Name('InitAttach-create-window')
+@Description('Create a window for handling InitAttach events')
+//@Audit
+create window InitAttachWindow.win:keepall() as correlation.INI_ATTACH;
+@Name('InitAttach-flush-window')
+@Description('Flush the named window for InitAttach correlations')
+//@Audit
+on pattern [every timer:interval(5 sec)]
+	delete from InitAttachWindow as iaw
+	where (iaw.IPRCS and  iaw.IPSSCS and  iaw.IPICS )
+	or  current_timestamp - iaw.CORRELATION_TIME > 30000; // timeout after 5 sec
+
+	
+	
+@Name('InitAttach-handle-INTERNAL_PROC_RRC_CONN_SETUP')
+@Description('Handle INTERNAL_PROC_RRC_CONN_SETUP events for InitAttach Correlation, create a new INI_ATTACH event')
+//@Audit
+expression eventsTime { event =>   ((event.TIMESTAMP_STOP_HOUR*3600*1000)+
+									(event.TIMESTAMP_STOP_MINUTE*60*1000)+ 
+									(event.TIMESTAMP_STOP_SECOND*1000) +
+									event.TIMESTAMP_STOP_MILLISEC)-
+									((event.TIMESTAMP_START_HOUR*3600*1000)+
+									(event.TIMESTAMP_START_MINUTE*60*1000)+
+									(event.TIMESTAMP_START_SECOND*1000) +
+									event.TIMESTAMP_START_MILLISEC)/1000
+}
+
+
+insert into correlation.INI_ATTACH select
+		'INI_ATTACH'       										as name,
+		iprcs.version       									as version,
+		iprcs.timestamp     									as timestamp,
+		iprcs.subNetwork										as subNetwork,
+		iprcs.ne            									as ne,
+		iprcs.timestamp 										as CURR_EVE_TIME,
+		{iprcs.name}											as EVENTS_EVENT_NAME,
+		Util.castArrayType({0.0})								as EVENTS_TIME_REL,
+		{iprcs.name}											as MILESTONES_MILESTONE_NAME,
+		Util.castArrayType({iprcs.timestamp})					as MILESTONES_MILESTONE_TIMESTAMP,
+		iprcs.RAC_UE_REF    									as RAC_UE_REF,
+		current_timestamp()										as CORRELATION_TIME,
+		iprcs.GLOBAL_CELL_ID 									as CELL_ID,
+		1														as RESULT
+		from celltrace.RRC_RRC_CONNECTION_SETUP as iprcs;
+		
+@Name('ServiceRequest-handle-RRC_RRC_CONNECTION_SETUP')
+@Description('Handle RRC_RRC_CONNECTION_SETUP event for ServiceRequest Correlation, result of the RRC Connection Request')
+//@Audit
+on celltrace.INTERNAL_PROC_RRC_CONN_SETUP iprrcs
+	merge InitAttachWindow iaw
+	where  iaw.CELL_ID = iprrcs.GLOBAL_CELL_ID and iaw.ne = iprrcs.ne and 
+	iaw.RAC_UE_REF = iprrcs.RAC_UE_REF and iaw.subNetwork = iprrcs.subNetwork
+	 when matched
+		then update	set
+	 	iaw.ENBS1APID 											=	iprrcs.ENBS1APID ,
+	 	iaw.GUMMEI												=	iprrcs.GUMMEI,
+	 	iaw.ENB_RESULT											=	iprrcs.RRC_RESULT,
+		iaw.ENB_RESULT_CAUSE									=	iprrcs.RRC_ESTABL_CAUSE,
+		iaw.ENB_ID												=	cast(iprrcs.ne,int),
+		iaw.RESULT												=   1,
+		iaw.CORRELATION_TIME									=	current_timestamp(), 
+		iaw.IPRCS												=	true
+	when not matched
+		then insert into correlation.LOG_EVENT select
+		'INTERNAL_PROC_RRC_CONN_SETUP' 							as 	name,
+		iprrcs.version											as 	version,
+		iprrcs.timestamp 										as 	timestamp,
+		iprrcs.subNetwork										as  subNetwork,
+		iprrcs.ne 												as 	ne,
+		2 														as 	RESULT, // ABORT value
+		iprrcs.getCSVStringQuoted() 							as LOG_MESSAGE;
+	
+			
+	
+		
+@Name('InitAttach-handle-INTERNAL_PROC_S1_SIG_CONN_SETUP')
+@Description('Handle INTERNAL_PROC_S1_SIG_CONN_SETUP event for InitAttach Correlation')
+//@Audit
+
+
+on celltrace.INTERNAL_PROC_S1_SIG_CONN_SETUP ipsscs
+	merge InitAttachWindow iaw
+	where iaw.CELL_ID = ipsscs.GLOBAL_CELL_ID and iaw.ne = ipsscs.ne and  
+	iaw.RAC_UE_REF = ipsscs.RAC_UE_REF and iaw.subNetwork = ipsscs.subNetwork 
+	when matched
+		then update	set
+		
+			iaw.ENBS1APID 						= 	ipsscs.ENBS1APID ,
+			iaw.GUMMEI    						= 	ipsscs.GUMMEI,
+			iaw.CORRELATION_TIME				=	current_timestamp() ,
+			iaw.DURATION                     	= 	Util.parse(ipsscs.timestamp - iaw.timestamp),
+			iaw.IPSSCS                  		= 	true,
+			iaw.END_TIMESTAMP                	= ipsscs.timestamp,
+			iaw.RESULT 							= case when iaw.IPRCS and iaw.IPSSCS   then 1 else 2 end
+	when not matched
+		// INTERNAL_PROC_S1_SIG_CONN_SETUP out of sequence for this UE
+		then insert into correlation.LOG_EVENT select
+		'INTERNAL_PROC_S1_SIG_CONN_SETUP' as name,
+		ipsscs.version as version,
+		ipsscs.timestamp as timestamp,
+		ipsscs.subNetwork as subNetwork,
+		ipsscs.ne as ne,
+		2 as RESULT, // ABORT value
+		ipsscs.getCSVStringQuoted() as LOG_MESSAGE;	
+
+
+		
+		
+@Name('InitAttach-handle-INTERNAL_PROC_INITIAL_CTXT_SETUP')
+@Description('Handle INTERNAL_PROC_INITIAL_CTXT_SETUP event for InitAttach Correlation')
+//@Audit
+
+on celltrace.INTERNAL_PROC_INITIAL_CTXT_SETUP ipics
+	merge InitAttachWindow iaw
+	where iaw.CELL_ID = ipics.GLOBAL_CELL_ID and iaw.RAC_UE_REF = ipics.RAC_UE_REF and 
+	iaw.subNetwork = ipics.subNetwork and iaw.ne = ipics.ne
+	 when matched
+		then update	set
+			iaw.CORRELATION_TIME				 =	current_timestamp() ,
+			iaw.ENBS1APID 						 = 	ipics.ENBS1APID ,
+			iaw.MMES1APID						 =	ipics.MMES1APID,
+			iaw.DURATION                     	 = 	Util.parse(ipics.timestamp - iaw.timestamp),
+			iaw.END_TIMESTAMP               	 = 	ipics.timestamp,
+			iaw.IPICS                        	 = 	true,
+			iaw.RESULT = case when iaw.IPRCS and iaw.IPSSCS and iaw.IPICS  then 1 else 2 end
+	when not matched
+		// INTERNAL_PROC_INITIAL_CTXT_SETUP out of sequence for this UE
+		then insert into correlation.LOG_EVENT select
+		'INTERNAL_PROC_INITIAL_CTXT_SETUP' as name,
+		ipics.version as version,
+		ipics.timestamp as timestamp,
+		ipics.subNetwork as subNetwork,
+		ipics.ne as ne,
+		2 as RESULT, // ABORT value
+		ipics.getCSVStringQuoted() as LOG_MESSAGE;
+		
+
+
+				
+@Name('InitAttach-handle-RRC_RRC_CONNECTION_SETUP')
+@Description('Handle RRC_RRC_CONNECTION_SETUP event for InitAttach Correlation, result of the RRC Connection Request')
+//@Audit
+on celltrace.RRC_RRC_CONNECTION_SETUP rrcConSCompl
+	merge InitAttachWindow iaw
+	where  iaw.CELL_ID = rrcConSCompl.GLOBAL_CELL_ID and iaw.ne = rrcConSCompl.ne and 
+	iaw.subNetwork = rrcConSCompl.subNetwork and iaw.RAC_UE_REF = rrcConSCompl.RAC_UE_REF  
+	 when matched
+		then update	set
+			iaw.EVENTS_EVENT_NAME				=	Util.updateArray(iaw.EVENTS_EVENT_NAME,rrcConSCompl.name,true),
+			iaw.EVENTS_TIME_REL					=	Util.updateArray(iaw.EVENTS_TIME_REL,0.0,true),
+			iaw.CURR_EVE_TIME					=	rrcConSCompl.timestamp,
+			iaw.DURATION                     	= 	Util.parse(rrcConSCompl.timestamp - iaw.timestamp),
+			iaw.MILESTONES_MILESTONE_NAME		=	Util.updateArray(iaw.MILESTONES_MILESTONE_NAME,rrcConSCompl.name,true),
+			iaw.MILESTONES_MILESTONE_TIMESTAMP  =	Util.updateLongArray(iaw.MILESTONES_MILESTONE_TIMESTAMP,rrcConSCompl.timestamp,true),
+			iaw.RESULT 							= 	case when iaw.IPRCS and iaw.IPSSCS and iaw.IPICS  
+													then 1 else 2 end
+	when not matched
+		then insert into correlation.LOG_EVENT select
+		'RRC_RRC_CONNECTION_SETUP' 	as name,
+		rrcConSCompl.version					as version,
+		rrcConSCompl.timestamp 					as timestamp,
+		rrcConSCompl.subNetwork 				as subNetwork,
+		rrcConSCompl.ne 						as ne,
+		2 										as RESULT, // ABORT value
+		rrcConSCompl.getCSVStringQuoted() 		as LOG_MESSAGE;
+		
+@Name('InitAttach-handle-RRC_RRC_CONNECTION_SETUP_COMPLETE')
+@Description('Handle RRC_RRC_CONNECTION_SETUP_COMPLETE event for InitAttach Correlation, result of the RRC Connection Request')
+//@Audit
+on celltrace.RRC_RRC_CONNECTION_SETUP_COMPLETE rrcrrccsc
+	merge InitAttachWindow iaw
+	where  iaw.CELL_ID = rrcrrccsc.GLOBAL_CELL_ID and iaw.ne = rrcrrccsc.ne and 
+	iaw.subNetwork = rrcrrccsc.subNetwork and iaw.RAC_UE_REF = rrcrrccsc.RAC_UE_REF  
+	 when matched
+		then update	set
+			iaw.EVENTS_EVENT_NAME				=	Util.updateArray(iaw.EVENTS_EVENT_NAME,rrcrrccsc.name,false),
+			iaw.EVENTS_TIME_REL					=	Util.updateArray(iaw.EVENTS_TIME_REL,(cast(rrcrrccsc.timestamp - iaw.CURR_EVE_TIME, int)/1000),false),
+			iaw.DURATION                     	= 	Util.parse(rrcrrccsc.timestamp - iaw.timestamp),
+			iaw.CURR_EVE_TIME					=	rrcrrccsc.timestamp,
+			iaw.MILESTONES_MILESTONE_NAME		=	Util.updateArray(iaw.MILESTONES_MILESTONE_NAME,rrcrrccsc.name,false),
+			iaw.MILESTONES_MILESTONE_TIMESTAMP  =	Util.updateLongArray(iaw.MILESTONES_MILESTONE_TIMESTAMP,rrcrrccsc.timestamp,false),
+			iaw.RESULT 							= 	case when iaw.IPRCS and iaw.IPSSCS and iaw.IPICS  
+													then 0 else -1 end
+	when not matched
+		then insert into correlation.LOG_EVENT select
+		'RRC_RRC_CONNECTION_SETUP_COMPLETE' 	as name,
+		rrcrrccsc.version						as version,
+		rrcrrccsc.timestamp 					as timestamp,
+		rrcrrccsc.subNetwork					as subNetwork,
+		rrcrrccsc.ne 							as ne,
+		2 										as RESULT, // ABORT value
+		rrcrrccsc.getCSVStringQuoted() 			as LOG_MESSAGE;
+	
+@Name('InitAttach-handle-S1_INITIAL_UE_MESSAGE')
+@Description('Handle RRC_RRC_CONNECTION_SETUP_COMPLETE event for InitAttach Correlation, ')
+//@Audit
+on celltrace.S1_INITIAL_UE_MESSAGE sinium
+	merge InitAttachWindow iaw
+	where  iaw.CELL_ID = sinium.GLOBAL_CELL_ID and iaw.subNetwork = sinium.subNetwork and 
+	iaw.ne = sinium.ne and  iaw.RAC_UE_REF = sinium.RAC_UE_REF  
+	 when matched
+		then update	set
+			iaw.EVENTS_EVENT_NAME				=	Util.updateArray(iaw.EVENTS_EVENT_NAME,sinium.name,false),
+			iaw.EVENTS_TIME_REL					=	Util.updateArray(iaw.EVENTS_TIME_REL,(cast(sinium.timestamp - iaw.CURR_EVE_TIME, int)/1000),false),
+			iaw.DURATION           				= 	Util.parse(sinium.timestamp - iaw.timestamp),
+			iaw.MILESTONES_MILESTONE_NAME		=	Util.updateArray(iaw.MILESTONES_MILESTONE_NAME,sinium.name,false),
+			iaw.MILESTONES_MILESTONE_TIMESTAMP  =	Util.updateLongArray(iaw.MILESTONES_MILESTONE_TIMESTAMP,sinium.timestamp,false),
+			iaw.CURR_EVE_TIME					=	sinium.timestamp,
+			iaw.RESULT 							= 	case when iaw.IPRCS and iaw.IPSSCS and iaw.IPICS  
+													then 1 else 2 end
+	when not matched
+		then insert into correlation.LOG_EVENT select
+		'S1_INITIAL_UE_MESSAGE' 				as name,
+		sinium.version							as version,
+		sinium.timestamp 						as timestamp,
+		sinium.subNetwork 						as subNetwork,
+		sinium.ne 								as ne,
+		2 										as RESULT, // ABORT value
+		sinium.getCSVStringQuoted() 			as LOG_MESSAGE;
+	
+@Name('InitAttach-handle-S1_DOWNLINK_NAS_TRANSPORT')
+@Description('Handle S1_DOWNLINK_NAS_TRANSPORT event for InitAttach Correlation, ')
+//@Audit
+on celltrace.S1_DOWNLINK_NAS_TRANSPORT s1DlNasTransport
+	merge InitAttachWindow iaw
+	where  iaw.CELL_ID = s1DlNasTransport.GLOBAL_CELL_ID and iaw.subNetwork = s1DlNasTransport.subNetwork and 
+	iaw.ne = s1DlNasTransport.ne and  iaw.RAC_UE_REF = s1DlNasTransport.RAC_UE_REF  
+	 when matched
+		then update	set
+			iaw.EVENTS_EVENT_NAME				=	Util.updateArray(iaw.EVENTS_EVENT_NAME,s1DlNasTransport.name,false),
+			iaw.EVENTS_TIME_REL					=	Util.updateArray(iaw.EVENTS_TIME_REL,(cast(s1DlNasTransport.timestamp - iaw.CURR_EVE_TIME, int)/1000),false),
+			iaw.DURATION           				= 	Util.parse(s1DlNasTransport.timestamp - iaw.timestamp),
+			iaw.CURR_EVE_TIME					=	s1DlNasTransport.timestamp,
+			iaw.RESULT 							= 	case when iaw.IPRCS and iaw.IPSSCS and iaw.IPICS  
+													then 1 else 2 end
+	when not matched
+		then insert into correlation.LOG_EVENT select
+		'S1_INITIAL_UE_MESSAGE' 				as name,
+		s1DlNasTransport.version				as version,
+		s1DlNasTransport.timestamp 				as timestamp,
+		s1DlNasTransport.subNetwork 			as subNetwork,
+		s1DlNasTransport.ne 					as ne,
+		2 										as RESULT, // ABORT value
+		s1DlNasTransport.getCSVStringQuoted() 	as LOG_MESSAGE;
+	
+@Name('InitAttach-handle-RRC_DL_INFORMATION_TRANSFER')
+@Description('Handle RRC_DL_INFORMATION_TRANSFER event for InitAttach Correlation, ')
+//@Audit
+on celltrace.RRC_DL_INFORMATION_TRANSFER rrcDlInfoTras
+	merge InitAttachWindow iaw
+	where  iaw.CELL_ID = rrcDlInfoTras.GLOBAL_CELL_ID and iaw.subNetwork = rrcDlInfoTras.subNetwork and 
+	iaw.ne = rrcDlInfoTras.ne and  iaw.RAC_UE_REF = rrcDlInfoTras.RAC_UE_REF  
+	 when matched
+		then update	set
+			iaw.EVENTS_EVENT_NAME				=	Util.updateArray(iaw.EVENTS_EVENT_NAME,rrcDlInfoTras.name,false),
+			iaw.EVENTS_TIME_REL					=	Util.updateArray(iaw.EVENTS_TIME_REL,(cast(rrcDlInfoTras.timestamp - iaw.CURR_EVE_TIME, int)/1000),false),
+			iaw.DURATION           				= 	Util.parse(rrcDlInfoTras.timestamp - iaw.timestamp),
+			iaw.CURR_EVE_TIME					=	rrcDlInfoTras.timestamp,
+			iaw.RESULT 							= 	case when iaw.IPRCS and iaw.IPSSCS and iaw.IPICS  
+													then 1 else 2 end
+	when not matched
+		then insert into correlation.LOG_EVENT select
+		'RRC_DL_INFORMATION_TRANSFER' 			as name,
+		rrcDlInfoTras.version					as version,
+		rrcDlInfoTras.timestamp 				as timestamp,
+		rrcDlInfoTras.subNetwork				as subNetwork,
+		rrcDlInfoTras.ne 						as ne,
+		2 										as RESULT, // ABORT value
+		rrcDlInfoTras.getCSVStringQuoted() 		as LOG_MESSAGE;
+	
+		
+@Name('InitAttach-handle-RRC_UL_INFORMATION_TRANSFER')
+@Description('Handle RRC_UL_INFORMATION_TRANSFER event for InitAttach Correlation, ')
+//@Audit
+on celltrace.RRC_UL_INFORMATION_TRANSFER rrcUlInfoTras
+	merge InitAttachWindow iaw
+	where  iaw.CELL_ID = rrcUlInfoTras.GLOBAL_CELL_ID and iaw.subNetwork = rrcUlInfoTras.subNetwork and 
+	iaw.ne = rrcUlInfoTras.ne and  iaw.RAC_UE_REF = rrcUlInfoTras.RAC_UE_REF  
+	 when matched
+		then update	set
+			iaw.EVENTS_EVENT_NAME				=	Util.updateArray(iaw.EVENTS_EVENT_NAME,rrcUlInfoTras.name,false),
+			iaw.EVENTS_TIME_REL					=	Util.updateArray(iaw.EVENTS_TIME_REL,(cast(rrcUlInfoTras.timestamp - iaw.CURR_EVE_TIME, int)/1000),false),
+			iaw.DURATION           				= 	Util.parse(rrcUlInfoTras.timestamp - iaw.timestamp),
+			iaw.CURR_EVE_TIME					=	rrcUlInfoTras.timestamp,
+			iaw.RESULT 							= 	case when iaw.IPRCS and iaw.IPSSCS and iaw.IPICS  
+													then 1 else 2 end
+	when not matched
+		then insert into correlation.LOG_EVENT select
+		'RRC_UL_INFORMATION_TRANSFER' 			as name,
+		rrcUlInfoTras.version					as version,
+		rrcUlInfoTras.timestamp 				as timestamp,
+		rrcUlInfoTras.subNetwork				as subNetwork,
+		rrcUlInfoTras.ne 						as ne,
+		2 										as RESULT, // ABORT value
+		rrcUlInfoTras.getCSVStringQuoted() 		as LOG_MESSAGE;
+	
+		
+@Name('InitAttach-handle-S1_UPLINK_NAS_TRANSPORT')
+@Description('Handle S1_UPLINK_NAS_TRANSPORT event for InitAttach Correlation, ')
+//@Audit
+on celltrace.S1_UPLINK_NAS_TRANSPORT rrcUlNasTras
+	merge InitAttachWindow iaw
+	where  iaw.CELL_ID = rrcUlNasTras.GLOBAL_CELL_ID and iaw.subNetwork = rrcUlNasTras.subNetwork and 
+	iaw.ne = rrcUlNasTras.ne and  iaw.RAC_UE_REF = rrcUlNasTras.RAC_UE_REF  
+	 when matched
+		then update	set
+			iaw.EVENTS_EVENT_NAME				=	Util.updateArray(iaw.EVENTS_EVENT_NAME,rrcUlNasTras.name,false),
+			iaw.EVENTS_TIME_REL					=	Util.updateArray(iaw.EVENTS_TIME_REL,(cast(rrcUlNasTras.timestamp - iaw.CURR_EVE_TIME, int)/1000),false),
+			iaw.CURR_EVE_TIME					=	rrcUlNasTras.timestamp,
+			iaw.DURATION           				= 	Util.parse(rrcUlNasTras.timestamp - iaw.timestamp),
+
+			iaw.MILESTONES_MILESTONE_NAME		=	Util.updateArray(iaw.MILESTONES_MILESTONE_NAME,rrcUlNasTras.name,false),
+			iaw.MILESTONES_MILESTONE_TIMESTAMP  =	Util.updateLongArray(iaw.MILESTONES_MILESTONE_TIMESTAMP,rrcUlNasTras.timestamp,false),
+			iaw.RESULT 							= 	case when iaw.IPRCS and iaw.IPSSCS and iaw.IPICS  
+													then 1 else 2 end
+	when not matched
+		then insert into correlation.LOG_EVENT select
+		'S1_UPLINK_NAS_TRANSPORT' 				as name,
+		rrcUlNasTras.version					as version,
+		rrcUlNasTras.timestamp 					as timestamp,
+		rrcUlNasTras.ne 						as ne,
+		rrcUlNasTras.subNetwork					as subNetwork,
+		2 										as RESULT, // ABORT value
+		rrcUlNasTras.getCSVStringQuoted() 		as LOG_MESSAGE;
+	
+		
+		
+@Name('InitAttach-handle-RRC_SECURITY_MODE_COMMAND')
+@Description('Handle RRC_SECURITY_MODE_COMMAND event for InitAttach Correlation, ')
+//@Audit
+on celltrace.RRC_SECURITY_MODE_COMMAND rrcSecCommand
+	merge InitAttachWindow iaw
+	where  iaw.CELL_ID = rrcSecCommand.GLOBAL_CELL_ID and iaw.subNetwork = rrcSecCommand.subNetwork and 
+	iaw.ne = rrcSecCommand.ne and  iaw.RAC_UE_REF = rrcSecCommand.RAC_UE_REF  
+	 when matched
+		then update	set
+			iaw.EVENTS_EVENT_NAME				=	Util.updateArray(iaw.EVENTS_EVENT_NAME,"AUTH_START",false),
+			iaw.EVENTS_TIME_REL					=	Util.updateArray(iaw.EVENTS_TIME_REL,(cast(rrcSecCommand.timestamp - iaw.CURR_EVE_TIME, int)/1000),false),
+			iaw.DURATION           				= 	Util.parse(rrcSecCommand.timestamp - iaw.timestamp),
+			iaw.CURR_EVE_TIME					=	rrcSecCommand.timestamp,
+			iaw.RESULT 							= 	case when iaw.IPRCS and iaw.IPSSCS and iaw.IPICS  
+													then 1 else 2 end
+	when not matched
+		then insert into correlation.LOG_EVENT select
+		'RRC_SECURITY_MODE_COMMAND' 			as name,
+		rrcSecCommand.version					as version,
+		rrcSecCommand.timestamp 				as timestamp,
+		rrcSecCommand.subNetwork				as subNetwork,
+		rrcSecCommand.ne 						as ne,
+		2 										as RESULT, // ABORT value
+		rrcSecCommand.getCSVStringQuoted() 		as LOG_MESSAGE;
+	
+		
+		
+		
+@Name('InitAttach-handle-RRC_SECURITY_MODE_COMPLETE')
+@Description('Handle RRC_SECURITY_MODE_COMPLETE event for InitAttach Correlation, ')
+//@Audit
+on celltrace.RRC_SECURITY_MODE_COMPLETE rrcSecCoCpl
+	merge InitAttachWindow iaw
+	where  iaw.CELL_ID = rrcSecCoCpl.GLOBAL_CELL_ID and iaw.subNetwork = rrcSecCoCpl.subNetwork and 
+	iaw.ne = rrcSecCoCpl.ne and  iaw.RAC_UE_REF = rrcSecCoCpl.RAC_UE_REF  
+	 when matched
+		then update	set
+			iaw.EVENTS_EVENT_NAME				=	Util.updateArray(iaw.EVENTS_EVENT_NAME,rrcSecCoCpl.name,false),
+			iaw.EVENTS_TIME_REL					=	Util.updateArray(iaw.EVENTS_TIME_REL,(cast(rrcSecCoCpl.timestamp - iaw.CURR_EVE_TIME, int)/1000),false),
+			iaw.DURATION           				= 	Util.parse(rrcSecCoCpl.timestamp - iaw.timestamp),
+			iaw.CURR_EVE_TIME					=	rrcSecCoCpl.timestamp,
+			iaw.MILESTONES_MILESTONE_NAME		=	Util.updateArray(iaw.MILESTONES_MILESTONE_NAME,"AUTH_END",false),
+			iaw.MILESTONES_MILESTONE_TIMESTAMP  =	Util.updateLongArray(iaw.MILESTONES_MILESTONE_TIMESTAMP,rrcSecCoCpl.timestamp,false),
+			iaw.RESULT 							= 	case when iaw.IPRCS and iaw.IPSSCS and iaw.IPICS  
+													then 1 else 2 end
+	when not matched
+		then insert into correlation.LOG_EVENT select
+		'RRC_SECURITY_MODE_COMPLETE' 			as name,
+		rrcSecCoCpl.version						as version,
+		rrcSecCoCpl.timestamp 					as timestamp,
+		rrcSecCoCpl.subNetwork					as subNetwork,
+		rrcSecCoCpl.ne 							as ne,
+		2 										as RESULT, // ABORT value
+		rrcSecCoCpl.getCSVStringQuoted() 		as LOG_MESSAGE;
+	
+		
+		
+@Name('InitAttach-handle-RRC_UE_CAPABILITY_ENQUIRY')
+@Description('Handle RRC_UE_CAPABILITY_ENQUIRY event for InitAttach Correlation, ')
+//@Audit
+on celltrace.RRC_UE_CAPABILITY_ENQUIRY rrcUeCapEnq
+	merge InitAttachWindow iaw
+	where  iaw.CELL_ID = rrcUeCapEnq.GLOBAL_CELL_ID and iaw.subNetwork = rrcUeCapEnq.subNetwork and 
+	iaw.ne = rrcUeCapEnq.ne and  iaw.RAC_UE_REF = rrcUeCapEnq.RAC_UE_REF  
+	 when matched
+		then update	set
+			iaw.EVENTS_EVENT_NAME				=	Util.updateArray(iaw.EVENTS_EVENT_NAME,rrcUeCapEnq.name,false),
+			iaw.EVENTS_TIME_REL					=	Util.updateArray(iaw.EVENTS_TIME_REL,(cast(rrcUeCapEnq.timestamp - iaw.CURR_EVE_TIME, int)/1000),false),
+			iaw.DURATION           				= 	Util.parse(rrcUeCapEnq.timestamp - iaw.timestamp),
+			iaw.CURR_EVE_TIME					=	rrcUeCapEnq.timestamp,
+			iaw.RESULT 							= 	case when iaw.IPRCS and iaw.IPSSCS and iaw.IPICS  
+													then 1 else 2 end
+	when not matched
+		then insert into correlation.LOG_EVENT select
+		'RRC_UE_CAPABILITY_ENQUIRY' 			as name,
+		rrcUeCapEnq.version						as version,
+		rrcUeCapEnq.timestamp 					as timestamp,
+		rrcUeCapEnq.subNetwork					as subNetwork,
+		rrcUeCapEnq.ne 							as ne,
+		2 										as RESULT, // ABORT value
+		rrcUeCapEnq.getCSVStringQuoted() 		as LOG_MESSAGE;
+	
+				
+		
+@Name('InitAttach-handle-RRC_UE_CAPABILITY_INFORMATION')
+@Description('Handle RRC_UE_CAPABILITY_INFORMATION event for InitAttach Correlation, ')
+//@Audit
+on celltrace.RRC_UE_CAPABILITY_INFORMATION rrcUeCapInfo
+	merge InitAttachWindow iaw
+	where  iaw.CELL_ID = rrcUeCapInfo.GLOBAL_CELL_ID and iaw.subNetwork = rrcUeCapInfo.subNetwork and 
+	iaw.ne = rrcUeCapInfo.ne and  iaw.RAC_UE_REF = rrcUeCapInfo.RAC_UE_REF  
+	 when matched
+		then update	set
+			iaw.EVENTS_EVENT_NAME				=	Util.updateArray(iaw.EVENTS_EVENT_NAME,rrcUeCapInfo.name,false),
+			iaw.EVENTS_TIME_REL					=	Util.updateArray(iaw.EVENTS_TIME_REL,(cast(rrcUeCapInfo.timestamp - iaw.CURR_EVE_TIME, int)/1000),false),
+			iaw.DURATION           				= 	Util.parse(rrcUeCapInfo.timestamp - iaw.timestamp),
+
+			iaw.CURR_EVE_TIME					=	rrcUeCapInfo.timestamp,
+			iaw.RESULT 							= 	case when iaw.IPRCS and iaw.IPSSCS and iaw.IPICS  
+													then 1 else 2 end
+	when not matched
+		then insert into correlation.LOG_EVENT select
+		'RRC_UE_CAPABILITY_INFORMATION' 		as name,
+		rrcUeCapInfo.version					as version,
+		rrcUeCapInfo.timestamp 					as timestamp,
+		rrcUeCapInfo.subNetwork					as subNetwork,
+		rrcUeCapInfo.ne 						as ne,
+		2 										as RESULT, // ABORT value
+		rrcUeCapInfo.getCSVStringQuoted() 		as LOG_MESSAGE;
+	
+		
+@Name('InitAttach-handle-S1_UE_CAPABILITY_INFO_INDICATION')
+@Description('Handle S1_UE_CAPABILITY_INFO_INDICATION event for InitAttach Correlation, ')
+//@Audit
+on celltrace.S1_UE_CAPABILITY_INFO_INDICATION rrcUeCapInfoInd
+	merge InitAttachWindow iaw
+	where  iaw.CELL_ID = rrcUeCapInfoInd.GLOBAL_CELL_ID and iaw.subNetwork = rrcUeCapInfoInd.subNetwork and 
+	iaw.ne = rrcUeCapInfoInd.ne and  iaw.RAC_UE_REF = rrcUeCapInfoInd.RAC_UE_REF  
+	 when matched
+		then update	set
+			iaw.EVENTS_EVENT_NAME				=	Util.updateArray(iaw.EVENTS_EVENT_NAME,rrcUeCapInfoInd.name,false),
+			iaw.EVENTS_TIME_REL					=	Util.updateArray(iaw.EVENTS_TIME_REL,(cast(rrcUeCapInfoInd.timestamp - iaw.CURR_EVE_TIME, int)/1000),false),
+			iaw.DURATION           				= 	Util.parse(rrcUeCapInfoInd.timestamp - iaw.timestamp),
+			iaw.CURR_EVE_TIME					=	rrcUeCapInfoInd.timestamp,
+			iaw.RESULT 							= 	case when iaw.IPRCS and iaw.IPSSCS and iaw.IPICS  
+													then 1 else 2 end
+	when not matched
+		then insert into correlation.LOG_EVENT select
+		'S1_UE_CAPABILITY_INFO_INDICATION' 		as name,
+		rrcUeCapInfoInd.version					as version,
+		rrcUeCapInfoInd.timestamp 				as timestamp,
+		rrcUeCapInfoInd.subNetwork				as subNetwork,
+		rrcUeCapInfoInd.ne 						as ne,
+		2 										as RESULT, // ABORT value
+		rrcUeCapInfoInd.getCSVStringQuoted() 	as LOG_MESSAGE;
+	
+				
+		
+@Name('InitAttach-handle-S1_INITIAL_CONTEXT_SETUP_REQUEST')
+@Description('Handle S1_INITIAL_CONTEXT_SETUP_REQUEST event for InitAttach Correlation, ')
+//@Audit
+on celltrace.S1_INITIAL_CONTEXT_SETUP_REQUEST s1IniCtxSReq
+	merge InitAttachWindow iaw
+	where  iaw.CELL_ID = s1IniCtxSReq.GLOBAL_CELL_ID and iaw.subNetwork = s1IniCtxSReq.subNetwork and 
+	iaw.ne = s1IniCtxSReq.ne and  iaw.RAC_UE_REF = s1IniCtxSReq.RAC_UE_REF  
+	 when matched
+		then update	set
+			iaw.EVENTS_EVENT_NAME				=	Util.updateArray(iaw.EVENTS_EVENT_NAME,s1IniCtxSReq.name,false),
+			iaw.EVENTS_TIME_REL					=	Util.updateArray(iaw.EVENTS_TIME_REL,(cast(s1IniCtxSReq.timestamp - iaw.CURR_EVE_TIME, int)/1000),false),
+			iaw.DURATION           				= 	Util.parse(s1IniCtxSReq.timestamp - iaw.timestamp),
+			iaw.CURR_EVE_TIME					=	s1IniCtxSReq.timestamp,
+			iaw.MILESTONES_MILESTONE_NAME		=	Util.updateArray(iaw.MILESTONES_MILESTONE_NAME,s1IniCtxSReq.name,false),
+			iaw.MILESTONES_MILESTONE_TIMESTAMP  =	Util.updateLongArray(iaw.MILESTONES_MILESTONE_TIMESTAMP,s1IniCtxSReq.timestamp,false),
+			iaw.RESULT 							= 	case when iaw.IPRCS and iaw.IPSSCS and iaw.IPICS  
+													then 1 else 2 end
+	when not matched
+		then insert into correlation.LOG_EVENT select
+		'S1_INITIAL_CONTEXT_SETUP_REQUEST' 		as name,
+		s1IniCtxSReq.version					as version,
+		s1IniCtxSReq.timestamp 					as timestamp,
+		s1IniCtxSReq.subNetwork					as subNetwork,
+		s1IniCtxSReq.ne 						as ne,
+		2 										as RESULT, // ABORT value
+		s1IniCtxSReq.getCSVStringQuoted() 		as LOG_MESSAGE;
+				
+		
+@Name('InitAttach-handle-RRC_RRC_CONNECTION_RECONFIGURATION')
+@Description('Handle RRC_RRC_CONNECTION_RECONFIGURATION event for InitAttach Correlation, ')
+//@Audit
+on celltrace.RRC_RRC_CONNECTION_RECONFIGURATION rrcConRcon
+	merge InitAttachWindow iaw
+	where  iaw.CELL_ID = rrcConRcon.GLOBAL_CELL_ID and iaw.subNetwork = rrcConRcon.subNetwork and 
+	iaw.ne = rrcConRcon.ne and  iaw.RAC_UE_REF = rrcConRcon.RAC_UE_REF  
+	 when matched
+		then update	set
+			iaw.EVENTS_EVENT_NAME				=	Util.updateArray(iaw.EVENTS_EVENT_NAME,rrcConRcon.name,false),
+			iaw.EVENTS_TIME_REL					=	Util.updateArray(iaw.EVENTS_TIME_REL,(cast(rrcConRcon.timestamp - iaw.CURR_EVE_TIME, int)/1000),false),
+			iaw.DURATION           				= 	Util.parse(rrcConRcon.timestamp - iaw.timestamp),
+			iaw.CURR_EVE_TIME					=	rrcConRcon.timestamp,
+			iaw.RESULT 							= 	case when iaw.IPRCS and iaw.IPSSCS and iaw.IPICS  
+													then 1 else 2 end
+	when not matched
+		then insert into correlation.LOG_EVENT select
+		'RRC_RRC_CONNECTION_RECONFIGURATION' 	as name,
+		rrcConRcon.version						as version,
+		rrcConRcon.timestamp 					as timestamp,
+		rrcConRcon.subNetwork					as subNetwork,
+		rrcConRcon.ne 							as ne,
+		2 										as RESULT, // ABORT value
+		rrcConRcon.getCSVStringQuoted() 		as LOG_MESSAGE;
+			
+@Name('InitAttach-handle-RRC_RRC_CONNECTION_RECONFIGURATION_COMPLETE')
+@Description('Handle RRC_RRC_CONNECTION_RECONFIGURATION_COMPLETE event for InitAttach Correlation, ')
+//@Audit
+on celltrace.RRC_RRC_CONNECTION_RECONFIGURATION_COMPLETE rrcConRconCpl
+	merge InitAttachWindow iaw
+	where  iaw.CELL_ID = rrcConRconCpl.GLOBAL_CELL_ID and iaw.subNetwork = rrcConRconCpl.subNetwork and 
+	iaw.ne = rrcConRconCpl.ne and  iaw.RAC_UE_REF = rrcConRconCpl.RAC_UE_REF  
+	 when matched
+		then update	set
+			iaw.EVENTS_EVENT_NAME				=	Util.updateArray(iaw.EVENTS_EVENT_NAME,rrcConRconCpl.name,false),
+			iaw.EVENTS_TIME_REL					=	Util.updateArray(iaw.EVENTS_TIME_REL,(cast(rrcConRconCpl.timestamp - iaw.CURR_EVE_TIME, int)/1000),false),
+			iaw.DURATION           				= 	Util.parse(rrcConRconCpl.timestamp - iaw.timestamp),
+			iaw.CURR_EVE_TIME					=	rrcConRconCpl.timestamp,
+			iaw.RESULT 							= 	case when iaw.IPRCS and iaw.IPSSCS and iaw.IPICS 
+													then 0 else 1 end
+	when not matched
+		then insert into correlation.LOG_EVENT select
+		'RRC_RRC_CONNECTION_RECONFIGURATION_COMPLETE' 		as name,
+		rrcConRconCpl.version					as version,
+		rrcConRconCpl.timestamp 				as timestamp,
+		rrcConRconCpl.subNetwork				as subNetwork,
+		rrcConRconCpl.ne 						as ne,
+		2 										as RESULT, // ABORT value
+		rrcConRconCpl.getCSVStringQuoted() 		as LOG_MESSAGE;
+			
+		
+@Name('InitAttach-handle-S1_INITIAL_CONTEXT_SETUP_RESPONSE')
+@Description('Handle S1_INITIAL_CONTEXT_SETUP_RESPONSEevent for InitAttach Correlation, ')
+//@Audit
+on celltrace.S1_INITIAL_CONTEXT_SETUP_RESPONSE s1InitCtxSResp
+	merge InitAttachWindow iaw
+	where  iaw.CELL_ID = s1InitCtxSResp.GLOBAL_CELL_ID and iaw.subNetwork = s1InitCtxSResp.subNetwork and 
+	iaw.ne = s1InitCtxSResp.ne and  iaw.RAC_UE_REF = s1InitCtxSResp.RAC_UE_REF  
+	 when matched
+		then update	set
+			iaw.EVENTS_EVENT_NAME				=	Util.updateArray(iaw.EVENTS_EVENT_NAME,s1InitCtxSResp.name,false),
+			iaw.EVENTS_TIME_REL					=	Util.updateArray(iaw.EVENTS_TIME_REL,(cast(s1InitCtxSResp.timestamp - iaw.CURR_EVE_TIME, int)/1000),false),
+			iaw.DURATION           				= 	Util.parse(s1InitCtxSResp.timestamp - iaw.timestamp),
+
+			iaw.CURR_EVE_TIME					=	s1InitCtxSResp.timestamp,
+			iaw.MILESTONES_MILESTONE_NAME		=	Util.updateArray(iaw.MILESTONES_MILESTONE_NAME,s1InitCtxSResp.name,false),
+			iaw.MILESTONES_MILESTONE_TIMESTAMP  =	Util.updateLongArray(iaw.MILESTONES_MILESTONE_TIMESTAMP,s1InitCtxSResp.timestamp,false),
+		    iaw.IPRCS							= 	true,
+			iaw.RESULT 							= 	0
+	when not matched
+		then insert into correlation.LOG_EVENT select
+		'S1_INITIAL_CONTEXT_SETUP_RESPONSE' 	as name,
+		s1InitCtxSResp.version					as version,
+		s1InitCtxSResp.timestamp 				as timestamp,
+		s1InitCtxSResp.subNetwork				as subNetwork,
+		s1InitCtxSResp.ne 						as ne,
+		2 										as RESULT, // ABORT value
+		s1InitCtxSResp.getCSVStringQuoted() 	as LOG_MESSAGE;
+			
+	
+
+// Insert the new S1 Handover event into the named window
+@Name('InitAttach-handle-new-INI_ATTACH')
+@Description('Handle new INI_ATTACH event for InitAttach Correlation')
+//@Audit
+on correlation.INI_ATTACH new_ia
+	merge InitAttachWindow iaw
+	where iaw.MMES1APID = new_ia.MMES1APID and Arrays.equals(iaw.GUMMEI, new_ia.GUMMEI) and iaw.RESULT < 0
+	when matched
+		then insert into correlation.LOG_EVENT select
+		'INI_ATTACH' as name,
+		new_ia.version as version,
+		new_ia.timestamp as timestamp,
+		new_ia.subNetwork as subNetwork,
+		new_ia.ne as ne,
+		2 as RESULT, // ABORT value
+		new_ia.getCSVStringQuoted() as LOG_MESSAGE
+	when not matched
+		then insert select *;
+			
+		

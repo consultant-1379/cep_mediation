@@ -1,0 +1,40 @@
+module raw_events_base_module;
+
+IMPORT com.ericsson.cepmediation.correlation.lookup.impl.DefaultLookupService;
+
+create window ImsiMapWindow.win:keepall() as correlation.CUSTOM_IMSI_MAP_WINDOW;
+
+@Name('Imsi-Map-Flush')
+@Priority(31)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from ImsiMapWindow;
+
+@Priority(30)
+//@Drop
+on gpeh.RRC_RRC_CONNECTION_SETUP as rrc
+merge ImsiMapWindow AS imw
+where imw.UE_CONTEXT = rrc.UE_CONTEXT
+  and imw.RNC_MODULE_ID = rrc.RNC_MODULE_ID
+when matched 
+     then
+    	 update set
+    	    imw.IMSI              = -1
+when not matched
+     then
+         insert into ImsiMapWindow
+         select rrc.UE_CONTEXT    as UE_CONTEXT,
+                rrc.RNC_MODULE_ID as RNC_MODULE_ID,
+                -1                as IMSI;    
+
+@Priority(29)
+on gpeh.INTERNAL_IMSI as imsi_event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT = imsi_event.UE_CONTEXT
+  and imw.RNC_MODULE_ID = imsi_event.RNC_MODULE_ID
+when matched then
+update set imw.IMSI = cast(imsi_event.IMSI, long)
+when not matched then
+insert into ImsiMapWindow 
+select cast(imsi_event.IMSI, long) as IMSI,
+       imsi_event.UE_CONTEXT as UE_CONTEXT,           
+       imsi_event.RNC_MODULE_ID as RNC_MODULE_ID;

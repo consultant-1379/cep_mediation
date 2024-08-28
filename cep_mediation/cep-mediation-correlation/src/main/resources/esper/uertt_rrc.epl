@@ -1,0 +1,1857 @@
+module uertt_module_rrc;
+
+uses uertt_raw_events_base_module;
+
+create window RrcMeasurementReportEnrichedWindow.win:keepall() as gpeh.RRC_MEASUREMENT_REPORT_ENRICHED;
+create window RrcMeasurementReportUnenrichedWindow.win:keepall() as gpeh.RRC_MEASUREMENT_REPORT_ENRICHED;
+
+create window RrcActiveSetUpdateEnrichedWindow.win:keepall() as gpeh.RRC_ACTIVE_SET_UPDATE_ENRICHED;
+create window RrcActiveSetUpdateUnenrichedWindow.win:keepall() as gpeh.RRC_ACTIVE_SET_UPDATE_ENRICHED;
+
+create window RrcActiveSetUpdateCompleteEnrichedWindow.win:keepall() as gpeh.RRC_ACTIVE_SET_UPDATE_COMPLETE_ENRICHED;
+create window RrcActiveSetUpdateCompleteUnenrichedWindow.win:keepall() as gpeh.RRC_ACTIVE_SET_UPDATE_COMPLETE_ENRICHED;
+
+create window RrcActiveSetUpdateFailureEnrichedWindow.win:keepall() as gpeh.RRC_ACTIVE_SET_UPDATE_FAILURE_ENRICHED;
+create window RrcActiveSetUpdateFailureUnenrichedWindow.win:keepall() as gpeh.RRC_ACTIVE_SET_UPDATE_FAILURE_ENRICHED;
+
+create window RrcCellUpdateEnrichedWindow.win:keepall() as gpeh.RRC_CELL_UPDATE_ENRICHED;
+create window RrcCellUpdateUnenrichedWindow.win:keepall() as gpeh.RRC_CELL_UPDATE_ENRICHED;
+
+create window RrcCellUpdateConfirmEnrichedWindow.win:keepall() as gpeh.RRC_CELL_UPDATE_CONFIRM_ENRICHED;
+create window RrcCellUpdateConfirmUnenrichedWindow.win:keepall() as gpeh.RRC_CELL_UPDATE_CONFIRM_ENRICHED;
+
+create window RrcDownlinkDirectTransferEnrichedWindow.win:keepall() as gpeh.RRC_DOWNLINK_DIRECT_TRANSFER_ENRICHED;
+create window RrcDownlinkDirectTransferUnenrichedWindow.win:keepall() as gpeh.RRC_DOWNLINK_DIRECT_TRANSFER_ENRICHED;
+
+create window RrcMeasurementControlEnrichedWindow.win:keepall() as gpeh.RRC_MEASUREMENT_CONTROL_ENRICHED;
+create window RrcMeasurementControlUnenrichedWindow.win:keepall() as gpeh.RRC_MEASUREMENT_CONTROL_ENRICHED;
+
+create window RrcPagingType2EnrichedWindow.win:keepall() as gpeh.RRC_PAGING_TYPE_2_ENRICHED;
+create window RrcPagingType2UnenrichedWindow.win:keepall() as gpeh.RRC_PAGING_TYPE_2_ENRICHED;
+
+create window RrcRadioBearerReconfigurationEnrichedWindow.win:keepall() as gpeh.RRC_RADIO_BEARER_RECONFIGURATION_ENRICHED;
+create window RrcRadioBearerReconfigurationUnenrichedWindow.win:keepall() as gpeh.RRC_RADIO_BEARER_RECONFIGURATION_ENRICHED;
+
+create window RrcRadioBearerReconfigurationCompleteEnrichedWindow.win:keepall() as gpeh.RRC_RADIO_BEARER_RECONFIGURATION_COMPLETE_ENRICHED;
+create window RrcRadioBearerReconfigurationCompleteUnenrichedWindow.win:keepall() as gpeh.RRC_RADIO_BEARER_RECONFIGURATION_COMPLETE_ENRICHED;
+
+create window RrcRadioBearerReconfigurationFailureEnrichedWindow.win:keepall() as gpeh.RRC_RADIO_BEARER_RECONFIGURATION_FAILURE_ENRICHED;
+create window RrcRadioBearerReconfigurationFailureUnenrichedWindow.win:keepall() as gpeh.RRC_RADIO_BEARER_RECONFIGURATION_FAILURE_ENRICHED;
+
+create window RrcRadioBearerReleaseEnrichedWindow.win:keepall() as gpeh.RRC_RADIO_BEARER_RELEASE_ENRICHED;
+create window RrcRadioBearerReleaseUnenrichedWindow.win:keepall() as gpeh.RRC_RADIO_BEARER_RELEASE_ENRICHED;
+
+create window RrcRadioBearerReleaseCompleteEnrichedWindow.win:keepall() as gpeh.RRC_RADIO_BEARER_RELEASE_COMPLETE_ENRICHED;
+create window RrcRadioBearerReleaseCompleteUnenrichedWindow.win:keepall() as gpeh.RRC_RADIO_BEARER_RELEASE_COMPLETE_ENRICHED;
+
+create window RrcRadioBearerReleaseFailureEnrichedWindow.win:keepall() as gpeh.RRC_RADIO_BEARER_RELEASE_FAILURE_ENRICHED;
+create window RrcRadioBearerReleaseFailureUnenrichedWindow.win:keepall() as gpeh.RRC_RADIO_BEARER_RELEASE_FAILURE_ENRICHED;
+
+create window RrcRadioBearerSetupEnrichedWindow.win:keepall() as gpeh.RRC_RADIO_BEARER_SETUP_ENRICHED;
+create window RrcRadioBearerSetupUnenrichedWindow.win:keepall() as gpeh.RRC_RADIO_BEARER_SETUP_ENRICHED;
+
+create window RrcRadioBearerSetupCompleteEnrichedWindow.win:keepall() as gpeh.RRC_RADIO_BEARER_SETUP_COMPLETE_ENRICHED;
+create window RrcRadioBearerSetupCompleteUnenrichedWindow.win:keepall() as gpeh.RRC_RADIO_BEARER_SETUP_COMPLETE_ENRICHED;
+
+create window RrcRadioBearerSetupFailureEnrichedWindow.win:keepall() as gpeh.RRC_RADIO_BEARER_SETUP_FAILURE_ENRICHED;
+create window RrcRadioBearerSetupFailureUnenrichedWindow.win:keepall() as gpeh.RRC_RADIO_BEARER_SETUP_FAILURE_ENRICHED;
+
+create window RrcRrcConnectionReleaseEnrichedWindow.win:keepall() as gpeh.RRC_RRC_CONNECTION_RELEASE_ENRICHED;
+create window RrcRrcConnectionReleaseUnenrichedWindow.win:keepall() as gpeh.RRC_RRC_CONNECTION_RELEASE_ENRICHED;
+
+create window RrcRrcConnectionReleaseCompleteEnrichedWindow.win:keepall() as gpeh.RRC_RRC_CONNECTION_RELEASE_COMPLETE_ENRICHED;
+create window RrcRrcConnectionReleaseCompleteUnenrichedWindow.win:keepall() as gpeh.RRC_RRC_CONNECTION_RELEASE_COMPLETE_ENRICHED;
+
+create window RrcRrcStatusEnrichedWindow.win:keepall() as gpeh.RRC_RRC_STATUS_ENRICHED;
+create window RrcRrcStatusUnenrichedWindow.win:keepall() as gpeh.RRC_RRC_STATUS_ENRICHED;
+
+create window RrcSecurityModeCommandEnrichedWindow.win:keepall() as gpeh.RRC_SECURITY_MODE_COMMAND_ENRICHED;
+create window RrcSecurityModeCommandUnenrichedWindow.win:keepall() as gpeh.RRC_SECURITY_MODE_COMMAND_ENRICHED;
+
+create window RrcSecurityModeCompleteEnrichedWindow.win:keepall() as gpeh.RRC_SECURITY_MODE_COMPLETE_ENRICHED;
+create window RrcSecurityModeCompleteUnenrichedWindow.win:keepall() as gpeh.RRC_SECURITY_MODE_COMPLETE_ENRICHED;
+
+create window RrcSecurityModeFailureEnrichedWindow.win:keepall() as gpeh.RRC_SECURITY_MODE_FAILURE_ENRICHED;
+create window RrcSecurityModeFailureUnenrichedWindow.win:keepall() as gpeh.RRC_SECURITY_MODE_FAILURE_ENRICHED;
+
+create window RrcSignallingConnectionReleaseEnrichedWindow.win:keepall() as gpeh.RRC_SIGNALLING_CONNECTION_RELEASE_ENRICHED;
+create window RrcSignallingConnectionReleaseUnenrichedWindow.win:keepall() as gpeh.RRC_SIGNALLING_CONNECTION_RELEASE_ENRICHED;
+
+create window RrcSignallingConnectionReleaseIndicationEnrichedWindow.win:keepall() as gpeh.RRC_SIGNALLING_CONNECTION_RELEASE_INDICATION_ENRICHED;
+create window RrcSignallingConnectionReleaseIndicationUnenrichedWindow.win:keepall() as gpeh.RRC_SIGNALLING_CONNECTION_RELEASE_INDICATION_ENRICHED;
+
+create window RrcUeCapabilityInformationEnrichedWindow.win:keepall() as gpeh.RRC_UE_CAPABILITY_INFORMATION_ENRICHED;
+create window RrcUeCapabilityInformationUnenrichedWindow.win:keepall() as gpeh.RRC_UE_CAPABILITY_INFORMATION_ENRICHED;
+
+create window RrcUeCapabilityInformationConfirmEnrichedWindow.win:keepall() as gpeh.RRC_UE_CAPABILITY_INFORMATION_CONFIRM_ENRICHED;
+create window RrcUeCapabilityInformationConfirmUnenrichedWindow.win:keepall() as gpeh.RRC_UE_CAPABILITY_INFORMATION_CONFIRM_ENRICHED;
+
+create window RrcUplinkDirectTransferEnrichedWindow.win:keepall() as gpeh.RRC_UPLINK_DIRECT_TRANSFER_ENRICHED;
+create window RrcUplinkDirectTransferUnenrichedWindow.win:keepall() as gpeh.RRC_UPLINK_DIRECT_TRANSFER_ENRICHED;
+
+create window RrcUtranMobilityInformationConfirmEnrichedWindow.win:keepall() as gpeh.RRC_UTRAN_MOBILITY_INFORMATION_CONFIRM_ENRICHED;
+create window RrcUtranMobilityInformationConfirmUnenrichedWindow.win:keepall() as gpeh.RRC_UTRAN_MOBILITY_INFORMATION_CONFIRM_ENRICHED;
+
+create window RrcHandoverFromUtranCommandEnrichedWindow.win:keepall() as gpeh.RRC_HANDOVER_FROM_UTRAN_COMMAND_ENRICHED;
+create window RrcHandoverFromUtranCommandUnenrichedWindow.win:keepall() as gpeh.RRC_HANDOVER_FROM_UTRAN_COMMAND_ENRICHED;
+
+create window RrcHandoverFromUtranFailureEnrichedWindow.win:keepall() as gpeh.RRC_HANDOVER_FROM_UTRAN_FAILURE_ENRICHED;
+create window RrcHandoverFromUtranFailureUnenrichedWindow.win:keepall() as gpeh.RRC_HANDOVER_FROM_UTRAN_FAILURE_ENRICHED;
+
+create window RrcPhysicalChannelReconfigurationEnrichedWindow.win:keepall() as gpeh.RRC_PHYSICAL_CHANNEL_RECONFIGURATION_ENRICHED;
+create window RrcPhysicalChannelReconfigurationUnenrichedWindow.win:keepall() as gpeh.RRC_PHYSICAL_CHANNEL_RECONFIGURATION_ENRICHED;
+
+create window RrcPhysicalChannelReconfigurationCompleteEnrichedWindow.win:keepall() as gpeh.RRC_PHYSICAL_CHANNEL_RECONFIGURATION_COMPLETE_ENRICHED;
+create window RrcPhysicalChannelReconfigurationCompleteUnenrichedWindow.win:keepall() as gpeh.RRC_PHYSICAL_CHANNEL_RECONFIGURATION_COMPLETE_ENRICHED;
+
+create window RrcPhysicalChannelReconfigurationFailureEnrichedWindow.win:keepall() as gpeh.RRC_PHYSICAL_CHANNEL_RECONFIGURATION_FAILURE_ENRICHED;
+create window RrcPhysicalChannelReconfigurationFailureUnenrichedWindow.win:keepall() as gpeh.RRC_PHYSICAL_CHANNEL_RECONFIGURATION_FAILURE_ENRICHED;
+
+create window RrcUtranMobilityInformationEnrichedWindow.win:keepall() as gpeh.RRC_UTRAN_MOBILITY_INFORMATION_ENRICHED;
+create window RrcUtranMobilityInformationUnenrichedWindow.win:keepall() as gpeh.RRC_UTRAN_MOBILITY_INFORMATION_ENRICHED;
+
+create window RrcUtranMobilityInformationFailureEnrichedWindow.win:keepall() as gpeh.RRC_UTRAN_MOBILITY_INFORMATION_FAILURE_ENRICHED;
+create window RrcUtranMobilityInformationFailureUnenrichedWindow.win:keepall() as gpeh.RRC_UTRAN_MOBILITY_INFORMATION_FAILURE_ENRICHED;
+
+create window RrcCellChangeOrderFromUtranEnrichedWindow.win:keepall() as gpeh.RRC_CELL_CHANGE_ORDER_FROM_UTRAN_ENRICHED;
+create window RrcCellChangeOrderFromUtranUnenrichedWindow.win:keepall() as gpeh.RRC_CELL_CHANGE_ORDER_FROM_UTRAN_ENRICHED;
+
+create window RrcCellChangeOrderFromUtranFailureEnrichedWindow.win:keepall() as gpeh.RRC_CELL_CHANGE_ORDER_FROM_UTRAN_FAILURE_ENRICHED;
+create window RrcCellChangeOrderFromUtranFailureUnenrichedWindow.win:keepall() as gpeh.RRC_CELL_CHANGE_ORDER_FROM_UTRAN_FAILURE_ENRICHED;
+
+create window RrcUeCapabilityEnquiryEnrichedWindow.win:keepall() as gpeh.RRC_UE_CAPABILITY_ENQUIRY_ENRICHED;
+create window RrcUeCapabilityEnquiryUnenrichedWindow.win:keepall() as gpeh.RRC_UE_CAPABILITY_ENQUIRY_ENRICHED;
+
+create window RrcUraUpdateEnrichedWindow.win:keepall() as gpeh.RRC_URA_UPDATE_ENRICHED;
+create window RrcUraUpdateUnenrichedWindow.win:keepall() as gpeh.RRC_URA_UPDATE_ENRICHED;
+
+create window RrcUraUpdateConfirmEnrichedWindow.win:keepall() as gpeh.RRC_URA_UPDATE_CONFIRM_ENRICHED;
+create window RrcUraUpdateConfirmUnenrichedWindow.win:keepall() as gpeh.RRC_URA_UPDATE_CONFIRM_ENRICHED;
+
+create window RrcTransportChannelReconfigurationEnrichedWindow.win:keepall() as gpeh.RRC_TRANSPORT_CHANNEL_RECONFIGURATION_ENRICHED;
+create window RrcTransportChannelReconfigurationUnenrichedWindow.win:keepall() as gpeh.RRC_TRANSPORT_CHANNEL_RECONFIGURATION_ENRICHED;
+
+create window RrcTransportChannelReconfigurationCompleteEnrichedWindow.win:keepall() as gpeh.RRC_TRANSPORT_CHANNEL_RECONFIGURATION_COMPLETE_ENRICHED;
+create window RrcTransportChannelReconfigurationCompleteUnenrichedWindow.win:keepall() as gpeh.RRC_TRANSPORT_CHANNEL_RECONFIGURATION_COMPLETE_ENRICHED;
+
+create window RrcMeasurementControlFailureEnrichedWindow.win:keepall() as gpeh.RRC_MEASUREMENT_CONTROL_FAILURE_ENRICHED;
+create window RrcMeasurementControlFailureUnenrichedWindow.win:keepall() as gpeh.RRC_MEASUREMENT_CONTROL_FAILURE_ENRICHED;
+
+
+// ************************************ RRC_MEASUREMENT_REPORT    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcMeasurementReport')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcMeasurementReportEnrichedWindow;
+
+@Name('RrcMeasurementReport-Capturing')
+@Priority(12)
+on gpeh.RRC_MEASUREMENT_REPORT as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcMeasurementReportEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+
+when not matched
+  then insert into
+  RrcMeasurementReportUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcMeasurementReport')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcMeasurementReportUnenrichedWindow as RrcMeasurementReportUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcMeasurementReportUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcMeasurementReportUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+
+// ************************************ RRC_ACTIVE_SET_UPDATE    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcActiveSetUpdate')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcActiveSetUpdateEnrichedWindow;
+
+@Name('RrcActiveSetUpdate-Capturing')
+@Priority(12)
+on gpeh.RRC_ACTIVE_SET_UPDATE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcActiveSetUpdateEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcActiveSetUpdateUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcActiveSetUpdate')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcActiveSetUpdateUnenrichedWindow as RrcActiveSetUpdateUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcActiveSetUpdateUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcActiveSetUpdateUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+      
+        
+// ************************************ RRC_ACTIVE_SET_UPDATE_COMPLETE    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcActiveSetUpdateComplete')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcActiveSetUpdateCompleteEnrichedWindow;
+
+@Name('RrcActiveSetUpdateComplete-Capturing')
+@Priority(12)
+on gpeh.RRC_ACTIVE_SET_UPDATE_COMPLETE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcActiveSetUpdateCompleteEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcActiveSetUpdateCompleteUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcActiveSetUpdateComplete')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcActiveSetUpdateCompleteUnenrichedWindow as RrcActiveSetUpdateCompleteUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcActiveSetUpdateCompleteUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcActiveSetUpdateCompleteUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_ACTIVE_SET_UPDATE_FAILURE    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcActiveSetUpdateFailure')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcActiveSetUpdateFailureEnrichedWindow;
+
+@Name('RrcActiveSetUpdateFailure-Capturing')
+@Priority(12)
+on gpeh.RRC_ACTIVE_SET_UPDATE_FAILURE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcActiveSetUpdateFailureEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcActiveSetUpdateFailureUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcActiveSetUpdateFailure')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcActiveSetUpdateFailureUnenrichedWindow as RrcActiveSetUpdateFailureUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcActiveSetUpdateFailureUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcActiveSetUpdateFailureUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+
+
+// ************************************ RRC_CELL_UPDATE    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcCellUpdate')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcCellUpdateEnrichedWindow;
+
+@Name('RrcCellUpdate-Capturing')
+@Priority(12)
+on gpeh.RRC_CELL_UPDATE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcCellUpdateEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcCellUpdateUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcCellUpdate')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcCellUpdateUnenrichedWindow as RrcCellUpdateUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcCellUpdateUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcCellUpdateUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+       
+// ************************************ RRC_CELL_UPDATE_CONFIRM    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcCellUpdateConfirm')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcCellUpdateConfirmEnrichedWindow;
+
+@Name('RrcCellUpdateConfirm-Capturing')
+@Priority(12)
+on gpeh.RRC_CELL_UPDATE_CONFIRM as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcCellUpdateConfirmEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcCellUpdateConfirmUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcCellUpdateConfirm')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcCellUpdateConfirmUnenrichedWindow as RrcCellUpdateConfirmUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcCellUpdateConfirmUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcCellUpdateConfirmUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+
+// ************************************ RRC_DOWNLINK_DIRECT_TRANSFER    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcDownlinkDirectTransfer')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcDownlinkDirectTransferEnrichedWindow;
+
+@Name('RrcDownlinkDirectTransfer-Capturing')
+@Priority(12)
+on gpeh.RRC_DOWNLINK_DIRECT_TRANSFER as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcDownlinkDirectTransferEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcDownlinkDirectTransferUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcDownlinkDirectTransfer')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcDownlinkDirectTransferUnenrichedWindow as RrcDownlinkDirectTransferUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcDownlinkDirectTransferUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcDownlinkDirectTransferUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+        
+        
+// ************************************ RRC_MEASUREMENT_CONTROL    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcMeasurementControl')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcMeasurementControlEnrichedWindow;
+
+@Name('RrcMeasurementControl-Capturing')
+@Priority(12)
+on gpeh.RRC_MEASUREMENT_CONTROL as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcMeasurementControlEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcMeasurementControlUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcMeasurementControl')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcMeasurementControlUnenrichedWindow as RrcMeasurementControlUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcMeasurementControlUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcMeasurementControlUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_PAGING_TYPE_2    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcMeasurementControl')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcPagingType2EnrichedWindow;
+
+@Name('RrcPagingType2-Capturing')
+@Priority(12)
+on gpeh.RRC_PAGING_TYPE_2 as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcPagingType2EnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcPagingType2UnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcPagingType2')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcPagingType2UnenrichedWindow as RrcPagingType2UnenrichedWindow
+where imsi.UE_CONTEXT     = RrcPagingType2UnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcPagingType2UnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_RADIO_BEARER_RECONFIGURATION    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcRadioBearerReconfiguration')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcRadioBearerReconfigurationEnrichedWindow;
+
+@Name('RrcRadioBearerReconfiguration-Capturing')
+@Priority(12)
+on gpeh.RRC_RADIO_BEARER_RECONFIGURATION as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcRadioBearerReconfigurationEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcRadioBearerReconfigurationUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcRadioBearerReconfiguration')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcRadioBearerReconfigurationUnenrichedWindow as RrcRadioBearerReconfigurationUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcRadioBearerReconfigurationUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcRadioBearerReconfigurationUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_RADIO_BEARER_RECONFIGURATION_COMPLETE    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcRadioBearerReconfigurationComplete')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcRadioBearerReconfigurationCompleteEnrichedWindow;
+
+@Name('RrcRadioBearerReconfigurationComplete-Capturing')
+@Priority(12)
+on gpeh.RRC_RADIO_BEARER_RECONFIGURATION_COMPLETE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcRadioBearerReconfigurationCompleteEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcRadioBearerReconfigurationCompleteUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcRadioBearerReconfigurationComplete')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcRadioBearerReconfigurationCompleteUnenrichedWindow as RrcRadioBearerReconfigurationCompleteUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcRadioBearerReconfigurationCompleteUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcRadioBearerReconfigurationCompleteUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_RADIO_BEARER_RECONFIGURATION_FAILURE    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcRadioBearerReconfigurationFailure')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcRadioBearerReconfigurationFailureEnrichedWindow;
+
+@Name('RrcRadioBearerReconfigurationFailure-Capturing')
+@Priority(12)
+on gpeh.RRC_RADIO_BEARER_RECONFIGURATION_FAILURE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcRadioBearerReconfigurationFailureEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcRadioBearerReconfigurationFailureUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcRadioBearerReconfigurationFailure')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcRadioBearerReconfigurationFailureUnenrichedWindow as RrcRadioBearerReconfigurationFailureUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcRadioBearerReconfigurationFailureUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcRadioBearerReconfigurationFailureUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_RADIO_BEARER_RELEASE    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcRadioBearerRelease')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcRadioBearerReleaseEnrichedWindow;
+
+@Name('RrcRadioBearerRelease-Capturing')
+@Priority(12)
+on gpeh.RRC_RADIO_BEARER_RELEASE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcRadioBearerReleaseEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcRadioBearerReleaseUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcRadioBearerRelease')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcRadioBearerReleaseUnenrichedWindow as RrcRadioBearerReleaseUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcRadioBearerReleaseUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcRadioBearerReleaseUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_RADIO_BEARER_RELEASE_COMPLETE    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcRadioBearerReleaseComplete')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcRadioBearerReleaseCompleteEnrichedWindow;
+
+@Name('RrcRadioBearerReleaseComplete-Capturing')
+@Priority(12)
+on gpeh.RRC_RADIO_BEARER_RELEASE_COMPLETE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcRadioBearerReleaseCompleteEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcRadioBearerReleaseCompleteUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcRadioBearerReleaseComplete')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcRadioBearerReleaseCompleteUnenrichedWindow as RrcRadioBearerReleaseCompleteUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcRadioBearerReleaseCompleteUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcRadioBearerReleaseCompleteUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_RADIO_BEARER_RELEASE_FAILURE    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcRadioBearerReleaseFailure')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcRadioBearerReleaseFailureEnrichedWindow;
+
+@Name('RrcRadioBearerReleaseFailure-Capturing')
+@Priority(12)
+on gpeh.RRC_RADIO_BEARER_RELEASE_FAILURE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcRadioBearerReleaseFailureEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcRadioBearerReleaseFailureUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcRadioBearerReleaseFailure')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcRadioBearerReleaseFailureUnenrichedWindow as RrcRadioBearerReleaseFailureUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcRadioBearerReleaseFailureUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcRadioBearerReleaseFailureUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_RADIO_BEARER_SETUP    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcRadioBearerSetup')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcRadioBearerSetupEnrichedWindow;
+
+@Name('RrcRadioBearerSetup-Capturing')
+@Priority(12)
+on gpeh.RRC_RADIO_BEARER_SETUP as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcRadioBearerSetupEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcRadioBearerSetupUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcRadioBearerSetup')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcRadioBearerSetupUnenrichedWindow as RrcRadioBearerSetupUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcRadioBearerSetupUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcRadioBearerSetupUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_RADIO_BEARER_SETUP_COMPLETE    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcRadioBearerSetupComplete')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcRadioBearerSetupCompleteEnrichedWindow;
+
+@Name('RrcRadioBearerSetupComplete-Capturing')
+@Priority(12)
+on gpeh.RRC_RADIO_BEARER_SETUP_COMPLETE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcRadioBearerSetupCompleteEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcRadioBearerSetupCompleteUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcRadioBearerSetupComplete')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcRadioBearerSetupCompleteUnenrichedWindow as RrcRadioBearerSetupCompleteUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcRadioBearerSetupCompleteUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcRadioBearerSetupCompleteUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_RADIO_BEARER_SETUP_FAILURE    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcRadioBearerSetupFailure')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcRadioBearerSetupFailureEnrichedWindow;
+
+@Name('RrcRadioBearerSetupFailure-Capturing')
+@Priority(12)
+on gpeh.RRC_RADIO_BEARER_SETUP_FAILURE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcRadioBearerSetupFailureEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcRadioBearerSetupFailureUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcRadioBearerSetupFailure')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcRadioBearerSetupFailureUnenrichedWindow as RrcRadioBearerSetupFailureUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcRadioBearerSetupFailureUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcRadioBearerSetupFailureUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_RRC_CONNECTION_RELEASE    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcRrcConnectionRelease')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcRrcConnectionReleaseEnrichedWindow;
+
+@Name('RrcRrcConnectionRelease-Capturing')
+@Priority(12)
+on gpeh.RRC_RRC_CONNECTION_RELEASE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcRrcConnectionReleaseEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcRrcConnectionReleaseUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcRrcConnectionRelease')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcRrcConnectionReleaseUnenrichedWindow as RrcRrcConnectionReleaseUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcRrcConnectionReleaseUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcRrcConnectionReleaseUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_RRC_CONNECTION_RELEASE_COMPLETE    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcRrcConnectionReleaseComplete')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcRrcConnectionReleaseCompleteEnrichedWindow;
+
+@Name('RrcRrcConnectionReleaseComplete-Capturing')
+@Priority(12)
+on gpeh.RRC_RRC_CONNECTION_RELEASE_COMPLETE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcRrcConnectionReleaseCompleteEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcRrcConnectionReleaseCompleteUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcRrcConnectionReleaseComplete')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcRrcConnectionReleaseCompleteUnenrichedWindow as RrcRrcConnectionReleaseCompleteUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcRrcConnectionReleaseCompleteUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcRrcConnectionReleaseCompleteUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_RRC_STATUS    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcRrcStatus')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcRrcStatusEnrichedWindow;
+
+@Name('RrcRrcStatus-Capturing')
+@Priority(12)
+on gpeh.RRC_RRC_STATUS as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcRrcStatusEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcRrcStatusUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcRrcStatus')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcRrcStatusUnenrichedWindow as RrcRrcStatusUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcRrcStatusUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcRrcStatusUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_SECURITY_MODE_COMMAND    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcSecurityModeCommand')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcSecurityModeCommandEnrichedWindow;
+
+@Name('RrcSecurityModeCommand-Capturing')
+@Priority(12)
+on gpeh.RRC_SECURITY_MODE_COMMAND as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcSecurityModeCommandEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcSecurityModeCommandUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcSecurityModeCommand')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcSecurityModeCommandUnenrichedWindow as RrcSecurityModeCommandUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcSecurityModeCommandUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcSecurityModeCommandUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_SECURITY_MODE_COMPLETE    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcSecurityModeComplete')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcSecurityModeCompleteEnrichedWindow;
+
+@Name('RrcSecurityModeComplete-Capturing')
+@Priority(12)
+on gpeh.RRC_SECURITY_MODE_COMPLETE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcSecurityModeCompleteEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcSecurityModeCompleteUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcSecurityModeComplete')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcSecurityModeCompleteUnenrichedWindow as RrcSecurityModeCompleteUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcSecurityModeCompleteUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcSecurityModeCompleteUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_SECURITY_MODE_FAILURE    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcSecurityModeFailure')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcSecurityModeFailureEnrichedWindow;
+
+@Name('RrcSecurityModeFailure-Capturing')
+@Priority(12)
+on gpeh.RRC_SECURITY_MODE_FAILURE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcSecurityModeFailureEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcSecurityModeFailureUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcSecurityModeFailure')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcSecurityModeFailureUnenrichedWindow as RrcSecurityModeFailureUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcSecurityModeFailureUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcSecurityModeFailureUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_SIGNALLING_CONNECTION_RELEASE    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcSignallingConnectionRelease')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcSignallingConnectionReleaseEnrichedWindow;
+
+@Name('RrcSignallingConnectionRelease-Capturing')
+@Priority(12)
+on gpeh.RRC_SIGNALLING_CONNECTION_RELEASE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcSignallingConnectionReleaseEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcSignallingConnectionReleaseUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcSignallingConnectionRelease')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcSignallingConnectionReleaseUnenrichedWindow as RrcSignallingConnectionReleaseUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcSignallingConnectionReleaseUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcSignallingConnectionReleaseUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_SIGNALLING_CONNECTION_RELEASE_INDICATION    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcSignallingConnectionReleaseIndication')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcSignallingConnectionReleaseIndicationEnrichedWindow;
+
+@Name('RrcSignallingConnectionReleaseIndication-Capturing')
+@Priority(12)
+on gpeh.RRC_SIGNALLING_CONNECTION_RELEASE_INDICATION as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcSignallingConnectionReleaseIndicationEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcSignallingConnectionReleaseIndicationUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcSignallingConnectionReleaseIndication')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcSignallingConnectionReleaseIndicationUnenrichedWindow as RrcSignallingConnectionReleaseIndicationUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcSignallingConnectionReleaseIndicationUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcSignallingConnectionReleaseIndicationUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_UE_CAPABILITY_INFORMATION    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcUeCapabilityInformation')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcUeCapabilityInformationEnrichedWindow;
+
+@Name('RrcUeCapabilityInformation-Capturing')
+@Priority(12)
+on gpeh.RRC_UE_CAPABILITY_INFORMATION as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcUeCapabilityInformationEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcUeCapabilityInformationUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcUeCapabilityInformation')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcUeCapabilityInformationUnenrichedWindow as RrcUeCapabilityInformationUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcUeCapabilityInformationUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcUeCapabilityInformationUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_UE_CAPABILITY_INFORMATION_CONFIRM    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcUeCapabilityInformationConfirm')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcUeCapabilityInformationConfirmEnrichedWindow;
+
+@Name('RrcUeCapabilityInformationConfirm-Capturing')
+@Priority(12)
+on gpeh.RRC_UE_CAPABILITY_INFORMATION_CONFIRM as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcUeCapabilityInformationConfirmEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcUeCapabilityInformationConfirmUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcUeCapabilityInformationConfirm')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcUeCapabilityInformationConfirmUnenrichedWindow as RrcUeCapabilityInformationConfirmUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcUeCapabilityInformationConfirmUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcUeCapabilityInformationConfirmUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_UPLINK_DIRECT_TRANSFER    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcUplinkDirectTransfer')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcUplinkDirectTransferEnrichedWindow;
+
+@Name('RrcUplinkDirectTransfer-Capturing')
+@Priority(12)
+on gpeh.RRC_UPLINK_DIRECT_TRANSFER as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcUplinkDirectTransferEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcUplinkDirectTransferUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcUplinkDirectTransfer')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcUplinkDirectTransferUnenrichedWindow as RrcUplinkDirectTransferUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcUplinkDirectTransferUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcUplinkDirectTransferUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_UTRAN_MOBILITY_INFORMATION_CONFIRM    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcUtranMobilityInformationConfirm')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcUtranMobilityInformationConfirmEnrichedWindow;
+
+@Name('RrcUtranMobilityInformationConfirm-Capturing')
+@Priority(12)
+on gpeh.RRC_UTRAN_MOBILITY_INFORMATION_CONFIRM as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcUtranMobilityInformationConfirmEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcUtranMobilityInformationConfirmUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcUtranMobilityInformationConfirm')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcUtranMobilityInformationConfirmUnenrichedWindow as RrcUtranMobilityInformationConfirmUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcUtranMobilityInformationConfirmUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcUtranMobilityInformationConfirmUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_HANDOVER_FROM_UTRAN_COMMAND    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcHandoverFromUtranCommand')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcHandoverFromUtranCommandEnrichedWindow;
+
+@Name('RrcHandoverFromUtranCommand-Capturing')
+@Priority(12)
+on gpeh.RRC_HANDOVER_FROM_UTRAN_COMMAND as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcHandoverFromUtranCommandEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcHandoverFromUtranCommandUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcHandoverFromUtranCommand')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcHandoverFromUtranCommandUnenrichedWindow as RrcHandoverFromUtranCommandUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcHandoverFromUtranCommandUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcHandoverFromUtranCommandUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_HANDOVER_FROM_UTRAN_FAILURE    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcHandoverFromUtranFailure')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcHandoverFromUtranFailureEnrichedWindow;
+
+@Name('RrcHandoverFromUtranFailure-Capturing')
+@Priority(12)
+on gpeh.RRC_HANDOVER_FROM_UTRAN_FAILURE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcHandoverFromUtranFailureEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcHandoverFromUtranFailureUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcHandoverFromUtranFailure')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcHandoverFromUtranFailureUnenrichedWindow as RrcHandoverFromUtranFailureUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcHandoverFromUtranFailureUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcHandoverFromUtranFailureUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_PHYSICAL_CHANNEL_RECONFIGURATION    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcPhysicalChannelReconfiguration')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcPhysicalChannelReconfigurationEnrichedWindow;
+
+@Name('RrcPhysicalChannelReconfiguration-Capturing')
+@Priority(12)
+on gpeh.RRC_PHYSICAL_CHANNEL_RECONFIGURATION as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcPhysicalChannelReconfigurationEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcPhysicalChannelReconfigurationUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcPhysicalChannelReconfiguration')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcPhysicalChannelReconfigurationUnenrichedWindow as RrcPhysicalChannelReconfigurationUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcPhysicalChannelReconfigurationUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcPhysicalChannelReconfigurationUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_PHYSICAL_CHANNEL_RECONFIGURATION_COMPLETE    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcPhysicalChannelReconfigurationComplete')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcPhysicalChannelReconfigurationCompleteEnrichedWindow;
+
+@Name('RrcPhysicalChannelReconfigurationComplete-Capturing')
+@Priority(12)
+on gpeh.RRC_PHYSICAL_CHANNEL_RECONFIGURATION_COMPLETE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcPhysicalChannelReconfigurationCompleteEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcPhysicalChannelReconfigurationCompleteUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcPhysicalChannelReconfigurationComplete')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcPhysicalChannelReconfigurationCompleteUnenrichedWindow as RrcPhysicalChannelReconfigurationCompleteUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcPhysicalChannelReconfigurationCompleteUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcPhysicalChannelReconfigurationCompleteUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_PHYSICAL_CHANNEL_RECONFIGURATION_FAILURE    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcPhysicalChannelReconfigurationFailure')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcPhysicalChannelReconfigurationFailureEnrichedWindow;
+
+@Name('RrcPhysicalChannelReconfigurationFailure-Capturing')
+@Priority(12)
+on gpeh.RRC_PHYSICAL_CHANNEL_RECONFIGURATION_FAILURE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcPhysicalChannelReconfigurationFailureEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcPhysicalChannelReconfigurationFailureUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcPhysicalChannelReconfigurationFailure')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcPhysicalChannelReconfigurationFailureUnenrichedWindow as RrcPhysicalChannelReconfigurationFailureUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcPhysicalChannelReconfigurationFailureUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcPhysicalChannelReconfigurationFailureUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_UTRAN_MOBILITY_INFORMATION    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcUtranMobilityInformation')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcUtranMobilityInformationEnrichedWindow;
+
+@Name('RrcUtranMobilityInformation-Capturing')
+@Priority(12)
+on gpeh.RRC_UTRAN_MOBILITY_INFORMATION as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcUtranMobilityInformationEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcUtranMobilityInformationUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcUtranMobilityInformation')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcUtranMobilityInformationUnenrichedWindow as RrcUtranMobilityInformationUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcUtranMobilityInformationUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcUtranMobilityInformationUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_UTRAN_MOBILITY_INFORMATION_FAILURE    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcUtranMobilityInformationFailure')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcUtranMobilityInformationFailureEnrichedWindow;
+
+@Name('RrcUtranMobilityInformationFailure-Capturing')
+@Priority(12)
+on gpeh.RRC_UTRAN_MOBILITY_INFORMATION_FAILURE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcUtranMobilityInformationFailureEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcUtranMobilityInformationFailureUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcUtranMobilityInformationFailure')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcUtranMobilityInformationFailureUnenrichedWindow as RrcUtranMobilityInformationFailureUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcUtranMobilityInformationFailureUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcUtranMobilityInformationFailureUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_CELL_CHANGE_ORDER_FROM_UTRAN    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcCellChangeOrderFromUtran')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcCellChangeOrderFromUtranEnrichedWindow;
+
+@Name('RrcCellChangeOrderFromUtran-Capturing')
+@Priority(12)
+on gpeh.RRC_CELL_CHANGE_ORDER_FROM_UTRAN as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcCellChangeOrderFromUtranEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcCellChangeOrderFromUtranUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcCellChangeOrderFromUtran')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcCellChangeOrderFromUtranUnenrichedWindow as RrcCellChangeOrderFromUtranUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcCellChangeOrderFromUtranUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcCellChangeOrderFromUtranUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_CELL_CHANGE_ORDER_FROM_UTRAN_FAILURE    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcCellChangeOrderFromUtranFailure')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcCellChangeOrderFromUtranFailureEnrichedWindow;
+
+@Name('RrcCellChangeOrderFromUtranFailure-Capturing')
+@Priority(12)
+on gpeh.RRC_CELL_CHANGE_ORDER_FROM_UTRAN_FAILURE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcCellChangeOrderFromUtranFailureEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcCellChangeOrderFromUtranFailureUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcCellChangeOrderFromUtranFailure')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcCellChangeOrderFromUtranFailureUnenrichedWindow as RrcCellChangeOrderFromUtranFailureUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcCellChangeOrderFromUtranFailureUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcCellChangeOrderFromUtranFailureUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_UE_CAPABILITY_ENQUIRY    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcUeCapabilityEnquiry')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcUeCapabilityEnquiryEnrichedWindow;
+
+@Name('RrcUeCapabilityEnquiry-Capturing')
+@Priority(12)
+on gpeh.RRC_UE_CAPABILITY_ENQUIRY as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcUeCapabilityEnquiryEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcUeCapabilityEnquiryUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcUeCapabilityEnquiry')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcUeCapabilityEnquiryUnenrichedWindow as RrcUeCapabilityEnquiryUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcUeCapabilityEnquiryUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcUeCapabilityEnquiryUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_URA_UPDATE    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcUraUpdate')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcUraUpdateEnrichedWindow;
+
+@Name('RrcUraUpdate-Capturing')
+@Priority(12)
+on gpeh.RRC_URA_UPDATE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcUraUpdateEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcUraUpdateUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcUraUpdate')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcUraUpdateUnenrichedWindow as RrcUraUpdateUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcUraUpdateUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcUraUpdateUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_URA_UPDATE_CONFIRM    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcUraUpdateConfirm')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcUraUpdateConfirmEnrichedWindow;
+
+@Name('RrcUraUpdateConfirm-Capturing')
+@Priority(12)
+on gpeh.RRC_URA_UPDATE_CONFIRM as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcUraUpdateConfirmEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcUraUpdateConfirmUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcUraUpdateConfirm')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcUraUpdateConfirmUnenrichedWindow as RrcUraUpdateConfirmUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcUraUpdateConfirmUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcUraUpdateConfirmUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_TRANSPORT_CHANNEL_RECONFIGURATION    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcTransportChannelReconfiguration')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcTransportChannelReconfigurationEnrichedWindow;
+
+@Name('RrcTransportChannelReconfiguration-Capturing')
+@Priority(12)
+on gpeh.RRC_TRANSPORT_CHANNEL_RECONFIGURATION as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcTransportChannelReconfigurationEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcTransportChannelReconfigurationUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcTransportChannelReconfiguration')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcTransportChannelReconfigurationUnenrichedWindow as RrcTransportChannelReconfigurationUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcTransportChannelReconfigurationUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcTransportChannelReconfigurationUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_TRANSPORT_CHANNEL_RECONFIGURATION_COMPLETE    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcTransportChannelReconfigurationComplete')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcTransportChannelReconfigurationCompleteEnrichedWindow;
+
+@Name('RrcTransportChannelReconfigurationComplete-Capturing')
+@Priority(12)
+on gpeh.RRC_TRANSPORT_CHANNEL_RECONFIGURATION_COMPLETE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcTransportChannelReconfigurationCompleteEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcTransportChannelReconfigurationCompleteUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcTransportChannelReconfigurationComplete')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcTransportChannelReconfigurationCompleteUnenrichedWindow as RrcTransportChannelReconfigurationCompleteUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcTransportChannelReconfigurationCompleteUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcTransportChannelReconfigurationCompleteUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+
+// ************************************ RRC_MEASUREMENT_CONTROL_FAILURE    ***********************
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically
+@Name('Flush-IncompleteRrcMeasurementControlFailure')
+@Priority(32)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcMeasurementControlFailureEnrichedWindow;
+
+@Name('RrcMeasurementControlFailure-Capturing')
+@Priority(12)
+on gpeh.RRC_MEASUREMENT_CONTROL_FAILURE as event
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = event.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched
+  then insert into
+  RrcMeasurementControlFailureEnrichedWindow select
+        event                                                                  as base,
+        imw.IMSI                                                               as IMSI,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)     as LOCAL_TIMESTAMP
+        
+when not matched
+  then insert into
+  RrcMeasurementControlFailureUnenrichedWindow select
+        event                                                               as base,
+        event.timestamp + (event.networkElementTimezoneOffset * 60 * 1000)  as LOCAL_TIMESTAMP;
+        
+        
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcMeasurementControlFailure')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcMeasurementControlFailureUnenrichedWindow as RrcMeasurementControlFailureUnenrichedWindow
+where imsi.UE_CONTEXT     = RrcMeasurementControlFailureUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = RrcMeasurementControlFailureUnenrichedWindow.base.RNC_MODULE_ID
+when matched
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  

@@ -1,0 +1,8 @@
+# Make logging directory
+if [ -e "/var/log/ericsson/cep-mediation-datagen-precook" ]; then
+    echo log directory "/var/log/ericsson/cep-mediation-datagen-precook" already exists
+else
+	mkdir -p /var/log/ericsson/cep-mediation-datagen-precook
+	chown -R dcuser:dc5000 /var/log/ericsson/cep-mediation-datagen-precook
+    echo log directory "/var/log/ericsson/cep-mediation-datagen-precook" created
+fi

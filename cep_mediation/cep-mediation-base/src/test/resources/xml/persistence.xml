@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pojos that are going to be stored in db. -->
+<persistence xmlns="http://www.ericsson.com/Persistence">
+    <persistent-entity className="GPEH_SESSION" packageName="com.ericsson.eniqanalysis.apeventbeans.correlation">
+        <columns>
+            <column type="varchar" size="3">MCC</column>
+            <column type="varchar" size="3">MNC</column>
+            <column type="varchar" size="3">IMSI_MCC</column> 
+            <column type="varchar" size="3">IMSI_MNC</column>
+            <column type="unsignedbigint">IMEISV</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar" size="127">APN</column>
+            <column type="unsignedint">EVENT_CNT</column>
+            <column type="unsignedint">DURATION</column>
+            <column type="unsignedbigint">RAU_ATT_CNT</column>
+            <column type="unsignedbigint">RAU_SUC_CNT</column>
+            <column type="unsignedbigint">ISRAU_ATT_CNT</column>
+            <column type="unsignedbigint">ISRAU_SUC_CNT</column> 
+            <column type="varchar" size="128">START_SGSN</column>
+            <column type="varchar" size="128">END_SGSN</column>
+            <column type="smallint">START_RNC</column> 
+            <column type="smallint">END_RNC</column> 
+            <column type="unsignedint">START_CELL_ID</column>
+            <column type="unsignedint">END_CELL_ID</column>
+            <column type="bit">HAS_CONTINUATION</column> 
+            <column type="unsignedint">DISTINCT_CELL_CNT</column> 
+            <column type="unsignedint">RRC_MEAS_REP_SAMPLES</column>
+            <column type="unsignedint">RRC_SAMPLES_GC_BS</column> 
+            <column type="unsignedint">RRC_SAMPLES_GC_GS</column>
+            <column type="unsignedint">RRC_SAMPLES_BC_BS</column>
+            <column type="unsignedint">RRC_SAMPLES_BC_GS</column>
+            <column type="int">ECNO_AVG</column>
+            <column type="int">RSCP_AVG</column>
+            <column type="smallint">HSDPA_UE_CATEGORY</column> 
+            <column type="smallint">EUL_UE_CATEGORY</column>
+            <column type="float">HS_RATIO</column>
+            <column type="float">EUL_RATIO</column>
+            <column type="float">DCH_ACTIVITY</column>
+            <column type="int">UL_INTERFERENCE_AVG</column>
+            <column type="unsignedint">DL_NON_HS_TX_POWER_AVG</column>
+            <column type="smallint">HSDSCH_USERS_AVG</column>
+            <column type="smallint">CDS_COUNT</column>
+            <column type="smallint">CUS_COUNT</column>
+            <column type="smallint">CS_REASON_UE_ACTIVITY</column>
+            <column type="smallint">CS_REASON_CAPACITY</column>
+            <column type="smallint">CS_REASON_MOBILITY_COVERAGE</column>
+            <column type="smallint">CS_REASON_QOS_DCH</column>
+            <column type="smallint">CS_REASON_QUEUE</column>
+            <column type="smallint">CS_REASON_OTHER</column>  
+            <column type="unsignedint">HS_CELL_CHANGE_ERR_CNT</column>
+            <column type="unsignedint">HS_CELL_CHANGE_SUC_CNT</column>  
+            <column type="unsignedint">HS_NO_SELECTION_CNT</column>
+            <column type="unsignedint">IRAT_EXEC_ERR_CNT</column>
+            <column type="unsignedint">IFHO_EXEC_SUC_CNT</column>
+            <column type="unsignedint">IFHO_EXEC_ERR_CNT</column> 
+            <column type="unsignedint">SOHO_EXEC_SUC_CNT</column>
+            <column type="unsignedint">SOHO_EXEC_ERR_CNT</column>
+            <column type="unsignedint">CM_CNT</column>
+            <column type="unsignedint">CM_DURATION</column>
+            <column type="unsignedint">CM_UL_CNT</column>
+            <column type="unsignedint">CM_DL_CNT</column>
+            <column type="unsignedint">CM_ULDL_CNT</column>
+            <column type="unsignedint">CM_USER_CNT</column>
+            <column type="smallint">START_RAB</column> 
+            <column type="smallint">END_RAB</column>
+            <column type="smallint">CAUSE</column>
+            <column type="smallint">DISCONNECT_CAUSE</column> 
+            <column type="smallint">DISCONNECT_SUBCAUSE</column>
+            <column type="unsignedint">TAC</column>
+            <column type="bit">ROAMING</column>
+            <column type="unsignedbigint">IMSI</column>
+            <column type="unsignedbigint">MSISDN</column>
+            <column type="timestamp" truncateMillis="true">Timestamp</column>
+            <column type="timestamp">Timestamp</column> 
+        </columns>            
+    </persistent-entity>
+    <persistent-entity className="EE_VISITED_CELL" packageName="com.ericsson.eniqanalysis.apeventbeans.correlation">
+        <columns>
+            <column type="unsignedbigint">IMSI</column>
+            <column type="smallint">RNC_ID</column>
+            <column type="unsignedint">CELL_ID</column>
+            <column type="unsignedint">DURATION</column>
+            <column type="unsignedbigint">MSISDN</column>
+            <column type="unsignedint">TAC</column>
+            <column type="varchar" size="127">APN</column>
+            <column type="unsignedbigint">IMEISV</column>
+            <column type="unsignedint">RRC_SAMPLES_GC_BS</column>
+            <column type="unsignedint">RRC_SAMPLES_GC_GS</column>
+            <column type="unsignedint">RRC_SAMPLES_BC_BS</column>
+            <column type="unsignedint">RRC_SAMPLES_BC_GS</column>
+            <column type="timestamp" truncateMillis="true">Timestamp</column>
+            <column type="timestamp">Timestamp</column>
+        </columns>            
+    </persistent-entity>
+    <persistent-entity className="EE_RRC_MEASUREMENT" packageName="com.ericsson.eniqanalysis.apeventbeans.correlation">
+        <columns>
+	        <column type="smallint">EVENT_ID</column>
+	        <column type="unsignedbigint">IMSI</column>
+	        <column type="smallint">UE_CONTEXT</column>
+	        <column type="tinyint">RNC_MODULE_ID</column>
+	        <column type="smallint">SERVING_RNC_ID</column>
+	        <column type="unsignedint">SERVING_CELL_ID</column>
+	        <column type="smallint">RNC_ID_2</column>
+	        <column type="unsignedint">CELL_ID_2</column>
+	        <column type="smallint">RNC_ID_3</column>
+	        <column type="unsignedint">CELL_ID_3</column>
+	        <column type="smallint">RNC_ID_4</column>
+	        <column type="unsignedint">CELL_ID_4</column>
+	        <column type="tinyint">MEASUREMENT_TYPE</column>
+	        <column type="smallint">TRIGGER_EVENT_ID</column>
+	        <column type="int">RSCP</column>
+	        <column type="int">ECNO</column>
+	        <column type="smallint">SCRAMBLING_CODE</column>
+	        <column type="unsignedint">BSIC</column>
+	        <column type="tinyint">ORDER_NUMBER</column>
+            <column type="timestamp" truncateMillis="true">Timestamp</column>
+            <column type="timestamp">Timestamp</column>
+        </columns>            
+    </persistent-entity>
+    <persistent-entity className="TCP_REPORT_ENRICHED" packageName="com.ericsson.eniqanalysis.apeventbeans.correlation">
+        <columns>
+            <column type="varchar" size="3">IMSI_MCC</column> 
+            <column type="varchar" size="3">IMSI_MNC</column>
+            <column type="unsignedbigint">IMEISV</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar" size="127">APN</column>
+            <column type="unsignedint">DURATION</column>
+            <column type="bit">IS_PARTIAL</column>
+            <column type="bit">DOWNLINK</column>
+            <column type="unsignedbigint">DATA_RECEIVED</column>
+            <column type="unsignedint">THROUGHPUT</column>
+            <column type="unsignedint">PIPE_THROUGHPUT</column>
+            <column type="unsignedint">NONSS_PIPE_THROUGHPUT</column>
+            <column type="unsignedint">CHANNEL_PIPE_THROUGHPUT</column>
+            <column type="float">ALONE_RATIO</column>
+            <column type="unsignedint">MAX_RWIN</column>
+            <column type="unsignedint">SETUP_TIME_TERM</column>
+            <column type="unsignedint">SETUP_TIME_NET</column>
+            <column type="unsignedint">MAX_DATA_PACKET</column>
+            <column type="float">PACKET_LOSS_TERM</column>
+            <column type="float">PACKET_LOSS_NET</column>
+            <column type="unsignedint">CONTENT_TYPE</column>
+            <column type="varchar" size="127">HOST</column>
+            <column type="binary" size="16">UE_IP_ADDRESS</column>
+            <column type="unsignedint">TAC</column>
+            <column type="unsignedbigint">IMSI</column>
+            <column type="unsignedbigint">MSISDN</column>
+            <column type="timestamp" truncateMillis="true">Timestamp</column>
+            <column type="timestamp">Timestamp</column>
+        </columns>            
+    </persistent-entity>
+    <persistent-entity className="CLASSIFICATION_REPORT_ENRICHED" packageName="com.ericsson.eniqanalysis.apeventbeans.correlation">
+        <columns>
+            <column type="varchar" size="3">IMSI_MCC</column> 
+            <column type="varchar" size="3">IMSI_MNC</column>
+            <column type="unsignedbigint">IMEISV</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar" size="127">APN</column>
+            <column type="unsignedint">DURATION</column>
+            <column type="unsignedbigint">PACKETS_DOWNLINK</column>
+            <column type="unsignedbigint">PACKETS_UPLINK</column>
+            <column type="unsignedbigint">BYTES_DOWNLINK</column>
+            <column type="unsignedbigint">BYTES_UPLINK</column>
+            <column type="unsignedint">PROTOCOL</column>
+            <column type="unsignedint">FUNCTION</column>
+            <column type="unsignedint">ENCAPSULATION</column>
+            <column type="unsignedint">ENCRYPTION</column>
+            <column type="unsignedint">SERVICE_PROVIDER</column>
+            <column type="unsignedint">CLIENT</column>
+            <column type="binary" size="16">UE_IP_ADDRESS</column>
+            <column type="unsignedint">TAC</column>
+            <column type="unsignedbigint">IMSI</column>
+            <column type="unsignedbigint">MSISDN</column>
+            <column type="timestamp" truncateMillis="true">Timestamp</column>
+            <column type="timestamp">Timestamp</column>
+        </columns>            
+    </persistent-entity>
+    <persistent-entity className="INTERNAL_OUT_HARD_HANDOVER_FAILURE_ENRICHED" packageName="com.ericsson.eniqanalysis.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="tinyint">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="tinyint">TIMESTAMP_HOUR</column>
+            <column type="tinyint">TIMESTAMP_MINUTE</column>
+            <column type="tinyint">TIMESTAMP_SECOND</column>
+	        <column type="smallint">TIMESTAMP_MILLISEC</column>
+	        <column type="smallint">EVENT_ID</column>
+	        <column type="tinyint">SOURCE_CONF</column>
+	        <column type="unsignedint">C_ID_SERV_HSDSCH_CELL</column>
+	        <column type="tinyint">CPICH_EC_NO_CELL_1</column>
+	        <column type="tinyint">RSCP_CELL_1</column>
+	        <column type="tinyint">CPICH_EC_NO_CELL_2</column>
+	        <column type="tinyint">RSCP_CELL_2</column>
+	        <column type="tinyint">CPICH_EC_NO_CELL_3</column>
+	        <column type="tinyint">RSCP_CELL_3</column>
+	        <column type="tinyint">CPICH_EC_NO_CELL_4</column>
+	        <column type="tinyint">RSCP_CELL_4</column>
+	        <column type="unsignedint">HHO_TARGET_ID_1</column>
+	        <column type="unsignedint">HHO_TARGET_ID_2</column>
+	        <column type="unsignedint">HHO_TARGET_ID_3</column>
+	        <column type="smallint">HHO_TARGET_ID_4</column>
+	        <column type="tinyint">DL_QUALITY_MEAS1_TARGET_CELL</column>
+	        <column type="tinyint">DL_QUALITY_MEAS2_TARGET_CELL</column>
+	        <column type="smallint">SOURCE_CONNECTION_PROPERTIES</column>
+	        <column type="tinyint">TARGET_CONF</column>
+	        <column type="smallint">TARGET_CONNECTION_PROPERTIES</column>
+	        <column type="tinyint">WANTED_CONF</column>
+	        <column type="smallint">WANTED_CONNECTION_PROPERTIES</column>
+	        <column type="tinyint">PROCEDURE_INDICATOR</column>
+	        <column type="tinyint">EVALUATION_CASE</column>
+	        <column type="smallint">EXCEPTION_CLASS</column>
+	        <column type="smallint">CAUSE_VALUE</column>
+	        <column type="smallint">EXTENDED_CAUSE_VALUE</column>
+	        <column type="tinyint">SEVERITY_INDICATOR</column>
+	        <column type="smallint">CRNC_ID_SERV_HSDSCH_CELL</column>
+	        <column type="unsignedint">C_ID_1_SECONDARY_SERV_HSDSCH_CELL</column>
+	        <column type="smallint">SOURCE_CONNECTION_PROPERTIES_EXT</column>
+	        <column type="smallint">TARGET_CONNECTION_PROPERTIES_EXT</column>
+	        <column type="smallint">WANTED_CONNECTION_PROPERTIES_EXT</column>
+	        <column type="unsignedbigint" enriched="true">IMSI</column>
+	        <column type="timestamp" truncateMillis="true">Timestamp</column>
+            <column type="timestamp">Timestamp</column>
+        </columns>            
+    </persistent-entity>
+    <persistent-entity className="INTERNAL_SUCCESSFUL_HSDSCH_CELL_CHANGE_ENRICHED" packageName="com.ericsson.eniqanalysis.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="tinyint">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="tinyint">TIMESTAMP_HOUR</column>
+            <column type="tinyint">TIMESTAMP_MINUTE</column>
+            <column type="tinyint">TIMESTAMP_SECOND</column>
+            <column type="smallint">TIMESTAMP_MILLISEC</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="smallint">EVENT_TRIGGER</column>
+            <column type="unsignedint">C_ID_SOURCE</column>
+            <column type="smallint">RNC_ID_SOURCE</column>
+            <column type="tinyint">CPICH_EC_NO_SOURCE_CELL</column>
+            <column type="tinyint">CPICH_RSCP_SOURCE_CELL</column>
+            <column type="unsignedint">C_ID_TARGET</column>
+            <column type="smallint">RNC_ID_TARGET</column>
+            <column type="tinyint">CPICH_EC_NO_TARGET_CELL</column>
+            <column type="tinyint">CPICH_RSCP_TARGET_CELL</column>
+            <column type="tinyint">SOURCE_CONF</column>
+            <column type="smallint">GBR_UL</column>
+            <column type="smallint">GBR_DL</column>
+            <column type="smallint">SOURCE_CONNECTION_PROPERTIES</column>
+            <column type="smallint">TARGET_CONNECTION_PROPERTIES</column>
+            <column type="unsignedint">SOURCE_C_ID_1_SECONDARY_SERV_HSDSCH_CELL</column>
+            <column type="unsignedint">TARGET_C_ID_1_SECONDARY_SERV_HSDSCH_CELL</column>
+            <column type="smallint">SOURCE_CONNECTION_PROPERTIES_EXT</column>
+            <column type="smallint">TARGET_CONNECTION_PROPERTIES_EXT</column>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="timestamp" truncateMillis="true">Timestamp</column>
+            <column type="timestamp">Timestamp</column>
+        </columns>
+    </persistent-entity>
+    <persistent-entity className="INTERNAL_SYSTEM_UTILIZATION" packageName="com.ericsson.eniqanalysis.apeventbeans.gpeh">
+        <columns>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="tinyint">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="tinyint">TIMESTAMP_HOUR</column>
+            <column type="tinyint">TIMESTAMP_MINUTE</column>
+            <column type="tinyint">TIMESTAMP_SECOND</column>
+            <column type="smallint">TIMESTAMP_MILLISEC</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="unsignedint">RBS_ID</column>
+            <column type="unsignedint">LOCAL_CELL_GROUP_ID</column>
+            <column type="unsignedint">CAPACITY_CREDITS_UL</column>
+            <column type="unsignedint">CAPACITY_CREDITS_DL</column>
+            <column type="smallint">MAX_DL_POWER</column>
+            <column type="unsignedint">CONSUMED_CREDITS_UL</column>
+            <column type="unsignedint">CONSUMED_CREDITS_DL</column>
+			<column type="smallint">DL_TX_POWER</column>
+            <column type="smallint">DL_NON_HS_TX_POWER</column>
+            <column type="smallint">DL_HS_REQ_POWER</column>
+            <column type="smallint">UL_INTERFERENCE</column>
+            <column type="unsignedint">TOTAL_ASE_UL</column>
+            <column type="unsignedint">TOTAL_ASE_DL</column>
+            <column type="smallint">TOTAL_DL_CHAN_CODE_TREE_CONSUMPTION</column>
+            <column type="tinyint">NR_OF_CONNECTIONS_SF8</column>
+            <column type="tinyint">NR_OF_CONNECTIONS_SF16</column>
+            <column type="tinyint">NR_OF_CONNECTIONS_SF32</column>
+            <column type="tinyint">NO_OF_CM_USERS</column>
+            <column type="smallint">NUMBER_OF_USERS_ASSIGNED_TO_PHYS_HS_CHAN</column>
+            <column type="tinyint">NUMBER_OF_EDCH_USERS_IN_SERVING_CELL</column>
+            <column type="smallint">NUMBER_OF_EDCH_USERS_IN_NON_SERVING_CELL</column>
+            <column type="tinyint">NR_OF_CONNECTIONS_SF4_UL</column>
+            <column type="tinyint">NR_OF_CONNECTIONS_SF8_UL</column>
+            <column type="tinyint">NR_OF_CONNECTIONS_SF16_UL</column>
+            <column type="tinyint">NUMBER_OF_MCCH_MICH</column>
+            <column type="tinyint">NUMBER_OF_MTCH_64</column>
+            <column type="tinyint">NUMBER_OF_MTCH_128</column>
+            <column type="tinyint">NUMBER_OF_MTCH_256</column>
+            <column type="tinyint">NUMBER_OF_TTI2EDCH_USERS_IN_SERVING_CELL</column>
+            <column type="tinyint">NUMBER_OF_TTI2EDCH_USERS_IN_NON_SERVING_CELL</column>
+            <column type="smallint">UL_TN_IUB_USAGE</column>
+            <column type="smallint">DL_TN_IUB_USAGE</column>
+            <column type="tinyint">NR_OF_OPENED_SF256_FOR_FDPCH_SYSTEM_UTILIZATION</column>
+            <column type="smallint">NR_OF_ALLOCATED_TIMEPOSITIONS_FOR_FDPCH_SYSTEM_UTILIZATION</column>
+            <column type="smallint">EUL_SCHEDULED_RATE</column>
+            <column type="timestamp" truncateMillis="true">Timestamp</column>
+            <column type="timestamp">Timestamp</column>
+        </columns>
+    </persistent-entity>
+    
+    <persistent-entity className="INTERNAL_START_CONGESTION" packageName="com.ericsson.eniqanalysis.apeventbeans.gpeh">
+        <columns>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="tinyint">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="tinyint">TIMESTAMP_HOUR</column>
+            <column type="tinyint">TIMESTAMP_MINUTE</column>
+            <column type="tinyint">TIMESTAMP_SECOND</column>
+            <column type="smallint">TIMESTAMP_MILLISEC</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="smallint">DL_POWER</column>
+            <column type="smallint">UL_INTERFERENCE</column>
+            <column type="tinyint">PREVIOUS_DOWNLINK_STATE</column>
+            <column type="tinyint">CURRENT_DOWNLINK_STATE</column>
+            <column type="tinyint">PREVIOUS_UPLINK_STATE</column>
+            <column type="tinyint">CURRENT_UPLINK_STATE</column>
+            <column type="tinyint">TD_CARRIER_NO</column>
+            <column type="tinyint">TD_TS_NO</column>
+            <column type="tinyint">PREVIOUS_STATE</column>
+            <column type="tinyint">CURRENT_STATE</column>
+            <column type="timestamp" truncateMillis="true">Timestamp</column>
+            <column type="timestamp">Timestamp</column>
+        </columns>
+    </persistent-entity>
+    
+    <persistent-entity className="INTERNAL_STOP_CONGESTION" packageName="com.ericsson.eniqanalysis.apeventbeans.gpeh">
+        <columns>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="tinyint">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="tinyint">TIMESTAMP_HOUR</column>
+            <column type="tinyint">TIMESTAMP_MINUTE</column>
+            <column type="tinyint">TIMESTAMP_SECOND</column>
+            <column type="smallint">TIMESTAMP_MILLISEC</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="smallint">DL_POWER</column>
+            <column type="smallint">UL_INTERFERENCE</column>
+            <column type="tinyint">PREVIOUS_DOWNLINK_STATE</column>
+            <column type="tinyint">CURRENT_DOWNLINK_STATE</column>
+            <column type="tinyint">PREVIOUS_UPLINK_STATE</column>
+            <column type="tinyint">CURRENT_UPLINK_STATE</column>
+            <column type="tinyint">TD_CARRIER_NO</column>
+            <column type="tinyint">TD_TS_NO</column>
+            <column type="tinyint">PREVIOUS_STATE</column>
+            <column type="tinyint">CURRENT_STATE</column>
+            <column type="timestamp" truncateMillis="true">Timestamp</column>
+            <column type="timestamp">Timestamp</column>
+        </columns>
+    </persistent-entity>
+    <persistent-entity className="INTERNAL_RECORDING_FAULT" packageName="com.ericsson.eniqanalysis.apeventbeans.gpeh">
+        <columns>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="tinyint">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="tinyint">TIMESTAMP_HOUR</column>
+            <column type="tinyint">TIMESTAMP_MINUTE</column>
+            <column type="tinyint">TIMESTAMP_SECOND</column>
+            <column type="smallint">TIMESTAMP_MILLISEC</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="tinyint">RNC_MP_ID</column>
+            <column type="smallint">EVENT_TRIGGER</column>
+            <column type="tinyint">AFFECTED_SCANNER_TYPE</column>
+            <column type="timestamp" truncateMillis="true">Timestamp</column>
+            <column type="timestamp">Timestamp</column>
+        </columns>
+    </persistent-entity>
+    <persistent-entity className="INTERNAL_MP_OVERLOAD" packageName="com.ericsson.eniqanalysis.apeventbeans.gpeh">
+        <columns>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="tinyint">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="tinyint">TIMESTAMP_HOUR</column>
+            <column type="tinyint">TIMESTAMP_MINUTE</column>
+            <column type="tinyint">TIMESTAMP_SECOND</column>
+            <column type="smallint">TIMESTAMP_MILLISEC</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="tinyint">RNC_MP_ID</column>
+            <column type="timestamp" truncateMillis="true">Timestamp</column>
+            <column type="timestamp">Timestamp</column>
+        </columns>
+    </persistent-entity>
+</persistence>

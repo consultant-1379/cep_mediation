@@ -1,0 +1,1 @@
+this is just some random file in the input folder. it should not be processed as it name does not match the regex pattern for any input file type.

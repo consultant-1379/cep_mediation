@@ -1,0 +1,183 @@
+//core session window
+create window CoreSessionWindow.win:keepall() as correlation.SGEH_SESSION;
+
+//session duration
+create constant variable short CONT_SESSION_DURATION = 300;
+
+//session duration in millisecond
+create constant variable long CONT_SESSION_DURATION_MILL = 300000;
+
+@Name("CORE_SESSION")
+@Priority(10)
+on correlation.SESSION_END_EVENT as sessionEndEvent
+select csw.* from CoreSessionWindow as csw;
+
+@Priority(9)
+@Drop
+//remove selected session
+on correlation.SESSION_END_EVENT as sessionEndEvent
+delete from CoreSessionWindow;
+
+
+
+//ACTIVATE EVENT
+on ebm.ACTIVATE as a
+merge CoreSessionWindow as csw
+where
+    cast((case a.IMSI when "" then "0" else a.IMSI end),long) = csw.IMSI
+when matched
+    then update set
+        csw.END_APN = a.APN,
+        csw.SGSN_ACTIVITY_LATEST_TIME = a.timestamp,
+        csw.APN_ACTIVITY_LATEST_TIME = a.timestamp,
+        csw.EVENT_SOURCE_NAME = a.ne,
+        csw.TAC = cast(cast((case a.IMEISV when "" then "0" else a.IMEISV end), long)/100000000, int),         
+        csw.MSISDN = cast((case a.MSISDN when "" then "0" else a.MSISDN end), long)
+    where
+        csw.START_APN is not null
+    then update set
+        csw.END_APN = a.APN,
+        csw.START_APN = a.APN,
+        csw.SGSN_ACTIVITY_LATEST_TIME = a.timestamp,
+        csw.APN_ACTIVITY_LATEST_TIME = a.timestamp,
+        csw.APN_ACTIVITY_START_TIME = a.timestamp,
+        csw.EVENT_SOURCE_NAME = a.ne,
+        csw.TAC = cast(cast((case a.IMEISV when "" then "0" else a.IMEISV end), long)/100000000, int),         
+        csw.MSISDN = cast((case a.MSISDN when "" then "0" else a.MSISDN end), long)
+    where
+        csw.START_APN is null
+when not matched
+    then insert into
+        CoreSessionWindow
+    select
+        cast((case a.IMSI when "" then "0" else a.IMSI end), long) as IMSI,
+        cast(20000, short) as EVENT_ID,
+        a.APN as START_APN,
+        a.APN as END_APN,  //assign the activate apn as the end apn
+        cast(0, short) as RAU_ATT_CNT,
+        cast(0, short) as RAU_SUC_CNT,                                                                           
+        cast(0, short) as ISRAU_ATT_CNT,
+        cast(0, short) as ISRAU_SUC_CNT,
+        a.ne as EVENT_SOURCE_NAME,
+        cast(cast((case a.IMEISV when "" then "0" else a.IMEISV end), long)/100000000, int) as TAC,
+        cast((case a.MSISDN when "" then "0" else a.MSISDN end), long) as MSISDN,
+        a.timestamp - a.timestamp%CONT_SESSION_DURATION_MILL as timestamp,        
+        CONT_SESSION_DURATION as SESSION_DURATION,
+        a.timestamp as SGSN_ACTIVITY_START_TIME,
+        a.timestamp as SGSN_ACTIVITY_LATEST_TIME,
+        a.timestamp as APN_ACTIVITY_START_TIME,
+        a.timestamp as APN_ACTIVITY_LATEST_TIME;
+        
+
+//DEACTIVATE EVENT
+on  ebm.DEACTIVATE as a
+merge
+    CoreSessionWindow as csw
+where
+    cast((case a.IMSI when "" then "0" else a.IMSI end),long) = csw.IMSI
+when matched
+    then update set
+        csw.END_APN = a.APN,
+        csw.SGSN_ACTIVITY_LATEST_TIME = a.timestamp,
+        csw.APN_ACTIVITY_LATEST_TIME = a.timestamp,
+        csw.EVENT_SOURCE_NAME = a.ne,
+        csw.TAC = cast(cast((case a.IMEISV when "" then "0" else a.IMEISV end), long)/100000000, int),         
+        csw.MSISDN = cast((case a.MSISDN when "" then "0" else a.MSISDN end), long)
+    where
+        csw.START_APN is not null
+    then update set
+        csw.END_APN = a.APN,
+        csw.START_APN = a.APN,
+        csw.SGSN_ACTIVITY_LATEST_TIME = a.timestamp,
+        csw.APN_ACTIVITY_LATEST_TIME = a.timestamp,
+        csw.APN_ACTIVITY_START_TIME = a.timestamp,
+        csw.EVENT_SOURCE_NAME = a.ne,
+        csw.TAC = cast(cast((case a.IMEISV when "" then "0" else a.IMEISV end), long)/100000000, int),         
+        csw.MSISDN = cast((case a.MSISDN when "" then "0" else a.MSISDN end), long)
+    where
+        csw.START_APN is null
+when not matched
+    then insert into
+        CoreSessionWindow
+    select
+        cast((case a.IMSI when "" then "0" else a.IMSI end), long) as IMSI,
+        cast(20000, short) as EVENT_ID,
+        a.APN as START_APN,
+        a.APN as END_APN,  //assign the activate apn as the end apn
+        cast(0, short) as RAU_ATT_CNT,
+        cast(0, short) as RAU_SUC_CNT,
+        cast(0, short) as ISRAU_ATT_CNT,
+        cast(0, short) as ISRAU_SUC_CNT,
+        a.ne as EVENT_SOURCE_NAME,
+        cast(cast((case a.IMEISV when "" then "0" else a.IMEISV end), long)/100000000, int) as TAC,
+        cast((case a.MSISDN when "" then "0" else a.MSISDN end), long) as MSISDN,
+        a.timestamp - a.timestamp%CONT_SESSION_DURATION_MILL as timestamp, 
+        CONT_SESSION_DURATION as SESSION_DURATION,
+        a.timestamp as SGSN_ACTIVITY_START_TIME,
+        a.timestamp as SGSN_ACTIVITY_LATEST_TIME,
+        a.timestamp as APN_ACTIVITY_START_TIME,
+        a.timestamp as APN_ACTIVITY_LATEST_TIME;
+
+//RAU EVENT
+on ebm.RAU  as a
+merge
+    CoreSessionWindow as csw
+where
+    cast((case a.IMSI when "" then "0" else a.IMSI end),long) = csw.IMSI
+when matched
+    then update set
+        csw.SGSN_ACTIVITY_LATEST_TIME = a.timestamp,
+        csw.RAU_ATT_CNT = cast({csw.RAU_ATT_CNT, 1}.sumOf(), short),
+        csw.RAU_SUC_CNT = cast({csw.RAU_SUC_CNT,(case a.HEADER_EVENT_RESULT when 1 then 0 else 1 end)}.sumOf(), short),
+        csw.EVENT_SOURCE_NAME = a.ne,
+        csw.TAC = cast(cast((case a.IMEISV when "" then "0" else a.IMEISV end), long)/100000000, int),         
+        csw.MSISDN = cast((case a.MSISDN when "" then "0" else a.MSISDN end), long)
+when not matched
+    then insert into
+        CoreSessionWindow
+    select
+        cast((case a.IMSI when "" then "0" else a.IMSI end), long) as IMSI,
+        cast(20000, short) as EVENT_ID,
+        cast(1,short) as RAU_ATT_CNT,
+        cast((case a.HEADER_EVENT_RESULT when 1 then 0 else 1 end),short) as RAU_SUC_CNT,
+        cast(0, short) as ISRAU_ATT_CNT,
+        cast(0, short) as ISRAU_SUC_CNT,  
+        a.ne as EVENT_SOURCE_NAME,
+        cast(cast((case a.IMEISV when "" then "0" else a.IMEISV end), long)/100000000, int) as TAC,
+        cast((case a.MSISDN when "" then "0" else a.MSISDN end), long) as MSISDN,
+        a.timestamp - a.timestamp%CONT_SESSION_DURATION_MILL as timestamp, 
+        CONT_SESSION_DURATION as SESSION_DURATION,
+        a.timestamp as SGSN_ACTIVITY_START_TIME,
+        a.timestamp as SGSN_ACTIVITY_LATEST_TIME;
+
+//ISRAU EVENT
+on ebm.ISRAU as a
+merge
+    CoreSessionWindow as csw
+where
+    cast((case a.IMSI when "" then "0" else a.IMSI end),long) = csw.IMSI
+when matched
+    then update set
+        csw.SGSN_ACTIVITY_LATEST_TIME = a.timestamp,
+        csw.ISRAU_ATT_CNT = cast({csw.ISRAU_ATT_CNT, 1}.sumOf(), short),
+        csw.ISRAU_SUC_CNT = cast({csw.ISRAU_SUC_CNT,(case a.HEADER_EVENT_RESULT when 1 then 0 else 1 end)}.sumOf(), short),
+        csw.EVENT_SOURCE_NAME = a.ne,
+        csw.TAC = cast(cast((case a.IMEISV when "" then "0" else a.IMEISV end), long)/100000000, int),         
+        csw.MSISDN = cast((case a.MSISDN when "" then "0" else a.MSISDN end), long)
+when not matched
+    then insert into
+        CoreSessionWindow
+    select
+        cast((case a.IMSI when "" then "0" else a.IMSI end), long) as IMSI,
+        cast(20000, short) as EVENT_ID,
+        cast(0, short) as RAU_ATT_CNT,
+        cast(0, short) as RAU_SUC_CNT,  
+        cast(1, short) as ISRAU_ATT_CNT,
+        cast((case a.HEADER_EVENT_RESULT when 1 then 0 else 1 end), short) as ISRAU_SUC_CNT,
+        a.ne as EVENT_SOURCE_NAME,
+        cast(cast((case a.IMEISV when "" then "0" else a.IMEISV end), long)/100000000, int) as TAC,
+        cast((case a.MSISDN when "" then "0" else a.MSISDN end), long) as MSISDN,
+        a.timestamp - a.timestamp%CONT_SESSION_DURATION_MILL as timestamp, 
+        CONT_SESSION_DURATION as SESSION_DURATION,
+        a.timestamp as SGSN_ACTIVITY_START_TIME,
+        a.timestamp as SGSN_ACTIVITY_LATEST_TIME;

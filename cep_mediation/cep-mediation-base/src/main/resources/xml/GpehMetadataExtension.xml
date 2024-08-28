@@ -1,0 +1,3793 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extensions xmlns="http://www.ericsson.com/SchemaTypeExtension">
+    <!-- Extension metadata is needed because generally speaking event metadata
+        is not under our control. All extensions defined here aid automatic class
+        generation based on event metadata. -->
+
+    <!-- Common inerfaces for gpeh events. -->
+    <commoninterfaces>
+        <commoninterface name="GpehBase">
+            <params>
+                <param>EVENT_PARAM_TIMESTAMP_HOUR</param>
+                <param>EVENT_PARAM_TIMESTAMP_MINUTE</param>
+                <param>EVENT_PARAM_TIMESTAMP_SECOND</param>
+                <param>EVENT_PARAM_TIMESTAMP_MILLISEC</param>
+                <param>EVENT_PARAM_SCANNER_ID</param>
+                <param>EVENT_PARAM_UE_CONTEXT</param>
+                <param>EVENT_PARAM_RNC_MODULE_ID</param>
+                <param>EVENT_PARAM_C_ID_1</param>
+                <param>EVENT_PARAM_C_ID_2</param>
+                <param>EVENT_PARAM_C_ID_3</param>
+                <param>EVENT_PARAM_C_ID_4</param>
+                <param>EVENT_PARAM_RNC_ID_1</param>
+                <param>EVENT_PARAM_RNC_ID_2</param>
+                <param>EVENT_PARAM_RNC_ID_3</param>
+                <param>EVENT_PARAM_RNC_ID_4</param>
+            </params>
+        </commoninterface>
+    </commoninterfaces>
+
+    <!-- Raw gpeh events to which some attributes were added. -->
+    <enrichedevents>
+        <enrichedevent name="INTERNAL_OUT_HARD_HANDOVER_FAILURE_ENRICHED"
+            enriches="INTERNAL_OUT_HARD_HANDOVER_FAILURE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+
+                <param sqlType="2005">CELL_ID_1</param>
+                <param sqlType="2005">CELL_ID_2</param>
+                <param sqlType="2005">CELL_ID_3</param>
+                <param sqlType="2005">CELL_ID_4</param>
+
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="-5">HIER3_ID_2</param>
+                <param sqlType="-5">HIER321_ID_2</param>
+                <param sqlType="-5">HIER3_CELL_ID_2</param>
+                <param sqlType="-5">HIER3_ID_3</param>
+                <param sqlType="-5">HIER321_ID_3</param>
+                <param sqlType="-5">HIER3_CELL_ID_3</param>
+                <param sqlType="-5">HIER3_ID_4</param>
+                <param sqlType="-5">HIER321_ID_4</param>
+                <param sqlType="-5">HIER3_CELL_ID_4</param>
+                <param sqlType="-5">THIER3_ID</param>
+                <param sqlType="-5">THIER321_ID</param>
+                <param sqlType="-5">THIER3_CELL_ID</param>
+
+                <param sqlType="6">ECNO_CELL_1</param>
+                <param sqlType="4">RSCP_CELL_1</param>
+                <param sqlType="6">ECNO_CELL_2</param>
+                <param sqlType="4">RSCP_CELL_2</param>
+                <param sqlType="6">ECNO_CELL_3</param>
+                <param sqlType="4">RSCP_CELL_3</param>
+                <param sqlType="6">ECNO_CELL_4</param>
+                <param sqlType="4">RSCP_CELL_4</param>
+                <param sqlType="6">TARGET_CELL_ECNO</param>
+                <param sqlType="4">TARGET_CELL_RSCP</param>
+                <param sqlType="-6">TARGET_CELL_RSSI</param>
+            </params>
+        </enrichedevent>
+        <enrichedevent name="INTERNAL_SUCCESSFUL_HSDSCH_CELL_CHANGE_ENRICHED"
+            enriches="INTERNAL_SUCCESSFUL_HSDSCH_CELL_CHANGE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+
+                <param sqlType="2005">CELL_ID_1</param>
+                <param sqlType="2005">CELL_ID_2</param>
+                <param sqlType="2005">CELL_ID_3</param>
+                <param sqlType="2005">CELL_ID_4</param>
+
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="-5">HIER3_ID_2</param>
+                <param sqlType="-5">HIER321_ID_2</param>
+                <param sqlType="-5">HIER3_CELL_ID_2</param>
+                <param sqlType="-5">HIER3_ID_3</param>
+                <param sqlType="-5">HIER321_ID_3</param>
+                <param sqlType="-5">HIER3_CELL_ID_3</param>
+                <param sqlType="-5">HIER3_ID_4</param>
+                <param sqlType="-5">HIER321_ID_4</param>
+                <param sqlType="-5">HIER3_CELL_ID_4</param>
+                <param sqlType="-5">THIER3_ID</param>
+                <param sqlType="-5">THIER321_ID</param>
+                <param sqlType="-5">THIER3_CELL_ID</param>
+
+                <param sqlType="6">SOURCE_CELL_ECNO</param>
+                <param sqlType="4">SOURCE_CELL_RSCP</param>
+                <param sqlType="6">TARGET_CELL_ECNO</param>
+                <param sqlType="4">TARGET_CELL_RSCP</param>
+            </params>
+        </enrichedevent>
+        <enrichedevent name="INTERNAL_SOHO_DS_MISSING_NEIGHBOUR_ENRICHED"
+            enriches="INTERNAL_SOHO_DS_MISSING_NEIGHBOUR">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+
+                <param sqlType="6">ECNO_CELL_1</param>
+                <param sqlType="6">ECNO_CELL_2</param>
+                <param sqlType="6">ECNO_CELL_3</param>
+                <param sqlType="6">ECNO_CELL_4</param>
+
+                <param sqlType="4">RSCP_CELL_1</param>
+                <param sqlType="4">RSCP_CELL_2</param>
+                <param sqlType="4">RSCP_CELL_3</param>
+                <param sqlType="4">RSCP_CELL_4</param>
+
+                <param sqlType="6">ECNO_TRIGGER_CELL</param>
+                <param sqlType="4">RSCP_TRIGGER_CELL</param>
+
+                <param sqlType="6">ECNO_ADDITIONAL_CELL1</param>
+                <param sqlType="4">RSCP_ADDITIONAL_CELL1</param>
+
+                <param sqlType="6">ECNO_ADDITIONAL_CELL2</param>
+                <param sqlType="4">RSCP_ADDITIONAL_CELL2</param>
+            </params>
+        </enrichedevent>
+        <!-- The sql types are defined in java.sql.Types. See GenerateEventBean.java
+            for the types that are expected -->
+        <enrichedevent name="INTERNAL_CALL_SETUP_FAIL_ENRICHED"
+            enriches="INTERNAL_CALL_SETUP_FAIL">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="5">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param> <!-- Timestamp of the event in local time -->
+
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param> <!-- Not stored in DB, only used to track expired Esper window entries -->
+            </params>
+        </enrichedevent>
+        <enrichedevent name="INTERNAL_SYSTEM_RELEASE_ENRICHED"
+            enriches="INTERNAL_SYSTEM_RELEASE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="5">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param> <!-- Timestamp of the event in local time -->
+
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="INTERNAL_SOFT_HANDOVER_EXECUTION_ENRICHED"
+            enriches="INTERNAL_SOFT_HANDOVER_EXECUTION">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID</param>
+                <param sqlType="-5">HIER321_ID</param>
+                <param sqlType="-5">HIER3_CELL_ID</param>
+                <param sqlType="-5">THIER3_ID</param>
+                <param sqlType="-5">THIER321_ID</param>
+                <param sqlType="-5">THIER3_CELL_ID</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="5">RAC</param>
+                <param sqlType="-5">IMEISV</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-6">CATEGORY_ID</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param> <!-- Timestamp of the event in local time -->
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param> <!-- Not stored in DB, only used to track expired Esper window entries -->
+            </params>
+        </enrichedevent>
+        <!-- This event is stored in the HFA table for IFHOs -->
+        <enrichedevent name="INTERNAL_OUT_HARD_HANDOVER_FAILURE_IFHO_ENRICHED"
+            enriches="INTERNAL_OUT_HARD_HANDOVER_FAILURE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="-5">THIER3_ID</param>
+                <param sqlType="-5">THIER321_ID</param>
+                <param sqlType="-5">THIER3_CELL_ID</param>
+
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="5">RAC</param>
+                <param sqlType="-6">CATEGORY_ID</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param> <!-- Timestamp of the event in local time -->
+
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param> <!-- Not stored in DB, only used to track expired Esper window entries -->
+            </params>
+        </enrichedevent>
+        <!-- This event is stored in the HFA table for IRAT HOs -->
+        <enrichedevent name="INTERNAL_OUT_HARD_HANDOVER_FAILURE_IRAT_ENRICHED"
+            enriches="INTERNAL_OUT_HARD_HANDOVER_FAILURE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="-5">THIER3_ID</param>
+                <param sqlType="-5">THIER321_ID</param>
+                <param sqlType="-5">THIER3_CELL_ID</param>
+
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="5">RAC</param>
+                <param sqlType="-6">CATEGORY_ID</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param> <!-- Timestamp of the event in local time -->
+
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param> <!-- Not stored in DB, only used to track expired Esper window entries -->
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="INTERNAL_FAILED_HSDSCH_CELL_CHANGE_ENRICHED"
+            enriches="INTERNAL_FAILED_HSDSCH_CELL_CHANGE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID</param>
+                <param sqlType="-5">HIER321_ID</param>
+                <param sqlType="-5">HIER3_CELL_ID</param>
+                <param sqlType="-5">THIER3_ID</param>
+                <param sqlType="-5">THIER321_ID</param>
+                <param sqlType="-5">THIER3_CELL_ID</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="5">RAC</param>
+                <param sqlType="-5">IMEISV</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-6">CATEGORY_ID</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param> <!-- Timestamp of the event in local time -->
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param> <!-- Not stored in DB, only used to track expired Esper window entries -->
+            </params>
+        </enrichedevent>
+
+        <enrichedevent
+            name="INTERNAL_HSDSCH_CELL_SELECTION_NO_CELL_SELECTED_ENRICHED"
+            enriches="INTERNAL_HSDSCH_CELL_SELECTION_NO_CELL_SELECTED">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID</param>
+                <param sqlType="-5">HIER321_ID</param>
+                <param sqlType="-5">HIER3_CELL_ID</param>
+                <param sqlType="-5">THIER3_ID</param>
+                <param sqlType="-5">THIER321_ID</param>
+                <param sqlType="-5">THIER3_CELL_ID</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="5">RAC</param>
+                <param sqlType="-5">IMEISV</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-6">CATEGORY_ID</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param> <!-- Timestamp of the event in local time -->
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param> <!-- Not stored in DB, only used to track expired Esper window entries -->
+            </params>
+        </enrichedevent>
+        <enrichedevent name="INTERNAL_IFHO_EXECUTION_ACTIVE_ENRICHED"
+            enriches="INTERNAL_IFHO_EXECUTION_ACTIVE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID</param>
+                <param sqlType="-5">HIER321_ID</param>
+                <param sqlType="-5">HIER3_CELL_ID</param>
+                <param sqlType="-5">THIER3_ID</param>
+                <param sqlType="-5">THIER321_ID</param>
+                <param sqlType="-5">THIER3_CELL_ID</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="5">RAC</param>
+                <param sqlType="-5">IMEISV</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-6">CATEGORY_ID</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param> <!-- Timestamp of the event in local time -->
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param> <!-- Not stored in DB, only used to track expired Esper window entries -->
+                <param sqlType="4">RNC_ID_NU_FREQ_INT</param>
+            </params>
+        </enrichedevent>
+        <!-- INTERNAL_CALL_REESTABLISHMENT Event -->
+        <enrichedevent name="INTERNAL_CALL_REESTABLISHMENT_ENRICHED"
+            enriches="INTERNAL_CALL_REESTABLISHMENT">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="-5">IMEISV</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="5">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param> <!-- Not stored in DB, only used to track expired Esper window entries -->
+            </params>
+        </enrichedevent>
+
+        <!-- RRC EVENTS -->
+        <enrichedevent name="RRC_MEASUREMENT_REPORT_ENRICHED"
+            enriches="RRC_MEASUREMENT_REPORT">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_MEASUREMENT_CONTROL_ENRICHED"
+            enriches="RRC_MEASUREMENT_CONTROL">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_CELL_UPDATE_ENRICHED" enriches="RRC_CELL_UPDATE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_ACTIVE_SET_UPDATE_ENRICHED"
+            enriches="RRC_ACTIVE_SET_UPDATE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_ACTIVE_SET_UPDATE_COMPLETE_ENRICHED"
+            enriches="RRC_ACTIVE_SET_UPDATE_COMPLETE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_ACTIVE_SET_UPDATE_FAILURE_ENRICHED"
+            enriches="RRC_ACTIVE_SET_UPDATE_FAILURE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_CELL_UPDATE_ENRICHED" enriches="RRC_CELL_UPDATE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_CELL_UPDATE_CONFIRM_ENRICHED"
+            enriches="RRC_CELL_UPDATE_CONFIRM">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_DOWNLINK_DIRECT_TRANSFER_ENRICHED"
+            enriches="RRC_DOWNLINK_DIRECT_TRANSFER">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_PAGING_TYPE_2_ENRICHED"
+            enriches="RRC_PAGING_TYPE_2">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_RADIO_BEARER_RECONFIGURATION_ENRICHED"
+            enriches="RRC_RADIO_BEARER_RECONFIGURATION">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_RADIO_BEARER_RECONFIGURATION_COMPLETE_ENRICHED"
+            enriches="RRC_RADIO_BEARER_RECONFIGURATION_COMPLETE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_RADIO_BEARER_RECONFIGURATION_FAILURE_ENRICHED"
+            enriches="RRC_RADIO_BEARER_RECONFIGURATION_FAILURE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_RADIO_BEARER_RELEASE_ENRICHED"
+            enriches="RRC_RADIO_BEARER_RELEASE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_RADIO_BEARER_RELEASE_COMPLETE_ENRICHED"
+            enriches="RRC_RADIO_BEARER_RELEASE_COMPLETE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_RADIO_BEARER_RELEASE_FAILURE_ENRICHED"
+            enriches="RRC_RADIO_BEARER_RELEASE_FAILURE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_RADIO_BEARER_SETUP_ENRICHED"
+            enriches="RRC_RADIO_BEARER_SETUP">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_RADIO_BEARER_SETUP_COMPLETE_ENRICHED"
+            enriches="RRC_RADIO_BEARER_SETUP_COMPLETE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_RADIO_BEARER_SETUP_FAILURE_ENRICHED"
+            enriches="RRC_RADIO_BEARER_SETUP_FAILURE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_RRC_CONNECTION_RELEASE_ENRICHED"
+            enriches="RRC_RRC_CONNECTION_RELEASE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_RRC_CONNECTION_RELEASE_COMPLETE_ENRICHED"
+            enriches="RRC_RRC_CONNECTION_RELEASE_COMPLETE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_RRC_STATUS_ENRICHED" enriches="RRC_RRC_STATUS">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_SECURITY_MODE_COMMAND_ENRICHED"
+            enriches="RRC_SECURITY_MODE_COMMAND">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_SECURITY_MODE_COMPLETE_ENRICHED"
+            enriches="RRC_SECURITY_MODE_COMPLETE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_SECURITY_MODE_FAILURE_ENRICHED"
+            enriches="RRC_SECURITY_MODE_FAILURE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_SIGNALLING_CONNECTION_RELEASE_ENRICHED"
+            enriches="RRC_SIGNALLING_CONNECTION_RELEASE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_SIGNALLING_CONNECTION_RELEASE_INDICATION_ENRICHED"
+            enriches="RRC_SIGNALLING_CONNECTION_RELEASE_INDICATION">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_UE_CAPABILITY_INFORMATION_ENRICHED"
+            enriches="RRC_UE_CAPABILITY_INFORMATION">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_UE_CAPABILITY_INFORMATION_CONFIRM_ENRICHED"
+            enriches="RRC_UE_CAPABILITY_INFORMATION_CONFIRM">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_UPLINK_DIRECT_TRANSFER_ENRICHED"
+            enriches="RRC_UPLINK_DIRECT_TRANSFER">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_UTRAN_MOBILITY_INFORMATION_CONFIRM_ENRICHED"
+            enriches="RRC_UTRAN_MOBILITY_INFORMATION_CONFIRM">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_HANDOVER_FROM_UTRAN_COMMAND_ENRICHED"
+            enriches="RRC_HANDOVER_FROM_UTRAN_COMMAND">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_HANDOVER_FROM_UTRAN_FAILURE_ENRICHED"
+            enriches="RRC_HANDOVER_FROM_UTRAN_FAILURE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_PHYSICAL_CHANNEL_RECONFIGURATION_ENRICHED"
+            enriches="RRC_PHYSICAL_CHANNEL_RECONFIGURATION">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent
+            name="RRC_PHYSICAL_CHANNEL_RECONFIGURATION_COMPLETE_ENRICHED"
+            enriches="RRC_PHYSICAL_CHANNEL_RECONFIGURATION_COMPLETE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_PHYSICAL_CHANNEL_RECONFIGURATION_FAILURE_ENRICHED"
+            enriches="RRC_PHYSICAL_CHANNEL_RECONFIGURATION_FAILURE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_UTRAN_MOBILITY_INFORMATION_ENRICHED"
+            enriches="RRC_UTRAN_MOBILITY_INFORMATION">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_UTRAN_MOBILITY_INFORMATION_FAILURE_ENRICHED"
+            enriches="RRC_UTRAN_MOBILITY_INFORMATION_FAILURE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_CELL_CHANGE_ORDER_FROM_UTRAN_ENRICHED"
+            enriches="RRC_CELL_CHANGE_ORDER_FROM_UTRAN">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_CELL_CHANGE_ORDER_FROM_UTRAN_FAILURE_ENRICHED"
+            enriches="RRC_CELL_CHANGE_ORDER_FROM_UTRAN_FAILURE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_UE_CAPABILITY_ENQUIRY_ENRICHED"
+            enriches="RRC_UE_CAPABILITY_ENQUIRY">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_URA_UPDATE_ENRICHED" enriches="RRC_URA_UPDATE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_URA_UPDATE_CONFIRM_ENRICHED"
+            enriches="RRC_URA_UPDATE_CONFIRM">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_TRANSPORT_CHANNEL_RECONFIGURATION_ENRICHED"
+            enriches="RRC_TRANSPORT_CHANNEL_RECONFIGURATION">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent
+            name="RRC_TRANSPORT_CHANNEL_RECONFIGURATION_COMPLETE_ENRICHED"
+            enriches="RRC_TRANSPORT_CHANNEL_RECONFIGURATION_COMPLETE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RRC_MEASUREMENT_CONTROL_FAILURE_ENRICHED"
+            enriches="RRC_MEASUREMENT_CONTROL_FAILURE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="NBAP_RADIO_LINK_SETUP_REQUEST_ENRICHED"
+            enriches="NBAP_RADIO_LINK_SETUP_REQUEST">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="NBAP_RADIO_LINK_SETUP_RESPONSE_ENRICHED"
+            enriches="NBAP_RADIO_LINK_SETUP_RESPONSE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="NBAP_RADIO_LINK_SETUP_FAILURE_ENRICHED"
+            enriches="NBAP_RADIO_LINK_SETUP_FAILURE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="NBAP_RADIO_LINK_ADDITION_REQUEST_ENRICHED"
+            enriches="NBAP_RADIO_LINK_ADDITION_REQUEST">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="NBAP_RADIO_LINK_ADDITION_RESPONSE_ENRICHED"
+            enriches="NBAP_RADIO_LINK_ADDITION_RESPONSE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="NBAP_RADIO_LINK_ADDITION_FAILURE_ENRICHED"
+            enriches="NBAP_RADIO_LINK_ADDITION_FAILURE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="NBAP_RADIO_LINK_RECONFIGURATION_PREPARE_ENRICHED"
+            enriches="NBAP_RADIO_LINK_RECONFIGURATION_PREPARE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="NBAP_RADIO_LINK_RECONFIGURATION_READY_ENRICHED"
+            enriches="NBAP_RADIO_LINK_RECONFIGURATION_READY">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="NBAP_RADIO_LINK_RECONFIGURATION_FAILURE_ENRICHED"
+            enriches="NBAP_RADIO_LINK_RECONFIGURATION_FAILURE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="NBAP_RADIO_LINK_RECONFIGURATION_COMMIT_ENRICHED"
+            enriches="NBAP_RADIO_LINK_RECONFIGURATION_COMMIT">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="NBAP_RADIO_LINK_RECONFIGURATION_CANCEL_ENRICHED"
+            enriches="NBAP_RADIO_LINK_RECONFIGURATION_CANCEL">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="NBAP_RADIO_LINK_DELETION_REQUEST_ENRICHED"
+            enriches="NBAP_RADIO_LINK_DELETION_REQUEST">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="NBAP_RADIO_LINK_DELETION_RESPONSE_ENRICHED"
+            enriches="NBAP_RADIO_LINK_DELETION_RESPONSE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="NBAP_DL_POWER_CONTROL_REQUEST_ENRICHED"
+            enriches="NBAP_DL_POWER_CONTROL_REQUEST">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent
+            name="NBAP_DEDICATED_MEASUREMENT_INITIATION_REQUEST_ENRICHED"
+            enriches="NBAP_DEDICATED_MEASUREMENT_INITIATION_REQUEST">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent
+            name="NBAP_DEDICATED_MEASUREMENT_INITIATION_RESPONSE_ENRICHED"
+            enriches="NBAP_DEDICATED_MEASUREMENT_INITIATION_RESPONSE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent
+            name="NBAP_DEDICATED_MEASUREMENT_INITIATION_FAILURE_ENRICHED"
+            enriches="NBAP_DEDICATED_MEASUREMENT_INITIATION_FAILURE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="NBAP_DEDICATED_MEASUREMENT_REPORT_ENRICHED"
+            enriches="NBAP_DEDICATED_MEASUREMENT_REPORT">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent
+            name="NBAP_DEDICATED_MEASUREMENT_TERMINATION_REQUEST_ENRICHED"
+            enriches="NBAP_DEDICATED_MEASUREMENT_TERMINATION_REQUEST">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent
+            name="NBAP_DEDICATED_MEASUREMENT_FAILURE_INDICATION_ENRICHED"
+            enriches="NBAP_DEDICATED_MEASUREMENT_FAILURE_INDICATION">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="NBAP_RADIO_LINK_FAILURE_INDICATION_ENRICHED"
+            enriches="NBAP_RADIO_LINK_FAILURE_INDICATION">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="NBAP_RADIO_LINK_RESTORE_INDICATION_ENRICHED"
+            enriches="NBAP_RADIO_LINK_RESTORE_INDICATION">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="NBAP_COMPRESSED_MODE_COMMAND_ENRICHED"
+            enriches="NBAP_COMPRESSED_MODE_COMMAND">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="NBAP_RADIO_LINK_PARAMETER_UPDATE_INDICATION_ENRICHED"
+            enriches="NBAP_RADIO_LINK_PARAMETER_UPDATE_INDICATION">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="NBAP_SECONDARY_UL_FREQUENCY_REPORT_ENRICHED"
+            enriches="NBAP_SECONDARY_UL_FREQUENCY_REPORT">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent
+            name="NBAP_SECONDARY_UL_FREQUENCY_UPDATE_INDICATION_ENRICHED"
+            enriches="NBAP_SECONDARY_UL_FREQUENCY_UPDATE_INDICATION">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent
+            name="NBAP_RADIO_LINK_PREEMPTION_REQUIRED_INDICATION_ENRICHED"
+            enriches="NBAP_RADIO_LINK_PREEMPTION_REQUIRED_INDICATION">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RANAP_RAB_ASSIGNMENT_REQUEST_ENRICHED"
+            enriches="RANAP_RAB_ASSIGNMENT_REQUEST">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RANAP_RAB_ASSIGNMENT_RESPONSE_ENRICHED"
+            enriches="RANAP_RAB_ASSIGNMENT_RESPONSE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RANAP_IU_RELEASE_REQUEST_ENRICHED"
+            enriches="RANAP_IU_RELEASE_REQUEST">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RANAP_IU_RELEASE_COMMAND_ENRICHED"
+            enriches="RANAP_IU_RELEASE_COMMAND">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RANAP_IU_RELEASE_COMPLETE_ENRICHED"
+            enriches="RANAP_IU_RELEASE_COMPLETE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RANAP_SECURITY_MODE_COMMAND_ENRICHED"
+            enriches="RANAP_SECURITY_MODE_COMMAND">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RANAP_SECURITY_MODE_COMPLETE_ENRICHED"
+            enriches="RANAP_SECURITY_MODE_COMPLETE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RANAP_SECURITY_MODE_REJECT_ENRICHED"
+            enriches="RANAP_SECURITY_MODE_REJECT">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RANAP_LOCATION_REPORTING_CONTROL_ENRICHED"
+            enriches="RANAP_LOCATION_REPORTING_CONTROL">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RANAP_DIRECT_TRANSFER_ENRICHED"
+            enriches="RANAP_DIRECT_TRANSFER">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RANAP_ERROR_INDICATION_ENRICHED"
+            enriches="RANAP_ERROR_INDICATION">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RANAP_RELOCATION_REQUIRED_ENRICHED"
+            enriches="RANAP_RELOCATION_REQUIRED">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RANAP_RELOCATION_REQUEST_ENRICHED"
+            enriches="RANAP_RELOCATION_REQUEST">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RANAP_RELOCATION_REQUEST_ACKNOWLEDGE_ENRICHED"
+            enriches="RANAP_RELOCATION_REQUEST_ACKNOWLEDGE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RANAP_RELOCATION_COMMAND_ENRICHED"
+            enriches="RANAP_RELOCATION_COMMAND">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RANAP_RELOCATION_DETECT_ENRICHED"
+            enriches="RANAP_RELOCATION_DETECT">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RANAP_RELOCATION_COMPLETE_ENRICHED"
+            enriches="RANAP_RELOCATION_COMPLETE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RANAP_RELOCATION_PREPARATION_FAILURE_ENRICHED"
+            enriches="RANAP_RELOCATION_PREPARATION_FAILURE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RANAP_RELOCATION_FAILURE_ENRICHED"
+            enriches="RANAP_RELOCATION_FAILURE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RANAP_RELOCATION_CANCEL_ENRICHED"
+            enriches="RANAP_RELOCATION_CANCEL">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RANAP_RELOCATION_CANCEL_ACKNOWLEDGE_ENRICHED"
+            enriches="RANAP_RELOCATION_CANCEL_ACKNOWLEDGE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RANAP_SRNS_CONTEXT_REQUEST_ENRICHED"
+            enriches="RANAP_SRNS_CONTEXT_REQUEST">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RANAP_SRNS_CONTEXT_RESPONSE_ENRICHED"
+            enriches="RANAP_SRNS_CONTEXT_RESPONSE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RANAP_SRNS_DATA_FORWARD_COMMAND_ENRICHED"
+            enriches="RANAP_SRNS_DATA_FORWARD_COMMAND">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RANAP_LOCATION_REPORT_ENRICHED"
+            enriches="RANAP_LOCATION_REPORT">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RANAP_RANAP_RELOCATION_INFORMATION_ENRICHED"
+            enriches="RANAP_RANAP_RELOCATION_INFORMATION">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RANAP_RAB_RELEASE_REQUEST_ENRICHED"
+            enriches="RANAP_RAB_RELEASE_REQUEST">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent
+            name="RNSAP_COMMON_TRANSPORT_CHANNEL_RESOURCES_RELEASE_REQUEST_ENRICHED"
+            enriches="RNSAP_COMMON_TRANSPORT_CHANNEL_RESOURCES_RELEASE_REQUEST">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent
+            name="RNSAP_COMMON_TRANSPORT_CHANNEL_RESOURCES_REQUEST_ENRICHED"
+            enriches="RNSAP_COMMON_TRANSPORT_CHANNEL_RESOURCES_REQUEST">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent
+            name="RNSAP_COMMON_TRANSPORT_CHANNEL_RESOURCES_RESPONSE_ENRICHED"
+            enriches="RNSAP_COMMON_TRANSPORT_CHANNEL_RESOURCES_RESPONSE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent
+            name="RNSAP_COMMON_TRANSPORT_CHANNEL_RESOURCES_FAILURE_ENRICHED"
+            enriches="RNSAP_COMMON_TRANSPORT_CHANNEL_RESOURCES_FAILURE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RNSAP_RADIO_LINK_SETUP_REQUEST_ENRICHED"
+            enriches="RNSAP_RADIO_LINK_SETUP_REQUEST">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RNSAP_RADIO_LINK_SETUP_RESPONSE_ENRICHED"
+            enriches="RNSAP_RADIO_LINK_SETUP_RESPONSE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RNSAP_RADIO_LINK_SETUP_FAILURE_ENRICHED"
+            enriches="RNSAP_RADIO_LINK_SETUP_FAILURE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RNSAP_RADIO_LINK_ADDITION_REQUEST_ENRICHED"
+            enriches="RNSAP_RADIO_LINK_ADDITION_REQUEST">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RNSAP_RADIO_LINK_ADDITION_RESPONSE_ENRICHED"
+            enriches="RNSAP_RADIO_LINK_ADDITION_RESPONSE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RNSAP_RADIO_LINK_ADDITION_FAILURE_ENRICHED"
+            enriches="RNSAP_RADIO_LINK_ADDITION_FAILURE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RNSAP_RADIO_LINK_RECONFIGURATION_PREPARE_ENRICHED"
+            enriches="RNSAP_RADIO_LINK_RECONFIGURATION_PREPARE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RNSAP_RADIO_LINK_RECONFIGURATION_READY_ENRICHED"
+            enriches="RNSAP_RADIO_LINK_RECONFIGURATION_READY">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RNSAP_RADIO_LINK_RECONFIGURATION_FAILURE_ENRICHED"
+            enriches="RNSAP_RADIO_LINK_RECONFIGURATION_FAILURE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RNSAP_RADIO_LINK_RECONFIGURATION_COMMIT_ENRICHED"
+            enriches="RNSAP_RADIO_LINK_RECONFIGURATION_COMMIT">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RNSAP_RADIO_LINK_RECONFIGURATION_CANCEL_ENRICHED"
+            enriches="RNSAP_RADIO_LINK_RECONFIGURATION_CANCEL">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RNSAP_RADIO_LINK_DELETION_REQUEST_ENRICHED"
+            enriches="RNSAP_RADIO_LINK_DELETION_REQUEST">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RNSAP_RADIO_LINK_DELETION_RESPONSE_ENRICHED"
+            enriches="RNSAP_RADIO_LINK_DELETION_RESPONSE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RNSAP_DL_POWER_CONTROL_REQUEST_ENRICHED"
+            enriches="RNSAP_DL_POWER_CONTROL_REQUEST">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent
+            name="RNSAP_DEDICATED_MEASUREMENT_INITIATION_REQUEST_ENRICHED"
+            enriches="RNSAP_DEDICATED_MEASUREMENT_INITIATION_REQUEST">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent
+            name="RNSAP_DEDICATED_MEASUREMENT_INITIATION_RESPONSE_ENRICHED"
+            enriches="RNSAP_DEDICATED_MEASUREMENT_INITIATION_RESPONSE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent
+            name="RNSAP_DEDICATED_MEASUREMENT_INITIATION_FAILURE_ENRICHED"
+            enriches="RNSAP_DEDICATED_MEASUREMENT_INITIATION_FAILURE">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RNSAP_DEDICATED_MEASUREMENT_REPORT_ENRICHED"
+            enriches="RNSAP_DEDICATED_MEASUREMENT_REPORT">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent
+            name="RNSAP_DEDICATED_MEASUREMENT_TERMINATION_REQUEST_ENRICHED"
+            enriches="RNSAP_DEDICATED_MEASUREMENT_TERMINATION_REQUEST">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent
+            name="RNSAP_DEDICATED_MEASUREMENT_FAILURE_INDICATION_ENRICHED"
+            enriches="RNSAP_DEDICATED_MEASUREMENT_FAILURE_INDICATION">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RNSAP_RADIO_LINK_FAILURE_INDICATION_ENRICHED"
+            enriches="RNSAP_RADIO_LINK_FAILURE_INDICATION">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RNSAP_RADIO_LINK_RESTORE_INDICATION_ENRICHED"
+            enriches="RNSAP_RADIO_LINK_RESTORE_INDICATION">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RNSAP_COMPRESSED_MODE_COMMAND_ENRICHED"
+            enriches="RNSAP_COMPRESSED_MODE_COMMAND">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RNSAP_ERROR_INDICATION_ENRICHED"
+            enriches="RNSAP_ERROR_INDICATION">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RNSAP_UPLINK_SIGNALLING_TRANSFER_INDICATION_ENRICHED"
+            enriches="RNSAP_UPLINK_SIGNALLING_TRANSFER_INDICATION">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RNSAP_DOWNLINK_SIGNALLING_TRANSFER_REQUEST_ENRICHED"
+            enriches="RNSAP_DOWNLINK_SIGNALLING_TRANSFER_REQUEST">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+        <enrichedevent name="RNSAP_RADIO_LINK_PARAMETER_UPDATE_INDICATION_ENRICHED"
+            enriches="RNSAP_RADIO_LINK_PARAMETER_UPDATE_INDICATION">
+            <params>
+                <param sqlType="-5">EVENT_PARAM_IMSI</param>
+                <param sqlType="2005">IMSI_MNC</param>
+                <param sqlType="2005">IMSI_MCC</param>
+                <param sqlType="4">TAC</param>
+                <param sqlType="-5">MSISDN</param>
+                <param sqlType="-5">HIER3_ID_1</param>
+                <param sqlType="-5">HIER321_ID_1</param>
+                <param sqlType="-5">HIER3_CELL_ID_1</param>
+                <param sqlType="16">ROAMING</param>
+                <param sqlType="4">LAC</param>
+                <param sqlType="-6">RAC</param>
+                <param sqlType="-5">LOCAL_TIMESTAMP</param>
+                <param sqlType="-6">PS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">CS_RAB_FAIL_CNT</param>
+                <param sqlType="-6">MULTI_RAB_FAIL_CNT</param>
+                <param sqlType="5">FAILED_RAB_TYPE</param>
+                <param sqlType="-6">PS_ERR_CNT</param>
+                <param sqlType="-6">CS_ERR_CNT</param>
+                <param sqlType="-6">MULTI_ERR_CNT</param>
+                <param sqlType="-5">TIMESTAMP_WINDOW_ENTRY</param>
+            </params>
+        </enrichedevent>
+
+    </enrichedevents>
+</extensions>

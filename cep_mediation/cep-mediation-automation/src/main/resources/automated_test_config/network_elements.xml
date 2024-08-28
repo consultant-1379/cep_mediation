@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appconfig xmlns="http://www.ericsson.com/app-config">
+<hosts>
+	<host master="true" ip="10.44.79.41">
+		
+        <process procid="1">			
+			<network-elements>
+				<!-- If these paths are modified, modify ApplicationLauncher.INPUT_PATH value -->
+				<network-element ne-type="1"> 
+					<label>RNC09</label>
+					<directory>/eniq/home/dcuser/cep_mediation_automation/input/gpeh/SubNetwork=RNC09</directory>
+				</network-element>
+				
+				<network-element ne-type="3"> 
+                    <label>PCP2</label>
+                    <directory>/eniq/home/dcuser/cep_mediation_automation/input/up/PCP2</directory>
+                </network-element>
+				
+			</network-elements>
+		</process>
+		
+	</host>
+</hosts>
+</appconfig>
+
+		

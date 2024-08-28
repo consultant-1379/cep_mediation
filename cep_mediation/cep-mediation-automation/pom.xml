@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>cep-mediation</artifactId>
+        <groupId>com.ericsson.eniq.events.cepmediation</groupId>
+        <version>2.2.7</version>
+    </parent>
+
+    <artifactId>cep-mediation-automation-test</artifactId>
+    <name>${eniq.events.app.name} :: CEP Automation Test</name>
+    <version>2.2.7</version>
+    <packaging>jar</packaging>
+
+
+
+    <dependencies>
+        <dependency>
+            <groupId>com.ericsson.eniq.events.cepmediation</groupId>
+            <artifactId>cep-mediation-loading</artifactId>
+            <version>2.2.7</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ericsson.eniq.events.cepmediation</groupId>
+            <artifactId>cep-mediation-test-utilities</artifactId>
+            <version>2.2.7</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ericsson.eniq.events.cepmediation</groupId>
+            <artifactId>cep-mediation-server</artifactId>
+            <version>2.2.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.ericsson.eniq.events.cepmediation</groupId>
+            <artifactId>cep-mediation-base</artifactId>
+            <version>2.2.7</version>
+        </dependency>
+        <dependency>
+            <groupId>com.external.ericsson.3pp.sybase</groupId>
+            <artifactId>jconn</artifactId>
+            <version>4</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>2.12</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <executions>
+                    <execution>
+                        <id>install_rpm</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <executable>java</executable>
+                            <mainClass>com.ericsson.cepmediation.automation.install.PackageInstaller</mainClass>
+                            <systemProperties>
+                                <systemProperty>
+                                    <key>WORKSPACE</key>
+                                    <value>${WORKSPACE}</value>
+                                </systemProperty>
+                            </systemProperties>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>**/*.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+
+        </plugins>
+
+    </build>
+</project>

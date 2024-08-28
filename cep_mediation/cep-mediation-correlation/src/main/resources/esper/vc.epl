@@ -1,0 +1,281 @@
+IMPORT com.ericsson.cepmediation.correlation.lookup.impl.DefaultLookupService;
+create window VisitedCellsWindow.win:keepall() as correlation.ENHANCED_VISITED_CELL;
+
+@Name('Visited-Cells-Flush')
+@Priority(14)
+@Drop
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from VisitedCellsWindow;
+
+@Name('Visited-Cells-Rab-End-Conn-Release')
+@Priority(13)
+on gpeh.RRC_RRC_CONNECTION_RELEASE_COMPLETE as event
+merge VisitedCellsWindow AS vcw
+where vcw.CELL_CLOSED    = false
+  and vcw.UE_CONTEXT     = event.UE_CONTEXT
+  and vcw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+when matched and vcw.IMSI = -1l
+   then insert into vc_cleanup select
+      event.UE_CONTEXT                   as UE_CONTEXT,
+      event.RNC_MODULE_ID                as RNC_MODULE_ID
+when matched
+   then update set
+      DURATION                            = cast((event.timestamp - vcw.timestamp),int),
+      CELL_CLOSED                         = true;
+
+@Name('Visited-Cells-Sess-End-Terminate-Carry-Over')
+@Priority(12)
+on correlation.SESSION_END_EVENT as sessionEndEvent
+merge VisitedCellsWindow AS vcw
+when matched and vcw.CARRY_OVER = true and vcw.timestamp = vcw.END_TIMESTAMP and vcw.CELL_CLOSED = false
+    then update set
+        vcw.IMSI                                        = -1l
+    then insert into vc_cleanup select
+        vcw.UE_CONTEXT                                  as UE_CONTEXT,
+        vcw.RNC_MODULE_ID                               as RNC_MODULE_ID
+when matched
+    then update set
+        vcw.CARRY_OVER                                  = false;
+
+@Name('Visited-Cells-Sess-End')
+@Priority(11)
+on correlation.SESSION_END_EVENT as sessionEndEvent
+merge VisitedCellsWindow AS vcw
+where vcw.CELL_CLOSED = false
+when matched
+    then update set
+        DURATION                                        = cast((SESSION_DURATION_IN_MINUTES*ONE_MINUTE_IN_MS - (vcw.timestamp % (SESSION_DURATION_IN_MINUTES*ONE_MINUTE_IN_MS))), int),
+        CELL_CLOSED                                     = true,
+        CARRY_OVER                                      = case when (IMSI = -1l) then true else false end
+    then insert into VisitedCellsWindow select
+        vcw.UE_CONTEXT                                  as UE_CONTEXT,
+        vcw.RNC_MODULE_ID                               as RNC_MODULE_ID,
+        vcw.IMSI                                        as IMSI,
+        vcw.IMSI_MCC                                    as IMSI_MCC,
+        vcw.IMSI_MNC                                    as IMSI_MNC,
+        vcw.C_ID                                        as c_ID,
+        vcw.RNC_ID                                      as RNC_ID,
+        false                                           as CELL_CLOSED,
+        vcw.timestamp + vcw.DURATION                    as timestamp,
+        vcw.timestamp + vcw.DURATION                    as END_TIMESTAMP,
+        true                                            as CARRY_OVER,
+        0                                               as RRC_SAMPLES_GC_GS,
+        0                                               as RRC_SAMPLES_GC_BS,
+        0                                               as RRC_SAMPLES_BC_GS,
+        0                                               as RRC_SAMPLES_BC_BS;
+
+@Name('Visited-Cells-Conn-Setup-End')
+@Priority(10)
+on gpeh.RRC_RRC_CONNECTION_SETUP(c_ID_1 > -1 and c_ID_1 != 65535 and RNC_ID_1 > -1) as rrc
+merge VisitedCellsWindow AS vcw
+where vcw.UE_CONTEXT = rrc.UE_CONTEXT
+  and vcw.RNC_MODULE_ID = rrc.RNC_MODULE_ID
+  and vcw.CELL_CLOSED = false
+when matched and vcw.IMSI = -1l
+   then insert into vc_cleanup select
+      vcw.UE_CONTEXT   as UE_CONTEXT,
+      vcw.RNC_MODULE_ID as RNC_MODULE_ID
+when matched 
+    then update set
+        DURATION                            = cast((vcw.END_TIMESTAMP - vcw.timestamp), int),
+        CELL_CLOSED                         = true;
+
+@Name('Visited-Cells-Cleanup-When-No-Imsi')
+@Priority(9)
+on vc_cleanup as vc_cleanup
+delete from VisitedCellsWindow as vcw where vcw.UE_CONTEXT = vc_cleanup.UE_CONTEXT and vcw.RNC_MODULE_ID = vc_cleanup.RNC_MODULE_ID and vcw.IMSI = -1l;
+
+@Name('Visited-Cells-Enrichment')
+@Priority(8)
+on correlation.SESSION_END_EVENT as sessionEndEvent
+select vcw.* from VisitedCellsWindow as vcw where vcw.IMSI != -1l and vcw.CELL_CLOSED = true and vcw.duration > 0;
+
+@Name('Visited-Cells-Cleanup')
+@Priority(7)
+on correlation.SESSION_END_EVENT as sessionEndEvent
+delete from VisitedCellsWindow as vcw where vcw.CARRY_OVER = false;
+
+@Name('Visited-Cells-Create')
+@Priority(6)
+on gpeh.RRC_RRC_CONNECTION_SETUP(c_ID_1 > -1 and c_ID_1 != 65535 and RNC_ID_1 > -1) as rrc
+insert into VisitedCellsWindow select
+    rrc.UE_CONTEXT                      as UE_CONTEXT,
+    rrc.RNC_MODULE_ID                   as RNC_MODULE_ID,
+    rrc.c_ID_1                          as c_ID,
+    rrc.RNC_ID_1                        as RNC_ID,
+    false                               as CELL_CLOSED,
+    rrc.timestamp                       as timestamp,
+    rrc.timestamp                       as END_TIMESTAMP,
+    0                                   as RRC_SAMPLES_GC_GS,
+    0                                   as RRC_SAMPLES_GC_BS,
+    0                                   as RRC_SAMPLES_BC_GS,
+    0                                   as RRC_SAMPLES_BC_BS;
+
+@Priority(5)
+@Name('Visited-Cells-CellChange')
+on GpehBase(eventId != RRC_RRC_CONNECTION_SETUP_ID and c_ID_1 > -1 and c_ID_1 != 65535 and RNC_ID_1 > -1) AS event
+merge VisitedCellsWindow as vcw
+where vcw.UE_CONTEXT     = event.UE_CONTEXT
+  and vcw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and vcw.CELL_CLOSED    = false
+when matched and (vcw.c_ID != event.c_ID_1 or vcw.RNC_ID != event.RNC_ID_1)
+  then update set
+        DURATION                                        = cast((event.timestamp - vcw.timestamp),int),
+        vcw.CELL_CLOSED                                 = true
+  then insert into
+  VisitedCellsWindow select
+        vcw.IMSI                                        as IMSI,
+        vcw.IMSI_MCC                                    as IMSI_MCC,
+        vcw.IMSI_MNC                                    as IMSI_MNC,
+        event.UE_CONTEXT                                as UE_CONTEXT,
+        event.RNC_MODULE_ID                             as RNC_MODULE_ID,
+        event.c_ID_1                                    as c_ID,
+        event.RNC_ID_1                                  as RNC_ID,
+        false                                           as CELL_CLOSED,
+        event.timestamp                                 as timestamp,
+        event.timestamp                                 as END_TIMESTAMP,
+        0                                               as RRC_SAMPLES_GC_GS,
+        0                                               as RRC_SAMPLES_GC_BS,
+        0                                               as RRC_SAMPLES_BC_GS,
+        0                                               as RRC_SAMPLES_BC_BS
+when matched
+    then update set
+        END_TIMESTAMP                                   = event.timestamp;
+
+@Name('Visited-Cells-Close-By-Imsi')
+@Priority(4)
+on gpeh.INTERNAL_IMSI as event
+merge VisitedCellsWindow as vcw
+where vcw.CELL_CLOSED = false
+  and vcw.IMSI = cast(event.IMSI,long)
+  and (vcw.UE_CONTEXT != event.UE_CONTEXT or vcw.RNC_MODULE_ID != event.RNC_MODULE_ID)
+when matched
+  then update set
+  vcw.DURATION                                             = cast((vcw.END_TIMESTAMP - vcw.timestamp), int),
+  vcw.CELL_CLOSED                                          = true;
+
+@Name('Visited-Cells-Imsi')
+@Priority(3)
+on gpeh.INTERNAL_IMSI as event
+merge VisitedCellsWindow as vcw
+where vcw.UE_CONTEXT = event.UE_CONTEXT
+  and vcw.RNC_MODULE_ID = event.RNC_MODULE_ID
+  and vcw.IMSI = -1l
+when matched
+    then update set
+    IMSI                                                = cast(event.IMSI,long),
+    IMSI_MCC                                            = Util.getMcc(vcw.IMSI),
+    IMSI_MNC                                            = Util.getMnc(vcw.IMSI);
+
+@Name('Rrc-Measurement-Processing')
+@Priority(2)
+@Drop
+
+
+expression isFreqEvent {event => cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getMEASUREMENT_TYPE() = 0
+                           or  cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getMEASUREMENT_TYPE() = 1}
+
+
+expression getRscp {event =>  case when cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getRSCP() < -5
+                        then
+                            BASE_RSCP_VALUE - 5
+                        when cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getRSCP() >= HIGHEST_RSCP_INDEX
+                        then
+                            BASE_RSCP_VALUE + HIGHEST_RSCP_INDEX - 1
+                        else
+                            BASE_RSCP_VALUE + cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getRSCP()
+                        end
+                        }
+
+expression getEcno {event => case when cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getECNO() < 0
+                        then
+                            BASE_ECNO_VALUE
+                        when cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getECNO() >= HIGHEST_ECNO_INDEX
+                        then
+                            BASE_ECNO_VALUE + ((HIGHEST_ECNO_INDEX - 1)* 0.5f)
+                        else
+                            BASE_ECNO_VALUE + (cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getECNO()) * 0.5f
+                        end
+                        }
+
+expression ecnoAndRscpAreSet {event => cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getRSCP() != -2147483648
+                                and cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getECNO() != -2147483648}
+
+expression ecnoIsSet {event => cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getECNO() != -2147483648}
+
+expression rscpIsSet {event => cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getRSCP() != -2147483648}
+
+on GpehBase(event.getEventId()=ASN1_MEASUREMENT_ID) as event
+insert into processed_measurements select
+        event.UE_CONTEXT                  as UE_CONTEXT,
+        event.RNC_MODULE_ID               as RNC_MODULE_ID,
+        case when ecnoAndRscpAreSet(event) and isFreqEvent(event)
+            and getRscp(event) >= DefaultLookupService.getInstance().getRSCPThresholdValue()
+            and getEcno(event) >= DefaultLookupService.getInstance().getECNOThresholdValue()
+        then
+        1
+        else
+        0
+        end                               as RRC_SAMPLES_GC_GS,
+        case when ecnoAndRscpAreSet(event) and isFreqEvent(event)
+            and getRscp(event) >=  DefaultLookupService.getInstance().getRSCPThresholdValue()
+            and getEcno(event) < DefaultLookupService.getInstance().getECNOThresholdValue()
+        then
+        1
+        else
+        0
+        end                               as RRC_SAMPLES_GC_BS,
+        case when ecnoAndRscpAreSet(event) and isFreqEvent(event)
+            and getRscp(event) <  DefaultLookupService.getInstance().getRSCPThresholdValue()
+            and getEcno(event) >= DefaultLookupService.getInstance().getECNOThresholdValue()
+        then
+        1
+        else
+        0
+        end                               as RRC_SAMPLES_BC_GS,
+        case when ecnoAndRscpAreSet(event) and isFreqEvent(event)
+            and getRscp(event) <  DefaultLookupService.getInstance().getRSCPThresholdValue()
+            and getEcno(event) < DefaultLookupService.getInstance().getECNOThresholdValue()
+        then
+        1
+        else
+        0
+        end                               as RRC_SAMPLES_BC_BS,
+        case when ecnoIsSet(event) and isFreqEvent(event)
+        then
+        cast(Math.pow(10, (getEcno(event)/10).doubleValue()), float)
+        else
+        0f
+        end                               as ECNO_TOTAL,
+        case when ecnoIsSet(event) and isFreqEvent(event)
+        then
+        1
+        else
+        0
+        end                               as NUM_VALID_ECNO_SAMPLES,
+        case when rscpIsSet(event) and isFreqEvent(event)
+        then
+        cast(Math.pow(10, (getRscp(event)/10).doubleValue()), float)
+        else
+        0f
+        end                               as RSCP_TOTAL,
+        case when rscpIsSet(event) and isFreqEvent(event)
+        then
+        1
+        else
+        0
+        end                               as NUM_VALID_RSCP_SAMPLES;
+
+@Priority(1)
+@Name('Visited-Cells-Rrc')
+on processed_measurements as measurement
+    merge VisitedCellsWindow vcw
+    where  vcw.UE_CONTEXT = measurement.UE_CONTEXT
+    and vcw.RNC_MODULE_ID = measurement.RNC_MODULE_ID
+    and vcw.CELL_CLOSED = false
+    when matched
+        then update set
+            vcw.RRC_SAMPLES_GC_GS              = vcw.RRC_SAMPLES_GC_GS + measurement.RRC_SAMPLES_GC_GS,
+            vcw.RRC_SAMPLES_GC_BS              = vcw.RRC_SAMPLES_GC_BS + measurement.RRC_SAMPLES_GC_BS,
+            vcw.RRC_SAMPLES_BC_GS              = vcw.RRC_SAMPLES_BC_GS + measurement.RRC_SAMPLES_BC_GS,
+            vcw.RRC_SAMPLES_BC_BS              = vcw.RRC_SAMPLES_BC_BS + measurement.RRC_SAMPLES_BC_BS;

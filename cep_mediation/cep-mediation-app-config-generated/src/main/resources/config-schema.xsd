@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.ericsson.com/app-config" xmlns:Q1="http://www.ericsson.com/app-config">
+	<xs:element name="appconfig" type="Q1:AppConfigType"></xs:element>
+	<xs:complexType name="PropertyType">
+		<xs:sequence>
+			<xs:element name="key" maxOccurs="1" minOccurs="1">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="1"></xs:minLength>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="value" maxOccurs="1" minOccurs="1">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="1"></xs:minLength>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<!-- Process definitions goes here -->
+	<xs:complexType name="ProcArgumentType">
+		<xs:sequence>
+			<xs:element name="param-name" maxOccurs="1" minOccurs="1">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="1"></xs:minLength>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="param-value" maxOccurs="1" minOccurs="1">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="1"></xs:minLength>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="NetworkElement">
+		<xs:sequence>
+			<xs:element name="service-types" maxOccurs="1" minOccurs="0" type="Q1:ServiceTypes" />
+			<xs:element name="memory-size" maxOccurs="1" minOccurs="0" type="Q1:MemorySize" />
+			<xs:element name="memory-hint" maxOccurs="1" minOccurs="0" type="Q1:MemoryHint" />
+			<xs:element name="serial-processing" maxOccurs="1" minOccurs="0" type="Q1:SerialProcessing" />
+			<xs:element name="ip" maxOccurs="1" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="1"></xs:minLength>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="uname" maxOccurs="1" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="1"></xs:minLength>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="password" maxOccurs="1" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="1"></xs:minLength>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="label" maxOccurs="1" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="1"></xs:minLength>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="directory" maxOccurs="1" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="1"></xs:minLength>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="recommendations" maxOccurs="1" minOccurs="0" type="Q1:RecommendationsType" />
+		</xs:sequence>
+		<xs:attribute name="ne-type" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:int">
+					<xs:minInclusive value="1" />
+					<xs:maxInclusive value="4" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:simpleType name="ServiceTypes">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"></xs:minLength>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="MemorySize">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"></xs:minLength>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="MemoryHint">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"></xs:minLength>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="SerialProcessing">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"></xs:minLength>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="RecommendationsType">
+		<xs:sequence>
+			<xs:element name="recommendation" type="Q1:RecommendationType" maxOccurs="unbounded" minOccurs="0"></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="RecommendationType">
+		<xs:sequence>
+			<xs:element name="memory-size" type="Q1:MemorySize" maxOccurs="1" minOccurs="1" />
+			<xs:element name="includes" type="Q1:IncludesType" maxOccurs="1" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="IncludesType">
+		<xs:sequence>
+			<xs:element name="include" type="Q1:FeaturesEnum" maxOccurs="unbounded" minOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:simpleType name="AppStartTypeEnum">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="PCP" />
+			<xs:enumeration value="CEP_MEDIATION" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="AppConfigType">
+		<xs:sequence>
+			<xs:element name="AppStartTypeList" type="Q1:AppStartTypeList" maxOccurs="1" minOccurs="0">
+			</xs:element>
+			<xs:element name="properties" type="Q1:PropertiesType" maxOccurs="1" minOccurs="0">
+			</xs:element>
+			<xs:element name="features" type="Q1:FeaturesType" maxOccurs="1" minOccurs="0" />
+			<xs:element name="hosts" type="Q1:HostsType" maxOccurs="1" minOccurs="0">
+			</xs:element>
+			<xs:element name="serviceList" type="Q1:ServiceListType" maxOccurs="1" minOccurs="0">
+			</xs:element>
+			<xs:element name="network-element-configurations" type="Q1:NetworkElementConfigurationType" maxOccurs="1" minOccurs="0">
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="PropertiesType">
+		<xs:sequence>
+			<xs:element name="property" type="Q1:PropertyType" maxOccurs="unbounded" minOccurs="0"></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="HostsType">
+		<xs:sequence>
+			<xs:element name="host" type="Q1:HostType" maxOccurs="unbounded" minOccurs="1"></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AppStartTypeList">
+		<xs:sequence>
+			<xs:element name="AppStartType" maxOccurs="unbounded" minOccurs="0" type="Q1:AppStartTypeEnum">
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="ServiceType">
+		<xs:sequence>
+
+			<xs:element name="name" maxOccurs="1" minOccurs="1">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="1"></xs:minLength>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="class" maxOccurs="1" minOccurs="1">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="1"></xs:minLength>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="forwarder-type" maxOccurs="1" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="0"></xs:minLength>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="init-method" maxOccurs="1" minOccurs="1">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="1"></xs:minLength>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="args" maxOccurs="1" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="0"></xs:minLength>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="proc-enabled" type="xs:boolean" maxOccurs="1" minOccurs="1">
+			</xs:element>
+
+
+			<xs:element name="correlationspec" type="Q1:CorrelationSpec" maxOccurs="1" minOccurs="0">
+			</xs:element>
+			<xs:element name="event-listening" type="Q1:EventListeningType" maxOccurs="1" minOccurs="0">
+			</xs:element>
+			<xs:element name="hazelcast-topic" type="Q1:HazelcastTopicType" maxOccurs="1" minOccurs="0">
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="service-id" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:int">
+					<xs:minInclusive value="0"></xs:minInclusive>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="HazelcastTopicType">
+		<xs:sequence>
+			<xs:element name="topic-name" maxOccurs="1" minOccurs="1" type="Q1:TopicNameType" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EventType">
+		<xs:sequence>
+			<xs:element name="name" maxOccurs="unbounded" minOccurs="1" type="xs:string">
+			</xs:element>
+
+		</xs:sequence>
+
+	</xs:complexType>
+	<xs:complexType name="StatementType">
+		<xs:sequence>
+			<xs:element name="name" maxOccurs="unbounded" minOccurs="1" type="xs:string">
+			</xs:element>
+
+		</xs:sequence>
+
+	</xs:complexType>
+	<xs:complexType name="EplType">
+		<xs:sequence>
+			<xs:element name="name" maxOccurs="1" minOccurs="1" type="xs:string">
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute type="xs:string" use="optional" name="uses" />
+	</xs:complexType>
+	<xs:complexType name="RulesType">
+		<xs:sequence>
+			<xs:element name="epl" type="Q1:EplType" maxOccurs="1" minOccurs="1" />
+			<xs:element name="statements" type="Q1:StatementType" maxOccurs="1" minOccurs="1" />
+		</xs:sequence>
+
+	</xs:complexType>
+	<xs:complexType name="HostType">
+		<xs:sequence>
+			<xs:element name="process" type="Q1:ProcessType" maxOccurs="unbounded" minOccurs="1">
+			</xs:element>
+
+		</xs:sequence>
+		<xs:attribute name="master" type="xs:boolean"></xs:attribute>
+		<xs:attribute name="name" type="xs:string"></xs:attribute>
+		<xs:attribute name="ip" type="xs:string"></xs:attribute>
+
+	</xs:complexType>
+
+	<xs:complexType name="ServiceListType">
+		<xs:sequence>
+			<xs:element name="service" type="Q1:ServiceType" maxOccurs="unbounded" minOccurs="1">
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="NetworkElementConfigurationType">
+		<xs:sequence>
+			<xs:element name="network-element" type="Q1:NetworkElement" maxOccurs="unbounded" minOccurs="1">
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="EventListeningType">
+		<xs:sequence>
+			<xs:element name="topic-name" maxOccurs="1" minOccurs="1" type="Q1:TopicNameType" />
+			<xs:element name="event-type" type="Q1:EventType" maxOccurs="1" minOccurs="1">
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:simpleType name="TopicNameType">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"></xs:minLength>
+			<xs:maxLength value="39"></xs:maxLength>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="CorrelationSpec">
+		<xs:sequence>
+			<xs:element name="name" maxOccurs="1" minOccurs="1">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="1"></xs:minLength>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="session-duration" maxOccurs="1" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="ONE_MINUTE" />
+						<xs:enumeration value="FIVE_MINUTES" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="pre-correlator" maxOccurs="1" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="1"></xs:minLength>
+						<xs:maxLength value="40"></xs:maxLength>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="listener" maxOccurs="1" minOccurs="1">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="1"></xs:minLength>
+						<xs:maxLength value="40"></xs:maxLength>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="epl" type="Q1:EplType" maxOccurs="1" minOccurs="1" />
+			<xs:element name="statements" type="Q1:StatementType" maxOccurs="1" minOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ProcessArgumentsType">
+		<xs:sequence>
+			<xs:element name="argument" type="Q1:ProcArgumentType" maxOccurs="unbounded" minOccurs="0"></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="NetworkElementsType">
+		<xs:sequence>
+			<xs:element name="network-element" type="Q1:NetworkElement" maxOccurs="unbounded" minOccurs="1"></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="ProcessType">
+		<xs:sequence>
+			<xs:element name="network-elements" type="Q1:NetworkElementsType" minOccurs="0" maxOccurs="1" />
+			<xs:element name="memory-size" maxOccurs="1" minOccurs="0" type="Q1:MemorySize" />
+			<xs:element name="memory-hint" maxOccurs="1" minOccurs="0" type="Q1:MemoryHint" />
+			<xs:element name="serial-processing" maxOccurs="1" minOccurs="0" type="xs:boolean" />
+			<xs:element name="service-types" type="Q1:ServiceTypes" minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+
+		<xs:attribute name="procid" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:int">
+					<xs:minInclusive value="0"></xs:minInclusive>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="FeaturesType">
+		<xs:sequence>
+			<xs:element name="feature" type="Q1:FeatureType" minOccurs="1" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="FeatureType">
+		<xs:simpleContent>
+			<xs:extension base="Q1:FeaturesEnum">
+				<xs:attribute name="enabled" type="xs:boolean" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<xs:simpleType name="FeaturesEnum">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="CFA" />
+			<xs:enumeration value="HFA" />
+			<xs:enumeration value="SESSION_BROWSER" />
+			<xs:enumeration value="REESTABLISH" />
+            <xs:enumeration value="UE_RTT" />
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

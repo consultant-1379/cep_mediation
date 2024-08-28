@@ -1,0 +1,5 @@
+Export command:
+dbisql -c "UID=dc;PWD=dc;ENG=dwhdb;LINKS=TCPIP(host=localhost;port=2640;dobroadcast=DIRECT)" -nogui "select * from DIM_E_RAN_RNC; output to DIM_E_RAN_RNC.dbf FORMAT TEXT;"
+
+Import command:
+dbisql -c "UID=dc;PWD=dc;ENG=dwhdb;LINKS=TCPIP(host=localhost;port=2640;dobroadcast=DIRECT)" -nogui input into DIM_E_SGEH_HIER321 from DIM_E_SGEH_HIER321.dbf FORMAT TEXT;

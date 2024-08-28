@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- This sample illustrates structure of XML that
+ 	 will be sent over REST interface -->
+<session id="">
+	<events count="10">
+		<!-- XStream encoded events -->
+	</events>
+</session>

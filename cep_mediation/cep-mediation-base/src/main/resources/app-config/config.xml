@@ -1,0 +1,1507 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appconfig xmlns="http://www.ericsson.com/app-config">
+    <!-- ========================================================================= -->
+    <!-- Additional component specific general properties are detailed in their -->
+    <!-- own config files -->
+    <!-- ========================================================================= -->
+    <AppStartTypeList>
+        <!-- Link to the Staple/Captool configuration properties -->
+        <AppStartType>CEP_MEDIATION</AppStartType>
+
+    </AppStartTypeList>
+
+    <properties>
+        <property>
+            <key>stats.collection.active</key>
+            <value>true</value>
+        </property>
+        <property>
+            <key>stats.collection.period</key>
+            <value>300000</value><!--5 minutes -->
+        </property>
+        <property>
+            <key>db.storage.active</key>
+            <value>true</value>
+        </property>
+        <property>
+            <key>db.max.thread.counter.delay</key>
+            <value>500</value>
+        </property>
+        <property>
+            <key>db.max.thread.count</key>
+            <value>5</value>
+        </property>
+
+        <!-- ========================================================================= -->
+        <!-- Parameters for XML parsing of Event structure -->
+        <!-- ========================================================================= -->
+
+        <property>
+            <key>schematype.namespace</key>
+            <value>http://www.ericsson.com/SchemaTypes</value>
+        </property>
+        <property>
+            <key>schematype.schema</key>
+            <value>xml/SchemaTypes.xsd</value>
+        </property>
+        <property>
+            <key>schematype.xml.file</key>
+            <value>xml/SchemaTypes.xml</value>
+        </property>
+        <!-- Parameters for XML parsing of Event structure ends -->
+
+        <!-- ========================================================================= -->
+        <!-- Parameters for publishing -->
+        <!-- ========================================================================= -->
+        <!-- The default publishing buffer size is the number of events that will
+            be buffered before events are sent to publishing subscribers. The buffer
+            size for gpeh and sgeh is defined with separate properties. -->
+        <property>
+            <key>publishing.buffer.size</key>
+            <value>1048756</value>
+        </property>
+        <!-- The gpeh buffer should be large enough to hold one hour of busy rop
+            data. This is needed to guarantee that all rop events are sorted in the publisher
+            before sent to subscribers -->
+        <property>
+            <key>gpeh.publishing.buffer.size</key>
+            <value>16780096</value>
+        </property>
+
+        <!-- The sgeh buffer should be large enough to hold one hour of busy rop
+            data. This is needed to guarantee that all rop events are sorted in the publisher
+            before sent to subscribers -->
+        <property>
+            <key>ebs.publishing.buffer.size</key>
+            <value>8390048</value>
+        </property>
+        <!-- Events are buffered in publishing buffers. These buffers are flushed
+            periodically. This parameter sets the interval for buffer flushing. It is
+            set in milliseconds. -->
+        <property>
+            <key>publishing.loading.scan.interval</key>
+            <value>600000</value> <!-- Scan interval is long for loading because publishing buffers are explicitly
+                flushed by loaders -->
+        </property>
+        <property>
+            <key>publishing.correlating.scan.interval</key>
+            <value>10000</value> <!-- Scan interval is short for correlation because publishing buffers are
+                not explicitly flushed by correlations -->
+        </property>
+
+        <!-- ========================================================================= -->
+        <!-- Parameters for IQ datasources -->
+        <!-- ========================================================================= -->
+
+        <!-- Repdb datasource -->
+        <property>
+            <key>iq.repdb.datasource.user</key>
+            <value>dwhrep</value>
+        </property>
+        <property>
+            <key>iq.repdb.datasource.connection</key>
+            <value>dwhrep</value>
+        </property>
+        <!-- Dwhdb datasource -->
+        <property>
+            <key>iq.dwhdb.datasource.user</key>
+            <value>dc</value>
+        </property>
+        <property>
+            <key>iq.dwhdb.datasource.connection</key>
+            <value>dwh</value>
+        </property>
+
+        <!-- ========================================================================= -->
+        <!-- Parameters for IQ binary file creation -->
+        <!-- ========================================================================= -->
+
+        <!-- Byte order for IQ binary files -->
+        <property>
+            <key>iq.binary.file.byte.order</key>
+            <value>LITTLE_ENDIAN</value>
+        </property>
+        <property>
+            <key>iq.binary.directory</key>
+            <value>/eniq/data/etldata_</value>
+        </property>
+        <property>
+            <key>iq.binary.file.buffer.size</key>
+            <value>65536</value>
+        </property>
+        <property>
+            <key>iq.binary.flush.records</key>
+            <value>100000</value>
+        </property>
+        <property>
+            <key>iq.binary.flush.interval</key>
+            <value>5000</value>
+        </property>
+
+        <!-- ========================================================================= -->
+        <!-- Parameters for File System Monitor -->
+        <!-- ========================================================================= -->
+
+        <!-- Maximum percentage of the output file system (iq.binary.directory)
+            that can be filled -->
+        <property>
+            <key>max.percentage.used.space</key>
+            <value>85</value> <!-- Value is % -->
+        </property>
+        <property>
+            <key>filesystem.monitor.poll.interval</key>
+            <value>30</value> <!-- Value is in seconds -->
+        </property>
+        <!-- Maximum disk space used by the tech pack directories that CEP Mediation
+            populates -->
+        <property>
+            <key>max.diskspace.files</key>
+            <value>15360</value> <!-- Value is in MB -->
+        </property>
+
+        <!-- ========================================================================= -->
+        <!-- Parameters for XML parsing of Event structure -->
+        <!-- ========================================================================= -->
+
+        <property>
+            <key>param.preamble</key>
+            <value>EVENT_PARAM_</value>
+        </property>
+
+        <property>
+            <key>value.preamble</key>
+            <value>EVENT_VALUE_</value>
+        </property>
+        <property>
+            <key>event.namespace</key>
+            <value>http://www.ericsson.com/PmEvents</value>
+        </property>
+        <property>
+            <key>event.schema</key>
+            <value>xml/EventFormat.xsd</value>
+        </property>
+
+        <!-- ========================================================================= -->
+        <!-- Server specific configuration -->
+        <!-- ========================================================================= -->
+
+        <property>
+            <key>backlog.recovery.interval</key>
+            <value>75</value>  <!-- value is in minutes -->
+        </property>
+        <property>
+            <key>general.server.core.file.collection.mode</key>
+            <!-- LOCAL, REMOTE or SYMBOLIC_LINK -->
+            <value>SYMBOLIC_LINK</value>
+        </property>
+        <property>
+            <key>general.server.radio.file.collection.mode</key>
+            <!-- LOCAL, REMOTE or SYMBOLIC_LINK -->
+            <value>SYMBOLIC_LINK</value>
+        </property>
+        <property>
+            <key>gpeh.subfile.check</key>
+            <value>true</value>
+        </property>
+        <property><!-- file collection path in the local machine -->
+            <key>general.filecopy.destination</key>
+            <value>/output/</value>
+        </property>
+        <property>
+            <key>general.oss.server.alias.prefix</key>
+            <value>events_oss_</value>
+        </property>
+        <property>
+            <key>general.oss.server.isAdminServer</key>
+            <value>true</value>
+        </property>
+        <property>
+            <key>general.server.collection.start.delay</key>
+            <value>60</value> <!-- In seconds -->
+        </property>
+        <property>
+            <key>additional.gpeh.server.collection.start.delay</key>
+            <value>0</value> <!-- In seconds -->
+        </property>
+        <property>
+            <key>general.server.collection.interval</key>
+            <value>40</value> <!-- In seconds -->
+        </property>
+        <property>
+            <key>general.probe.file.collection.mode</key>
+            <!-- LOCAL, REMOTE or SYMBOLIC_LINK -->
+            <value>REMOTE</value>
+        </property>
+        <property>
+            <key>general.probe.log.batch.size</key>
+            <value>100</value>
+        </property>
+        <property>
+            <!-- Number of times to retry enriching UP event with IMSI before dropping -->
+            <key>general.userplane.retry.count</key>
+            <value>2</value>
+        </property>
+        <property>
+            <!-- Delay between retrying UP event enrichment, in milliseconds -->
+            <key>general.userplane.retry.delay</key>
+            <value>120000</value> <!-- 2 minutes -->
+        </property>
+
+        <!-- ========================================================================= -->
+        <!-- Hyperic Specific Properties -->
+        <!-- ========================================================================= -->
+
+        <property>
+            <key>install.dir</key>
+            <value>/opt/ericsson/cep-mediation/cep-mediation/</value>
+        </property>
+        <property>
+            <key>server.type</key>
+            <value>CEP Mediation Server</value>
+        </property>
+        <property>
+            <key>server.version</key>
+            <value>1.0.1</value>
+        </property>
+
+        <!-- ========================================================================= -->
+        <!-- properties required for auto-generation of network -->
+        <!-- ========================================================================= -->
+
+        <property>
+            <key>gpeh.mount.point</key>
+            <value>/eniq/data/eventdata/events_oss_1/GPEHEvents_CEP</value>
+        </property>
+
+        <property>
+            <key>cep.mediation.ini</key>
+            <value>/eniq/sw/conf/cep_mediation.ini</value>
+        </property>
+
+        <!-- ratio of total memory used for gpeh file processing -->
+        <property>
+            <key>gpeh.process.memory.ratio</key>
+            <value>0.6</value>
+        </property>
+
+        <!-- auto generation location for network elements -->
+        <property>
+            <key>auto.genertaion.location</key>
+            <value>/tmp</value>
+        </property>
+
+        <!-- ========================================================================= -->
+        <!-- Other Properties -->
+        <!-- ========================================================================= -->
+        <property>
+            <key>jmx.port.starting.index</key>
+            <value>1200</value>
+        </property>
+        <property>
+            <!-- Property controls whether the jvms are created with the jmx profiling
+                arguments included -->
+            <key>jmx.profiling.on</key>
+            <value>false</value>
+        </property>
+        <property>
+            <!-- If true then user plane events (TCP & Classification) will be forwarded
+                to database even though enrichment with SGEH data has failed. IMSI and related
+                fields will be null in the database. This should be enabled at initial sanity
+                check install just to verify how successful is enrichment. For production
+                purposes should be enabled only if there is enough DB capacity. -->
+            <key>test.forward.up.unmatched</key>
+            <value>true</value>
+        </property>
+        <property>
+            <!-- Set to true if TCP partials should not be loaded to database and
+                should be silently dropped. Should be false at initial install, if we see
+                to large volume hammering the database, set to false. -->
+            <key>up.drop.tcp.partials</key>
+            <value>false</value>
+        </property>
+
+        <property>
+            <!-- If True the loader will delete the Staple ROP file once it has being
+                loaded -->
+            <key>staple.deleteRemoteRopFile</key>
+            <value>false</value>
+        </property>
+        <property>
+            <!-- If True the loader will delete the Captool ROP file once it has being
+                loaded -->
+            <key>captool.deleteRemoteRopFile</key>
+            <value>false</value>
+        </property>
+
+        <property>
+            <key>ip.partition.ttl</key>
+            <value>1800000</value>
+        </property>
+
+        <property>
+            <!-- disable/enable internal system utilization -->
+            <key>internal.disable.isu</key>
+            <value>false</value>
+        </property>
+
+        <property>
+            <!-- How long should ISU events live. -->
+            <key>internal.isu.ttl</key>
+            <value>600000</value>
+        </property>
+
+        <property>
+            <!-- If merge of GPEH session takes longer than this millis, then log
+                info message -->
+            <key>sgeh.merge.report.threshold</key>
+            <value>1000</value>
+        </property>
+        <property>
+            <!-- If true merge of GPEH session with SGEH is disabled -->
+            <key>sgeh.merge.skip</key>
+            <value>false</value>
+        </property>
+        <property>
+            <!-- If true rrc measurement reports(like inter frequency and rat) without
+                scrambling code will be processed -->
+            <key>rrc.measurement.process.without.sc</key>
+            <value>true</value>
+        </property>
+
+        <property>
+            <key>java.rmi.server.port</key>
+            <value>1099</value>
+        </property>
+
+        <property>
+            <!-- cache refresh period for the look up service, value is in minutes -->
+            <key>lookupservice.cache.refresh.period</key>
+            <value>60</value>  <!-- Default value is 1 hour -->
+        </property>
+
+        <property>
+            <!-- For how long should events related to IMEI enrichment be buffered
+                before sending over hazeclast to the standalone application. -->
+            <key>imei.enrichment.hazelcast.flush.interval</key>
+            <value>10000</value>
+        </property>
+
+        <property>
+            <!-- Output Interval when enriched CFA/HFA events are sent out from Esper,
+                value is in seconds -->
+            <key>interval.produce.output.correlated.events</key>
+            <value>10</value>
+        </property>
+
+        <!-- ========================================================================= -->
+        <!-- Licensing Service Properties -->
+        <!-- ========================================================================= -->
+
+        <property>
+            <key>licensing.service.host</key>
+            <value>licenceservice</value>
+        </property>
+        <property>
+            <key>licensing.service.port</key>
+            <value>1200</value>
+        </property>
+        <property>
+            <key>licensing.service.name</key>
+            <value>LicensingCache</value>
+        </property>
+
+    </properties>
+    <!-- ========================================================================= -->
+    <!-- Features -->
+    <!-- ========================================================================= -->
+    <features>
+        <feature enabled="true">CFA</feature>
+        <feature enabled="true">HFA</feature>
+        <feature enabled="true">SESSION_BROWSER</feature>
+        <feature enabled="true">REESTABLISH</feature>
+        <feature enabled="true">UE_RTT</feature>
+    </features>
+    <!-- ========================================================================= -->
+    <!-- Services Definitions -->
+    <!-- ========================================================================= -->
+    <serviceList>
+        <service service-id="1">
+            <name>LoadingService</name>
+            <class>com.ericsson.cepmediation.server.service.LoadingServiceProvider</class>
+            <init-method>init</init-method>
+            <proc-enabled>true</proc-enabled>
+        </service>
+        <service service-id="3">
+            <name>ForwarderService</name>
+            <class>com.ericsson.cepmediation.server.service.DataForwarderServiceProvider
+            </class>
+            <forwarder-type>com.ericsson.cepmediation.forwarding.iq.IqForwarder
+            </forwarder-type>
+            <init-method>init</init-method>
+            <proc-enabled>true</proc-enabled>
+            <event-listening>
+                <topic-name>IqTopic</topic-name>
+                <event-type>
+                    <name>correlation.SGEH_SESSION</name>
+                    <name>correlation.GPEH_SESSION</name>
+                    <name>correlation.EE_VISITED_CELL</name>
+                    <name>correlation.EE_RRC_MEASUREMENT</name>
+                    <name>correlation.TCP_REPORT_ENRICHED</name>
+                    <name>correlation.CLASSIFICATION_REPORT_ENRICHED</name>
+                    <name>gpeh.enrichment.INTERNAL_OUT_HARD_HANDOVER_FAILURE_ENRICHED</name>
+                    <name>gpeh.enrichment.INTERNAL_SUCCESSFUL_HSDSCH_CELL_CHANGE_ENRICHED</name>
+                    <name>gpeh.enrichment.INTERNAL_SOHO_DS_MISSING_NEIGHBOUR_ENRICHED</name>
+                    <name>gpeh.INTERNAL_SYSTEM_UTILIZATION</name>
+                    <name>gpeh.INTERNAL_START_CONGESTION</name>
+                    <name>gpeh.INTERNAL_STOP_CONGESTION</name>
+                    <name>gpeh.INTERNAL_RECORDING_FAULT</name>
+                    <name>gpeh.INTERNAL_RECORDING_RECOVERED</name>
+                    <name>gpeh.INTERNAL_MP_OVERLOAD</name>
+                    <name>correlation.RAB_ESTABLISH_RNC_AGGR</name>
+                    <name>correlation.RAB_ESTABLISH_CELL_AGGR</name>
+                </event-type>
+            </event-listening>
+        </service>
+        <service service-id="4">
+            <name>3GCorrelationService</name>
+            <class>com.ericsson.cepmediation.server.service.CorrelationServiceProvider
+            </class>
+            <init-method>init</init-method>
+            <proc-enabled>true</proc-enabled>
+            <correlationspec>
+                <name>3GRadioSessionCorrelation</name>
+                <session-duration>FIVE_MINUTES</session-duration>
+                <listener>RadioSessionCorrelationEsperListener</listener>
+                <epl>
+                    <name>_rc.epl</name>
+                </epl>
+                <statements>
+                    <name>Session-Enrichment</name>
+                </statements>
+            </correlationspec>
+            <event-listening>
+                <topic-name>3GCorrelationTopic</topic-name>
+                <event-type>
+                    <name>gpeh.INTERNAL_IMSI</name>
+                    <name>gpeh.INTERNAL_RAB_ESTABLISHMENT</name>
+                    <name>gpeh.INTERNAL_RAB_RELEASE</name>
+                    <name>gpeh.INTERNAL_CHANNEL_SWITCHING</name>
+                    <name>gpeh.INTERNAL_SYSTEM_RELEASE</name>
+                    <name>gpeh.INTERNAL_FAILED_HSDSCH_CELL_CHANGE</name>
+                    <name>gpeh.INTERNAL_SUCCESSFUL_HSDSCH_CELL_CHANGE</name>
+                    <name>gpeh.INTERNAL_HSDSCH_CELL_SELECTION_NO_CELL_SELECTED</name>
+                    <name>gpeh.INTERNAL_OUT_HARD_HANDOVER_FAILURE</name>
+                    <name>gpeh.INTERNAL_IFHO_EXECUTION_ACTIVE</name>
+                    <name>gpeh.INTERNAL_SOFT_HANDOVER_EXECUTION</name>
+                    <name>gpeh.INTERNAL_SOHO_DS_MISSING_NEIGHBOUR</name>
+                    <name>gpeh.INTERNAL_CMODE_ACTIVATE</name>
+                    <name>gpeh.INTERNAL_CMODE_DEACTIVATE</name>
+                    <name>gpeh.INTERNAL_SYSTEM_UTILIZATION</name>
+                    <name>gpeh.RRC_MEASUREMENT_REPORT</name>
+                    <name>gpeh.RRC_RRC_CONNECTION_SETUP</name>
+                    <name>gpeh.RRC_RRC_CONNECTION_RELEASE_COMPLETE</name>
+                    <name>gpeh.RANAP_IU_RELEASE_COMMAND</name>
+                </event-type>
+            </event-listening>
+        </service>
+        <service service-id="5">
+            <name>3GVCCorrelationService</name>
+            <class>com.ericsson.cepmediation.server.service.CorrelationServiceProvider</class>
+            <init-method>init</init-method>
+            <proc-enabled>true</proc-enabled>
+            <correlationspec>
+                <name>3GRadioSessionVCCorrelation</name>
+                <session-duration>FIVE_MINUTES</session-duration>
+                <listener>RadioSessionCorrelationEsperListener</listener>
+                <epl>
+                    <name>vc.epl</name>
+                </epl>
+                <statements>
+                    <name>Visited-Cells-Enrichment</name>
+                </statements>
+            </correlationspec>
+            <event-listening>
+                <topic-name>VCCorrelationTopic</topic-name>
+                <event-type>
+                    <name>gpeh.INTERNAL_IMSI</name>
+                    <name>gpeh.INTERNAL_RAB_ESTABLISHMENT</name>
+                    <name>gpeh.INTERNAL_RAB_RELEASE</name>
+                    <name>gpeh.INTERNAL_CHANNEL_SWITCHING</name>
+                    <name>gpeh.INTERNAL_SYSTEM_RELEASE</name>
+                    <name>gpeh.INTERNAL_FAILED_HSDSCH_CELL_CHANGE</name>
+                    <name>gpeh.INTERNAL_SUCCESSFUL_HSDSCH_CELL_CHANGE</name>
+                    <name>gpeh.INTERNAL_HSDSCH_CELL_SELECTION_NO_CELL_SELECTED</name>
+                    <name>gpeh.INTERNAL_OUT_HARD_HANDOVER_FAILURE</name>
+                    <name>gpeh.INTERNAL_IFHO_EXECUTION_ACTIVE</name>
+                    <name>gpeh.INTERNAL_SOFT_HANDOVER_EXECUTION</name>
+                    <name>gpeh.INTERNAL_SOHO_DS_MISSING_NEIGHBOUR</name>
+                    <name>gpeh.INTERNAL_CMODE_ACTIVATE</name>
+                    <name>gpeh.INTERNAL_CMODE_DEACTIVATE</name>
+                    <name>gpeh.INTERNAL_SYSTEM_UTILIZATION</name>
+                    <name>gpeh.RRC_MEASUREMENT_REPORT</name>
+                    <name>gpeh.RRC_RRC_CONNECTION_SETUP</name>
+                    <name>gpeh.RRC_RRC_CONNECTION_RELEASE_COMPLETE</name>
+                    <name>gpeh.RANAP_IU_RELEASE_COMMAND</name>
+                </event-type>
+            </event-listening>
+        </service>
+        <service service-id="6">
+            <name>3GMCorrelationService</name>
+            <class>com.ericsson.cepmediation.server.service.CorrelationServiceProvider</class>
+            <init-method>init</init-method>
+            <proc-enabled>true</proc-enabled>
+            <correlationspec>
+                <name>3GRadioSessionMCorrelation</name>
+                <session-duration>FIVE_MINUTES</session-duration>
+                <listener>RadioSessionCorrelationEsperListener</listener>
+                <epl uses="cfa_hfa_common.epl,cfa.epl,hfa.epl,session_browser.epl">
+                    <name>raw_events_base.epl</name>
+                </epl>
+                <statements>
+                    <name>Handover-Enrichment</name>
+                    <name>CellChange-Enrichment</name>
+                    <name>Soho-Enrichment</name>
+                    <name>Thirty-Second-RRC-Measurement-Reports-Before-Call-Drop</name>
+                    <name>CallSetupFail-Enrichment</name>
+                    <name>IncompleteCallSetupFail-Enrichment</name>
+                    <name>Cleanup-IncompleteCallSetupFail-On-Connection-Setup</name>
+                    <name>Cleanup-IncompleteCallSetupFail-On-Connection-Release</name>
+                    <name>Cleanup-Expired-IncompleteCallSetupFail</name>
+                    <name>Flush-IncompleteCallSetupFail</name>
+                    <name>SystemRelease-Enrichment</name>
+                    <name>RrcUplinkDirectTransfer-Enrichment</name>
+                    <name>IncompleteRrcUplinkDirectTransfer-Enrichment</name>
+                    <name>SoftHandoverExecFail-Enrichment</name>
+                    <name>IncompleteSoftHandoverExecFail-Enrichment</name>
+                    <name>Cleanup-IncompleteSoftHandoverExecFail-On-Connection-Setup</name>
+                    <name>Cleanup-IncompleteSoftHandoverExecFail-On-Connection-Release</name>
+                    <name>Cleanup-Expired-IncompleteSoftHandoverExecFail</name>
+                    <name>Flush-IncompleteSoftHandoverExecFail</name>
+                    <name>OutHardIfho-Enrichment</name>
+                    <name>IncompleteOutHardIfho-Enrichment</name>
+                    <name>Cleanup-IncompleteOutHardIfho-On-Connection-Setup</name>
+                    <name>Cleanup-IncompleteOutHardIfho-On-Connection-Release</name>
+                    <name>Cleanup-Expired-IncompleteOutHardIfho</name>
+                    <name>Flush-IncompleteOutHardIfho</name>
+                    <name>OutHardIrat-Enrichment</name>
+                    <name>IncompleteOutHardIrat-Enrichment</name>
+                    <name>Cleanup-IncompleteOutHardIrat-On-Connection-Setup</name>
+                    <name>Cleanup-IncompleteOutHardIrat-On-Connection-Release</name>
+                    <name>Cleanup-Expired-IncompleteOutHardIrat</name>
+                    <name>Flush-IncompleteOutHardIrat</name>
+                    <name>FailedHsdschCellChange-Enrichment</name>
+                    <name>IncompleteFailedHsdschCellChange-Enrichment</name>
+                    <name>Cleanup-IncompleteFailedHsdschCellChange-On-Connection-Setup</name>
+                    <name>Cleanup-IncompleteFailedHsdschCellChange-On-Connection-Release</name>
+                    <name>Cleanup-Expired-IncompleteFailedHsdschCellChange</name>
+                    <name>Flush-IncompleteFailedHsdschCellChange</name>
+                    <name>HsdschNoCellSelected-Enrichment</name>
+                    <name>IncompleteHsdschNoCellSelected-Enrichment</name>
+                    <name>Cleanup-IncompleteHsdschNoCellSelected-On-Connection-Setup</name>
+                    <name>Cleanup-IncompleteHsdschNoCellSelected-On-Connection-Release</name>
+                    <name>Cleanup-Expired-IncompleteHsdschNoCellSelected</name>
+                    <name>Flush-IncompleteHsdschNoCellSelected</name>
+                    <name>IfhoExecFail-Enrichment</name>
+                    <name>IncompleteIfhoExecFail-Enrichment</name>
+                    <name>Cleanup-IncompleteIfhoExecFail-On-Connection-Setup</name>
+                    <name>Cleanup-IncompleteIfhoExecFail-On-Connection-Release</name>
+                    <name>Cleanup-Expired-IncompleteIfhoExecFail</name>
+                    <name>Flush-IncompleteIfhoExecFail</name>
+                    <name>Aggregate-RAB-To-RNC-Results</name>
+                    <name>Aggregate-RAB-To-Cell-Results</name>
+                    <name>Flush-IncompleteReestablish</name>
+                    <name>Reestablish-Capturing</name>
+                    <name>Reestablish-Enrichment</name>
+                    <name>Imsi-Arrives-After-Reestablish</name>
+                    <name>IncompleteReestablish-Enrichment</name>
+                    <name>Cleanup-IncompleteReestablish-On-Connection-Setup</name>
+                    <name>Cleanup-IncompleteReestablish-On-Connection-Release</name>
+                    <name>Cleanup-Expired-IncompleteReestablish</name>
+                </statements>
+            </correlationspec>
+            <event-listening>
+                <topic-name>MCorrelationTopic</topic-name>
+                <event-type>
+                    <name>gpeh.INTERNAL_IMSI</name>
+                    <name>gpeh.INTERNAL_SYSTEM_RELEASE</name>
+                    <name>gpeh.INTERNAL_SUCCESSFUL_HSDSCH_CELL_CHANGE</name>
+                    <name>gpeh.INTERNAL_OUT_HARD_HANDOVER_FAILURE</name>
+                    <name>gpeh.INTERNAL_SOFT_HANDOVER_EXECUTION</name>
+                    <name>gpeh.INTERNAL_SOHO_DS_MISSING_NEIGHBOUR</name>
+                    <name>gpeh.RRC_MEASUREMENT_REPORT</name>
+                    <name>gpeh.INTERNAL_CALL_SETUP_FAIL</name>
+                    <name>gpeh.INTERNAL_SYSTEM_RELEASE</name>
+                    <name>gpeh.INTERNAL_NORMAL_RELEASE</name>
+                    <name>gpeh.RRC_UPLINK_DIRECT_TRANSFER</name>
+                    <name>gpeh.INTERNAL_RAB_ESTABLISHMENT</name>
+                    <name>gpeh.RRC_RRC_CONNECTION_SETUP</name>
+                    <name>gpeh.RRC_RRC_CONNECTION_RELEASE_COMPLETE</name>
+                    <name>gpeh.INTERNAL_FAILED_HSDSCH_CELL_CHANGE</name>
+                    <name>gpeh.INTERNAL_HSDSCH_CELL_SELECTION_NO_CELL_SELECTED</name>
+                    <name>gpeh.INTERNAL_IFHO_EXECUTION_ACTIVE</name>
+                    <name>gpeh.INTERNAL_CALL_REESTABLISHMENT</name>
+                </event-type>
+            </event-listening>
+        </service>
+        <service service-id="7">
+            <name>CoreCorrelationService</name>
+            <class>com.ericsson.cepmediation.server.service.CorrelationServiceProvider</class>
+            <init-method>init</init-method>
+            <proc-enabled>true</proc-enabled>
+            <correlationspec>
+                <name>CoreSessionCorrelation</name>
+                <session-duration>FIVE_MINUTES</session-duration>
+                <listener>CoreSessionCorrelationEsperListener</listener>
+                <epl>
+                    <name>CoreCorrelation.epl</name>
+                </epl>
+                <statements>
+                    <name>CORE_SESSION</name>
+                </statements>
+            </correlationspec>
+            <event-listening>
+                <topic-name>CoreCorrelationTopic</topic-name>
+                <event-type>
+                    <name>ebm.ACTIVATE</name>
+                    <name>ebm.DEACTIVATE</name>
+                    <name>ebm.RAU</name>
+                    <name>ebm.ISRAU</name>
+                </event-type>
+            </event-listening>
+        </service>
+        <service service-id="8">
+            <name>UserPlaneCorrelationService</name>
+            <class>com.ericsson.cepmediation.server.service.CorrelationServiceProvider</class>
+            <init-method>init</init-method>
+            <proc-enabled>true</proc-enabled>
+            <correlationspec>
+                <name>UserPlaneCorrelation</name>
+                <session-duration>ONE_MINUTE</session-duration>
+                <listener>WcdmaUserPlaneCorrelationEsperListener3</listener>
+                <epl>
+                    <name>WcdmaUserPlaneCorrelation.epl</name>
+                </epl>
+                <statements>
+                    <name>classification-handler</name>
+                    <name>TCP_REPORT_ENRICHED</name>
+                </statements>
+            </correlationspec>
+            <event-listening>
+                <topic-name>UserPlaneCorrelationTopic</topic-name>
+                <event-type>
+                    <name>bearer_plane.TCP_REPORT_PARTIAL</name>
+                    <name>bearer_plane.CLASSIFICATION_REPORT</name>
+                </event-type>
+            </event-listening>
+        </service>
+        <service service-id="9">
+            <name>HazelcastForwarderService</name>
+            <class>com.ericsson.cepmediation.server.service.DataForwarderServiceProvider</class>
+            <forwarder-type>com.ericsson.cepmediation.forwarding.hazelcast.HazelcastForwarder</forwarder-type>
+            <init-method>init</init-method>
+            <proc-enabled>true</proc-enabled>
+            <event-listening>
+                <topic-name>IMEIEnrichmentTopic</topic-name>
+                <event-type>
+                    <name>ebm.ATTACH</name>
+                    <name>gpeh.enrichment.INTERNAL_CALL_SETUP_FAIL_ENRICHED</name>
+                    <name>gpeh.enrichment.INTERNAL_SYSTEM_RELEASE_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_UPLINK_DIRECT_TRANSFER_ENRICHED</name>
+                    <name>gpeh.enrichment.INTERNAL_SOFT_HANDOVER_EXECUTION_ENRICHED</name>
+                    <name>gpeh.enrichment.INTERNAL_FAILED_HSDSCH_CELL_CHANGE_ENRICHED</name>
+                    <name>gpeh.enrichment.INTERNAL_HSDSCH_CELL_SELECTION_NO_CELL_SELECTED_ENRICHED</name>
+                    <name>gpeh.enrichment.INTERNAL_IFHO_EXECUTION_ACTIVE_ENRICHED</name>
+                    <name>gpeh.enrichment.INTERNAL_OUT_HARD_HANDOVER_FAILURE_IFHO_ENRICHED</name>
+                    <name>gpeh.enrichment.INTERNAL_OUT_HARD_HANDOVER_FAILURE_IRAT_ENRICHED</name>
+                    <name>gpeh.enrichment.INTERNAL_CALL_REESTABLISHMENT_ENRICHED</name>
+                </event-type>
+            </event-listening>
+            <hazelcast-topic>
+                <topic-name>HazelcastIMEIEnrichmentTopic</topic-name>
+            </hazelcast-topic>
+        </service>
+        <service service-id="10">
+            <name>UERTTCorrelationService</name>
+            <class>com.ericsson.cepmediation.server.service.UERTTCorrelationServiceProvider</class>
+            <init-method>init</init-method>
+            <proc-enabled>true</proc-enabled>
+            <correlationspec>
+                <name>UERTTCorrelation</name>
+                <session-duration>FIVE_MINUTES</session-duration>
+                <listener>UERTTCorrelationEsperListener</listener>
+                <epl uses="uertt_rrc.epl,uertt_nbap.epl,uertt_ranap.epl,uertt_rnsap.epl">
+                    <name>uertt_raw_events_base.epl</name>
+                </epl>
+                <statements>
+                    <name>Imsi-Map-Flush</name>
+                    <name>Flush-IncompleteRrcMeasurementReport</name>
+                    <name>RrcMeasurementReport-Capturing</name>
+                    <name>RrcMeasurementReport-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcMeasurementReport</name>
+                    <name>Flush-IncompleteRrcActiveSetUpdate</name>
+                    <name>RrcActiveSetUpdate-Capturing</name>
+                    <name>RrcActiveSetUpdate-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcActiveSetUpdate</name>
+                    <name>Flush-IncompleteRrcActiveSetUpdateComplete</name>
+                    <name>RrcActiveSetUpdateComplete-Capturing</name>
+                    <name>RrcActiveSetUpdateComplete-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcActiveSetUpdateComplete</name>
+                    <name>Flush-IncompleteRrcActiveSetUpdateFailure</name>
+                    <name>RrcActiveSetUpdateFailure-Capturing</name>
+                    <name>RrcActiveSetUpdateFailure-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcActiveSetUpdateFailure</name>
+                    <name>Flush-IncompleteRrcCellUpdate</name>
+                    <name>RrcCellUpdate-Capturing</name>
+                    <name>RrcCellUpdate-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcCellUpdate</name>
+                    <name>Flush-IncompleteRrcCellUpdateConfirm</name>
+                    <name>RrcCellUpdateConfirm-Capturing</name>
+                    <name>RrcCellUpdateConfirm-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcCellUpdateConfirm</name>
+                    <name>Flush-IncompleteRrcDownlinkDirectTransfer</name>
+                    <name>RrcDownlinkDirectTransfer-Capturing</name>
+                    <name>RrcDownlinkDirectTransfer-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcDownlinkDirectTransfer</name>
+                    <name>Flush-IncompleteRrcMeasurementControl</name>
+                    <name>RrcMeasurementControl-Capturing</name>
+                    <name>RrcMeasurementControl-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcMeasurementControl</name>
+                    <name>Flush-IncompleteRrcPagingType2</name>
+                    <name>RrcPagingType2-Capturing</name>
+                    <name>RrcPagingType2-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcPagingType2</name>
+                    <name>Flush-IncompleteRrcRadioBearerReconfiguration</name>
+                    <name>RrcRadioBearerReconfiguration-Capturing</name>
+                    <name>RrcRadioBearerReconfiguration-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcRadioBearerReconfiguration</name>
+                    <name>Imsi-Arrives-After-RrcPagingType2</name>
+                    <name>Flush-IncompleteRrcRadioBearerReconfigurationComplete</name>
+                    <name>RrcRadioBearerReconfigurationComplete-Capturing</name>
+                    <name>RrcRadioBearerReconfigurationComplete-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcRadioBearerReconfigurationComplete</name>
+                    <name>Flush-IncompleteRrcRadioBearerReconfigurationFailure</name>
+                    <name>RrcRadioBearerReconfigurationFailure-Capturing</name>
+                    <name>RrcRadioBearerReconfigurationFailure-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcRadioBearerReconfigurationFailure</name>
+                    <name>Flush-IncompleteRrcRadioBearerRelease</name>
+                    <name>RrcRadioBearerRelease-Capturing</name>
+                    <name>RrcRadioBearerRelease-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcRadioBearerRelease</name>
+                    <name>Flush-IncompleteRrcRadioBearerReleaseComplete</name>
+                    <name>RrcRadioBearerReleaseComplete-Capturing</name>
+                    <name>RrcRadioBearerReleaseComplete-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcRadioBearerReleaseComplete</name>
+                    <name>Flush-IncompleteRrcRadioBearerReleaseFailure</name>
+                    <name>RrcRadioBearerReleaseFailure-Capturing</name>
+                    <name>RrcRadioBearerReleaseFailure-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcRadioBearerReleaseFailure</name>
+                    <name>Flush-IncompleteRrcRadioBearerSetup</name>
+                    <name>RrcRadioBearerSetup-Capturing</name>
+                    <name>RrcRadioBearerSetup-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcRadioBearerSetup</name>
+                    <name>Flush-IncompleteRrcRadioBearerSetupComplete</name>
+                    <name>RrcRadioBearerSetupComplete-Capturing</name>
+                    <name>RrcRadioBearerSetupComplete-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcRadioBearerSetupComplete</name>
+                    <name>Flush-IncompleteRrcRadioBearerSetupFailure</name>
+                    <name>RrcRadioBearerSetupFailure-Capturing</name>
+                    <name>RrcRadioBearerSetupFailure-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcRadioBearerSetupFailure</name>
+                    <name>Flush-IncompleteRrcRrcConnectionRelease</name>
+                    <name>RrcRrcConnectionRelease-Capturing</name>
+                    <name>RrcRrcConnectionRelease-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcRrcConnectionRelease</name>
+                    <name>Flush-IncompleteRrcRrcConnectionReleaseComplete</name>
+                    <name>RrcRrcConnectionReleaseComplete-Capturing</name>
+                    <name>RrcRrcConnectionReleaseComplete-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcRrcConnectionReleaseComplete</name>
+                    <name>Flush-IncompleteRrcRrcStatus</name>
+                    <name>RrcRrcStatus-Capturing</name>
+                    <name>RrcRrcStatus-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcRrcStatus</name>
+                    <name>Flush-IncompleteRrcSecurityModeCommand</name>
+                    <name>RrcSecurityModeCommand-Capturing</name>
+                    <name>RrcSecurityModeCommand-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcSecurityModeCommand</name>
+                    <name>Flush-IncompleteRrcSecurityModeComplete</name>
+                    <name>RrcSecurityModeComplete-Capturing</name>
+                    <name>RrcSecurityModeComplete-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcSecurityModeComplete</name>
+                    <name>Flush-IncompleteRrcSecurityModeFailure</name>
+                    <name>RrcSecurityModeFailure-Capturing</name>
+                    <name>RrcSecurityModeFailure-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcSecurityModeFailure</name>
+                    <name>Flush-IncompleteRrcSignallingConnectionRelease</name>
+                    <name>RrcSignallingConnectionRelease-Capturing</name>
+                    <name>RrcSignallingConnectionRelease-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcSignallingConnectionRelease</name>
+                    <name>Flush-IncompleteRrcSignallingConnectionReleaseIndication</name>
+                    <name>RrcSignallingConnectionReleaseIndication-Capturing</name>
+                    <name>RrcSignallingConnectionReleaseIndication-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcSignallingConnectionReleaseIndication</name>
+                    <name>Flush-IncompleteRrcUeCapabilityInformation</name>
+                    <name>RrcUeCapabilityInformation-Capturing</name>
+                    <name>RrcUeCapabilityInformation-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcUeCapabilityInformation</name>
+                    <name>Flush-IncompleteRrcUeCapabilityInformationConfirm</name>
+                    <name>RrcUeCapabilityInformationConfirm-Capturing</name>
+                    <name>RrcUeCapabilityInformationConfirm-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcUeCapabilityInformationConfirm</name>
+                    <name>Flush-IncompleteRrcUplinkDirectTransfer</name>
+                    <name>RrcUplinkDirectTransfer-Capturing</name>
+                    <name>RrcUplinkDirectTransfer-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcUplinkDirectTransfer</name>
+                    <name>Flush-IncompleteRrcUtranMobilityInformationConfirm</name>
+                    <name>RrcUtranMobilityInformationConfirm-Capturing</name>
+                    <name>RrcUtranMobilityInformationConfirm-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcUtranMobilityInformationConfirm</name>
+                    <name>Flush-IncompleteRrcHandoverFromUtranCommand</name>
+                    <name>RrcHandoverFromUtranCommand-Capturing</name>
+                    <name>RrcHandoverFromUtranCommand-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcHandoverFromUtranCommand</name>
+                    <name>Flush-IncompleteRrcHandoverFromUtranFailure</name>
+                    <name>RrcHandoverFromUtranFailure-Capturing</name>
+                    <name>RrcHandoverFromUtranFailure-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcHandoverFromUtranFailure</name>
+                    <name>Flush-IncompleteRrcPhysicalChannelReconfiguration</name>
+                    <name>RrcPhysicalChannelReconfiguration-Capturing</name>
+                    <name>RrcPhysicalChannelReconfiguration-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcPhysicalChannelReconfiguration</name>
+                    <name>Flush-IncompleteRrcPhysicalChannelReconfigurationComplete</name>
+                    <name>RrcPhysicalChannelReconfigurationComplete-Capturing</name>
+                    <name>RrcPhysicalChannelReconfigurationComplete-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcPhysicalChannelReconfigurationComplete</name>
+                    <name>Flush-IncompleteRrcPhysicalChannelReconfigurationFailure</name>
+                    <name>RrcPhysicalChannelReconfigurationFailure-Capturing</name>
+                    <name>RrcPhysicalChannelReconfigurationFailure-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcPhysicalChannelReconfigurationFailure</name>
+                    <name>Flush-IncompleteRrcUtranMobilityInformation</name>
+                    <name>RrcUtranMobilityInformation-Capturing</name>
+                    <name>RrcUtranMobilityInformation-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcUtranMobilityInformation</name>
+                    <name>Flush-IncompleteRrcUtranMobilityInformationFailure</name>
+                    <name>RrcUtranMobilityInformationFailure-Capturing</name>
+                    <name>RrcUtranMobilityInformationFailure-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcUtranMobilityInformationFailure</name>
+                    <name>Flush-IncompleteRrcCellChangeOrderFromUtran</name>
+                    <name>RrcCellChangeOrderFromUtran-Capturing</name>
+                    <name>RrcCellChangeOrderFromUtran-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcCellChangeOrderFromUtran</name>
+                    <name>Flush-IncompleteRrcCellChangeOrderFromUtranFailure</name>
+                    <name>RrcCellChangeOrderFromUtranFailure-Capturing</name>
+                    <name>RrcCellChangeOrderFromUtranFailure-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcCellChangeOrderFromUtranFailure</name>
+                    <name>Flush-IncompleteRrcUeCapabilityEnquiry</name>
+                    <name>RrcUeCapabilityEnquiry-Capturing</name>
+                    <name>RrcUeCapabilityEnquiry-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcUeCapabilityEnquiry</name>
+                    <name>Flush-IncompleteRrcUraUpdate</name>
+                    <name>RrcUraUpdate-Capturing</name>
+                    <name>RrcUraUpdate-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcUraUpdate</name>
+                    <name>Flush-IncompleteRrcUraUpdateConfirm</name>
+                    <name>RrcUraUpdateConfirm-Capturing</name>
+                    <name>RrcUraUpdateConfirm-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcUraUpdateConfirm</name>
+                    <name>Flush-IncompleteRrcTransportChannelReconfiguration</name>
+                    <name>RrcTransportChannelReconfiguration-Capturing</name>
+                    <name>RrcTransportChannelReconfiguration-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcTransportChannelReconfiguration</name>
+                    <name>Flush-IncompleteRrcTransportChannelReconfigurationComplete</name>
+                    <name>RrcTransportChannelReconfigurationComplete-Capturing</name>
+                    <name>RrcTransportChannelReconfigurationComplete-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcTransportChannelReconfigurationComplete</name>
+                    <name>Flush-IncompleteRrcMeasurementControlFailure</name>
+                    <name>RrcMeasurementControlFailure-Capturing</name>
+                    <name>RrcMeasurementControlFailure-Enrichment</name>
+                    <name>Imsi-Arrives-After-RrcMeasurementControlFailure</name>
+                    <name>Flush-IncompleteNbapRadioLinkSetupRequest</name>
+                    <name>NbapRadioLinkSetupRequest-Capturing</name>
+                    <name>Imsi-Arrives-After-NbapRadioLinkSetupRequest</name>
+                    <name>Flush-IncompleteNbapRadioLinkSetupResponse</name>
+                    <name>NbapRadioLinkSetupResponse-Capturing</name>
+                    <name>Imsi-Arrives-After-NbapRadioLinkSetupResponse</name>
+                    <name>Flush-IncompleteNbapRadioLinkSetupFailure</name>
+                    <name>NbapRadioLinkSetupFailure-Capturing</name>
+                    <name>Imsi-Arrives-After-NbapRadioLinkSetupFailure</name>
+                    <name>Flush-IncompleteNbapRadioLinkAdditionRequest</name>
+                    <name>NbapRadioLinkAdditionRequest-Capturing</name>
+                    <name>Imsi-Arrives-After-NbapRadioLinkAdditionRequest</name>
+                    <name>Flush-IncompleteNbapRadioLinkAdditionResponse</name>
+                    <name>NbapRadioLinkAdditionResponse-Capturing</name>
+                    <name>Imsi-Arrives-After-NbapRadioLinkAdditionResponse</name>
+                    <name>Flush-IncompleteNbapRadioLinkAdditionFailure</name>
+                    <name>NbapRadioLinkAdditionFailure-Capturing</name>
+                    <name>Imsi-Arrives-After-NbapRadioLinkAdditionFailure</name>
+                    <name>Flush-IncompleteNbapRadioLinkReconfigurationPrepare</name>
+                    <name>NbapRadioLinkReconfigurationPrepare-Capturing</name>
+                    <name>Imsi-Arrives-After-NbapRadioLinkReconfigurationPrepare</name>
+                    <name>Flush-IncompleteNbapRadioLinkReconfigurationReady</name>
+                    <name>NbapRadioLinkReconfigurationReady-Capturing</name>
+                    <name>Imsi-Arrives-After-NbapRadioLinkReconfigurationReady</name>
+                    <name>Flush-IncompleteNbapRadioLinkReconfigurationFailure</name>
+                    <name>NbapRadioLinkReconfigurationFailure-Capturing</name>
+                    <name>Imsi-Arrives-After-NbapRadioLinkReconfigurationFailure</name>
+                    <name>Flush-IncompleteNbapRadioLinkReconfigurationCommit</name>
+                    <name>NbapRadioLinkReconfigurationCommit-Capturing</name>
+                    <name>Imsi-Arrives-After-NbapRadioLinkReconfigurationCommit</name>
+                    <name>Flush-IncompleteNbapRadioLinkReconfigurationCancel</name>
+                    <name>NbapRadioLinkReconfigurationCancel-Capturing</name>
+                    <name>Imsi-Arrives-After-NbapRadioLinkReconfigurationCancel</name>
+                    <name>Flush-IncompleteNbapRadioLinkDeletionRequest</name>
+                    <name>NbapRadioLinkDeletionRequest-Capturing</name>
+                    <name>Imsi-Arrives-After-NbapRadioLinkDeletionRequest</name>
+                    <name>Flush-IncompleteNbapRadioLinkDeletionResponse</name>
+                    <name>NbapRadioLinkDeletionResponse-Capturing</name>
+                    <name>Imsi-Arrives-After-NbapRadioLinkDeletionResponse</name>
+                    <name>Flush-IncompleteNbapDedicatedMeasurementInitiationRequest</name>
+                    <name>NbapDedicatedMeasurementInitiationRequest-Capturing</name>
+                    <name>Imsi-Arrives-After-NbapDedicatedMeasurementInitiationRequest</name>
+                    <name>Flush-IncompleteNbapDedicatedMeasurementInitiationResponse</name>
+                    <name>NbapDedicatedMeasurementInitiationResponse-Capturing</name>
+                    <name>Imsi-Arrives-After-NbapDedicatedMeasurementInitiationResponse</name>
+                    <name>Flush-IncompleteNbapDedicatedMeasurementInitiationFailure</name>
+                    <name>NbapDedicatedMeasurementInitiationFailure-Capturing</name>
+                    <name>Imsi-Arrives-After-NbapDedicatedMeasurementInitiationFailure</name>
+                    <name>Flush-IncompleteNbapDedicatedMeasurementReport</name>
+                    <name>NbapDedicatedMeasurementReport-Capturing</name>
+                    <name>Imsi-Arrives-After-NbapDedicatedMeasurementReport</name>
+                    <name>Flush-IncompleteNbapDedicatedMeasurementTerminationRequest</name>
+                    <name>NbapDedicatedMeasurementTerminationRequest-Capturing</name>
+                    <name>Imsi-Arrives-After-NbapDedicatedMeasurementTerminationRequest</name>
+                    <name>Flush-IncompleteNbapDedicatedMeasurementFailureIndication</name>
+                    <name>NbapDedicatedMeasurementFailureIndication-Capturing</name>
+                    <name>Imsi-Arrives-After-NbapDedicatedMeasurementFailureIndication</name>
+                    <name>Flush-IncompleteNbapRadioLinkRestoreIndication</name>
+                    <name>NbapRadioLinkRestoreIndication-Capturing</name>
+                    <name>Imsi-Arrives-After-NbapRadioLinkRestoreIndication</name>
+                    <name>Flush-IncompleteNbapCompressedModeCommand</name>
+                    <name>NbapCompressedModeCommand-Capturing</name>
+                    <name>Imsi-Arrives-After-NbapCompressedModeCommand</name>
+                    <name>Flush-IncompleteNbapRadioLinkParameterUpdateIndication</name>
+                    <name>NbapRadioLinkParameterUpdateIndication-Capturing</name>
+                    <name>Imsi-Arrives-After-NbapRadioLinkParameterUpdateIndication</name>
+                    <name>Flush-IncompleteNbapSecondaryUlFrequencyReport</name>
+                    <name>NbapSecondaryUlFrequencyReport-Capturing</name>
+                    <name>Imsi-Arrives-After-NbapSecondaryUlFrequencyReport</name>
+                    <name>Flush-IncompleteNbapSecondaryUlFrequencyUpdateIndication</name>
+                    <name>NbapSecondaryUlFrequencyUpdateIndication-Capturing</name>
+                    <name>Imsi-Arrives-After-NbapSecondaryUlFrequencyUpdateIndication</name>
+                    <name>Flush-IncompleteNbapRadioLinkPreemptionIndication</name>
+                    <name>NbapRadioLinkPreemptionIndication-Capturing</name>
+                    <name>Imsi-Arrives-After-NbapRadioLinkPreemptionIndication</name>
+                    <name>Flush-IncompleteRanapRabAssignmentRequest</name>
+                    <name>RanapRabAssignmentRequest-Capturing</name>
+                    <name>Imsi-Arrives-After-RanapRabAssignmentRequest</name>
+                    <name>Flush-IncompleteRanapRabAssignmentResponse</name>
+                    <name>RanapRabAssignmentResponse-Capturing</name>
+                    <name>Imsi-Arrives-After-RanapRabAssignmentResponse</name>
+                    <name>Flush-IncompleteRanapIuReleaseRequest</name>
+                    <name>RanapIuReleaseRequest-Capturing</name>
+                    <name>Imsi-Arrives-After-RanapIuReleaseRequest</name>
+                    <name>Flush-IncompleteRanapIuReleaseCommand</name>
+                    <name>RanapIuReleaseCommand-Capturing</name>
+                    <name>Imsi-Arrives-After-RanapIuReleaseCommand</name>
+                    <name>Flush-IncompleteRanapIuReleaseComplete</name>
+                    <name>RanapIuReleaseComplete-Capturing</name>
+                    <name>Imsi-Arrives-After-RanapIuReleaseComplete</name>
+                    <name>Flush-IncompleteRanapSecurityModeCommand</name>
+                    <name>RanapSecurityModeCommand-Capturing</name>
+                    <name>Imsi-Arrives-After-RanapSecurityModeCommand</name>
+                    <name>Flush-IncompleteRanapSecurityModeComplete</name>
+                    <name>RanapSecurityModeComplete-Capturing</name>
+                    <name>Imsi-Arrives-After-RanapSecurityModeComplete</name>
+                    <name>Flush-IncompleteRanapSecurityModeReject</name>
+                    <name>RanapSecurityModeReject-Capturing</name>
+                    <name>Imsi-Arrives-After-RanapSecurityModeReject</name>
+                    <name>Flush-IncompleteRanapLocationReportingControl</name>
+                    <name>RanapLocationReportingControl-Capturing</name>
+                    <name>Imsi-Arrives-After-RanapLocationReportingControl</name>
+                    <name>Flush-IncompleteRanapDirectTransfer</name>
+                    <name>RanapDirectTransfer-Capturing</name>
+                    <name>Imsi-Arrives-After-RanapDirectTransfer</name>
+                    <name>Flush-IncompleteRanapErrorIndication</name>
+                    <name>RanapErrorIndication-Capturing</name>
+                    <name>Imsi-Arrives-After-RanapErrorIndication</name>
+                    <name>Flush-IncompleteRanapRelocationRequired</name>
+                    <name>RanapRelocationRequired-Capturing</name>
+                    <name>Imsi-Arrives-After-RanapRelocationRequired</name>
+                    <name>Flush-IncompleteRanapRelocationRequest</name>
+                    <name>RanapRelocationRequest-Capturing</name>
+                    <name>Imsi-Arrives-After-RanapRelocationRequest</name>
+                    <name>Flush-IncompleteRanapRelocationRequestAcknowledge</name>
+                    <name>RanapRelocationRequestAcknowledge-Capturing</name>
+                    <name>Imsi-Arrives-After-RanapRelocationRequestAcknowledge</name>
+                    <name>Flush-IncompleteRanapRelocationCommand</name>
+                    <name>RanapRelocationCommand-Capturing</name>
+                    <name>Imsi-Arrives-After-RanapRelocationCommand</name>
+                    <name>Flush-IncompleteRanapRelocationDetect</name>
+                    <name>RanapRelocationDetect-Capturing</name>
+                    <name>Imsi-Arrives-After-RanapRelocationDetect</name>
+                    <name>Flush-IncompleteRanapRelocationComplete</name>
+                    <name>RanapRelocationComplete-Capturing</name>
+                    <name>Imsi-Arrives-After-RanapRelocationComplete</name>
+                    <name>Flush-IncompleteRanapRelocationPreparationFailure</name>
+                    <name>RanapRelocationPreparationFailure-Capturing</name>
+                    <name>Imsi-Arrives-After-RanapRelocationPreparationFailure</name>
+                    <name>Flush-IncompleteRanapRelocationFailure</name>
+                    <name>RanapRelocationFailure-Capturing</name>
+                    <name>Imsi-Arrives-After-RanapRelocationFailure</name>
+                    <name>Flush-IncompleteRanapRelocationCancel</name>
+                    <name>RanapRelocationCancel-Capturing</name>
+                    <name>Imsi-Arrives-After-RanapRelocationCancel</name>
+                    <name>Flush-IncompleteRanapRelocationCancelAcknowledge</name>
+                    <name>RanapRelocationCancelAcknowledge-Capturing</name>
+                    <name>Imsi-Arrives-After-RanapRelocationCancelAcknowledge</name>
+                    <name>Flush-IncompleteRanapSrnsContextRequest</name>
+                    <name>RanapSrnsContextRequest-Capturing</name>
+                    <name>Imsi-Arrives-After-RanapSrnsContextRequest</name>
+                    <name>Flush-IncompleteRanapSrnsContextResponse</name>
+                    <name>RanapSrnsContextResponse-Capturing</name>
+                    <name>Imsi-Arrives-After-RanapSrnsContextResponse</name>
+                    <name>Flush-IncompleteRanapSrnsDataForwardCommand</name>
+                    <name>RanapSrnsDataForwardCommand-Capturing</name>
+                    <name>Imsi-Arrives-After-RanapSrnsDataForwardCommand</name>
+                    <name>Flush-IncompleteRanapLocationReport</name>
+                    <name>RanapLocationReport-Capturing</name>
+                    <name>Imsi-Arrives-After-RanapLocationReport</name>
+                    <name>Flush-IncompleteRanapRanapRelocationInformation</name>
+                    <name>RanapRanapRelocationInformation-Capturing</name>
+                    <name>Imsi-Arrives-After-RanapRanapRelocationInformation</name>
+                    <name>Flush-IncompleteRanapRabReleaseRequest</name>
+                    <name>RanapRabReleaseRequest-Capturing</name>
+                    <name>Imsi-Arrives-After-RanapRabReleaseRequest</name>
+                    <name>Flush-IncompleteRnsapCommonTransportChannelResourcesReleaseRequest</name>
+                    <name>RnsapCommonTransportChannelResourcesReleaseRequest-Capturing</name>
+                    <name>Imsi-Arrives-After-RnsapCommonTransportChannelResourcesReleaseRequest</name>
+                    <name>Flush-IncompleteRnsapCommonTransportChannelResourcesRequest</name>
+                    <name>RnsapCommonTransportChannelResourcesRequest-Capturing</name>
+                    <name>Imsi-Arrives-After-RnsapCommonTransportChannelResourcesRequest</name>
+                    <name>Flush-IncompleteRnsapCommonTransportChannelResourcesResponse</name>
+                    <name>RnsapCommonTransportChannelResourcesResponse-Capturing</name>
+                    <name>Imsi-Arrives-After-RnsapCommonTransportChannelResourcesResponse</name>
+                    <name>Flush-IncompleteRnsapCommonTransportChannelResourcesFailure</name>
+                    <name>RnsapCommonTransportChannelResourcesFailure-Capturing</name>
+                    <name>Imsi-Arrives-After-RnsapCommonTransportChannelResourcesFailure</name>
+                    <name>Flush-IncompleteRnsapRadioLinkSetupRequest</name>
+                    <name>RnsapRadioLinkSetupRequest-Capturing</name>
+                    <name>Imsi-Arrives-After-RnsapRadioLinkSetupRequest</name>
+                    <name>Flush-IncompleteRnsapRadioLinkSetupResponse</name>
+                    <name>RnsapRadioLinkSetupResponse-Capturing</name>
+                    <name>Imsi-Arrives-After-RnsapRadioLinkSetupResponse</name>
+                    <name>Flush-IncompleteRnsapRadioLinkSetupFailure</name>
+                    <name>RnsapRadioLinkSetupFailure-Capturing</name>
+                    <name>Imsi-Arrives-After-RnsapRadioLinkSetupFailure</name>
+                    <name>Flush-IncompleteRnsapRadioLinkAdditionRequest</name>
+                    <name>RnsapRadioLinkAdditionRequest-Capturing</name>
+                    <name>Imsi-Arrives-After-RnsapRadioLinkAdditionRequest</name>
+                    <name>Flush-IncompleteRnsapRadioLinkAdditionResponse</name>
+                    <name>RnsapRadioLinkAdditionResponse-Capturing</name>
+                    <name>Imsi-Arrives-After-RnsapRadioLinkAdditionResponse</name>
+                    <name>Flush-IncompleteRnsapRadioLinkAdditionFailure</name>
+                    <name>RnsapRadioLinkAdditionFailure-Capturing</name>
+                    <name>Imsi-Arrives-After-RnsapRadioLinkAdditionFailure</name>
+                    <name>Flush-IncompleteRnsapRadioLinkReconfigurationPrepare</name>
+                    <name>RnsapRadioLinkReconfigurationPrepare-Capturing</name>
+                    <name>Imsi-Arrives-After-RnsapRadioLinkReconfigurationPrepare</name>
+                    <name>Flush-IncompleteRnsapRadioLinkReconfigurationReady</name>
+                    <name>RnsapRadioLinkReconfigurationReady-Capturing</name>
+                    <name>Imsi-Arrives-After-RnsapRadioLinkReconfigurationReady</name>
+                    <name>Flush-IncompleteRnsapRadioLinkReconfigurationFailure</name>
+                    <name>RnsapRadioLinkReconfigurationFailure-Capturing</name>
+                    <name>Imsi-Arrives-After-RnsapRadioLinkReconfigurationFailure</name>
+                    <name>Flush-IncompleteRnsapRadioLinkReconfigurationCommit</name>
+                    <name>RnsapRadioLinkReconfigurationCommit-Capturing</name>
+                    <name>Imsi-Arrives-After-RnsapRadioLinkReconfigurationCommit</name>
+                    <name>Flush-IncompleteRnsapRadioLinkReconfigurationCancel</name>
+                    <name>RnsapRadioLinkReconfigurationCancel-Capturing</name>
+                    <name>Imsi-Arrives-After-RnsapRadioLinkReconfigurationCancel</name>
+                    <name>Flush-IncompleteRnsapRadioLinkDeletionRequest</name>
+                    <name>RnsapRadioLinkDeletionRequest-Capturing</name>
+                    <name>Imsi-Arrives-After-RnsapRadioLinkDeletionRequest</name>
+                    <name>Flush-IncompleteRnsapRadioLinkDeletionResponse</name>
+                    <name>RnsapRadioLinkDeletionResponse-Capturing</name>
+                    <name>Imsi-Arrives-After-RnsapRadioLinkDeletionResponse</name>
+                    <name>Flush-IncompleteRnsapDlPowerControlRequest</name>
+                    <name>RnsapDlPowerControlRequest-Capturing</name>
+                    <name>Imsi-Arrives-After-RnsapDlPowerControlRequest</name>
+                    <name>Flush-IncompleteRnsapDedicatedMeasurementInitiationRequest</name>
+                    <name>RnsapDedicatedMeasurementInitiationRequest-Capturing</name>
+                    <name>Imsi-Arrives-After-RnsapDedicatedMeasurementInitiationRequest</name>
+                    <name>Flush-IncompleteRnsapDedicatedMeasurementInitiationResponse</name>
+                    <name>RnsapDedicatedMeasurementInitiationResponse-Capturing</name>
+                    <name>Imsi-Arrives-After-RnsapDedicatedMeasurementInitiationResponse</name>
+                    <name>Flush-IncompleteRnsapDedicatedMeasurementInitiationFailure</name>
+                    <name>RnsapDedicatedMeasurementInitiationFailure-Capturing</name>
+                    <name>Imsi-Arrives-After-RnsapDedicatedMeasurementInitiationFailure</name>
+                    <name>Flush-IncompleteRnsapDedicatedMeasurementReport</name>
+                    <name>RnsapDedicatedMeasurementReport-Capturing</name>
+                    <name>Imsi-Arrives-After-RnsapDedicatedMeasurementReport</name>
+                    <name>Flush-IncompleteRnsapDedicatedMeasurementTerminationRequest</name>
+                    <name>RnsapDedicatedMeasurementTerminationRequest-Capturing</name>
+                    <name>Imsi-Arrives-After-RnsapDedicatedMeasurementTerminationRequest</name>
+                    <name>Flush-IncompleteRnsapDedicatedMeasurementFailureIndication</name>
+                    <name>RnsapDedicatedMeasurementFailureIndication-Capturing</name>
+                    <name>Imsi-Arrives-After-RnsapDedicatedMeasurementFailureIndication</name>
+                    <name>Flush-IncompleteRnsapRadioLinkFailureIndication</name>
+                    <name>RnsapRadioLinkFailureIndication-Capturing</name>
+                    <name>Imsi-Arrives-After-RnsapRadioLinkFailureIndication</name>
+                    <name>Flush-IncompleteRnsapRadioLinkRestoreIndication</name>
+                    <name>RnsapRadioLinkRestoreIndication-Capturing</name>
+                    <name>Imsi-Arrives-After-RnsapRadioLinkRestoreIndication</name>
+                    <name>Flush-IncompleteRnsapCompressedModeCommand</name>
+                    <name>RnsapCompressedModeCommand-Capturing</name>
+                    <name>Imsi-Arrives-After-RnsapCompressedModeCommand</name>
+                    <name>Flush-IncompleteRnsapErrorIndication</name>
+                    <name>RnsapErrorIndication-Capturing</name>
+                    <name>Imsi-Arrives-After-RnsapErrorIndication</name>
+                    <name>Flush-IncompleteRnsapUplinkSignallingTransferIndication</name>
+                    <name>RnsapUplinkSignallingTransferIndication-Capturing</name>
+                    <name>Imsi-Arrives-After-RnsapUplinkSignallingTransferIndication</name>
+                    <name>Flush-IncompleteRnsapDownlinkSignallingTransferRequest</name>
+                    <name>RnsapDownlinkSignallingTransferRequest-Capturing</name>
+                    <name>Imsi-Arrives-After-RnsapDownlinkSignallingTransferRequest</name>
+                    <name>Flush-IncompleteRnsapRadioLinkParameterUpdateIndication</name>
+                    <name>RnsapRadioLinkParameterUpdateIndication-Capturing</name>
+                    <name>Imsi-Arrives-After-RnsapRadioLinkParameterUpdateIndication</name>
+                </statements>
+            </correlationspec>
+            <event-listening>
+                <topic-name>UERTTCorrelationTopic</topic-name>
+                <event-type>
+                    <name>gpeh.INTERNAL_IMSI</name>
+                    <name>gpeh.RRC_ACTIVE_SET_UPDATE</name>
+                    <name>gpeh.RRC_ACTIVE_SET_UPDATE_COMPLETE</name>
+                    <name>gpeh.RRC_ACTIVE_SET_UPDATE_FAILURE</name>
+                    <name>gpeh.RRC_CELL_UPDATE</name>
+                    <name>gpeh.RRC_CELL_UPDATE_CONFIRM</name>
+                    <name>gpeh.RRC_DOWNLINK_DIRECT_TRANSFER</name>
+                    <name>gpeh.RRC_MEASUREMENT_CONTROL</name>
+                    <name>gpeh.RRC_MEASUREMENT_CONTROL_FAILURE</name>
+                    <name>gpeh.RRC_MEASUREMENT_REPORT</name>
+                    <name>gpeh.RRC_PAGING_TYPE_2</name>
+                    <name>gpeh.RRC_RADIO_BEARER_RECONFIGURATION</name>
+                    <name>gpeh.RRC_RADIO_BEARER_RECONFIGURATION_COMPLETE</name>
+                    <name>gpeh.RRC_RADIO_BEARER_RECONFIGURATION_FAILURE</name>
+                    <name>gpeh.RRC_RADIO_BEARER_RELEASE</name>
+                    <name>gpeh.RRC_RADIO_BEARER_RELEASE_COMPLETE</name>
+                    <name>gpeh.RRC_RADIO_BEARER_RELEASE_FAILURE</name>
+                    <name>gpeh.RRC_RADIO_BEARER_SETUP</name>
+                    <name>gpeh.RRC_RADIO_BEARER_SETUP_COMPLETE</name>
+                    <name>gpeh.RRC_RADIO_BEARER_SETUP_FAILURE</name>
+                    <name>gpeh.RRC_RRC_CONNECTION_RELEASE</name>
+                    <name>gpeh.RRC_RRC_CONNECTION_RELEASE_COMPLETE</name>
+                    <name>gpeh.RRC_RRC_STATUS</name>
+                    <name>gpeh.RRC_SECURITY_MODE_COMMAND</name>
+                    <name>gpeh.RRC_SECURITY_MODE_COMPLETE</name>
+                    <name>gpeh.RRC_SECURITY_MODE_FAILURE</name>
+                    <name>gpeh.RRC_SIGNALLING_CONNECTION_RELEASE</name>
+                    <name>gpeh.RRC_SIGNALLING_CONNECTION_RELEASE_INDICATION</name>
+                    <name>gpeh.RRC_UE_CAPABILITY_INFORMATION</name>
+                    <name>gpeh.RRC_UE_CAPABILITY_INFORMATION_CONFIRM</name>
+                    <name>gpeh.RRC_UPLINK_DIRECT_TRANSFER</name>
+                    <name>gpeh.RRC_UTRAN_MOBILITY_INFORMATION_CONFIRM</name>
+                    <name>gpeh.RRC_HANDOVER_FROM_UTRAN_COMMAND</name>
+                    <name>gpeh.RRC_HANDOVER_FROM_UTRAN_FAILURE</name>
+                    <name>gpeh.RRC_PHYSICAL_CHANNEL_RECONFIGURATION</name>
+                    <name>gpeh.RRC_PHYSICAL_CHANNEL_RECONFIGURATION_COMPLETE</name>
+                    <name>gpeh.RRC_PHYSICAL_CHANNEL_RECONFIGURATION_FAILURE</name>
+                    <name>gpeh.RRC_UTRAN_MOBILITY_INFORMATION</name>
+                    <name>gpeh.RRC_UTRAN_MOBILITY_INFORMATION_FAILURE</name>
+                    <name>gpeh.RRC_CELL_CHANGE_ORDER_FROM_UTRAN</name>
+                    <name>gpeh.RRC_CELL_CHANGE_ORDER_FROM_UTRAN_FAILURE</name>
+                    <name>gpeh.RRC_UE_CAPABILITY_ENQUIRY</name>
+                    <name>gpeh.RRC_URA_UPDATE</name>
+                    <name>gpeh.RRC_URA_UPDATE_CONFIRM</name>
+                    <name>gpeh.RRC_TRANSPORT_CHANNEL_RECONFIGURATION</name>
+                    <name>gpeh.RRC_TRANSPORT_CHANNEL_RECONFIGURATION_COMPLETE</name>
+                    <name>gpeh.NBAP_RADIO_LINK_SETUP_REQUEST</name>
+                    <name>gpeh.NBAP_RADIO_LINK_SETUP_RESPONSE</name>
+                    <name>gpeh.NBAP_RADIO_LINK_SETUP_FAILURE</name>
+                    <name>gpeh.NBAP_RADIO_LINK_ADDITION_REQUEST</name>
+                    <name>gpeh.NBAP_RADIO_LINK_ADDITION_RESPONSE</name>
+                    <name>gpeh.NBAP_RADIO_LINK_ADDITION_FAILURE</name>
+                    <name>gpeh.NBAP_RADIO_LINK_RECONFIGURATION_PREPARE</name>
+                    <name>gpeh.NBAP_RADIO_LINK_RECONFIGURATION_READY</name>
+                    <name>gpeh.NBAP_RADIO_LINK_RECONFIGURATION_FAILURE</name>
+                    <name>gpeh.NBAP_RADIO_LINK_RECONFIGURATION_COMMIT</name>
+                    <name>gpeh.NBAP_RADIO_LINK_RECONFIGURATION_CANCEL</name>
+                    <name>gpeh.NBAP_RADIO_LINK_DELETION_REQUEST</name>
+                    <name>gpeh.NBAP_RADIO_LINK_DELETION_RESPONSE</name>
+                    <name>gpeh.NBAP_DEDICATED_MEASUREMENT_INITIATION_REQUEST</name>
+                    <name>gpeh.NBAP_DEDICATED_MEASUREMENT_INITIATION_RESPONSE</name>
+                    <name>gpeh.NBAP_DEDICATED_MEASUREMENT_INITIATION_FAILURE</name>
+                    <name>gpeh.NBAP_DEDICATED_MEASUREMENT_REPORT</name>
+                    <name>gpeh.NBAP_DEDICATED_MEASUREMENT_TERMINATION_REQUEST</name>
+                    <name>gpeh.NBAP_DEDICATED_MEASUREMENT_FAILURE_INDICATION</name>
+                    <name>gpeh.NBAP_RADIO_LINK_RESTORE_INDICATION</name>
+                    <name>gpeh.NBAP_COMPRESSED_MODE_COMMAND</name>
+                    <name>gpeh.NBAP_RADIO_LINK_PARAMETER_UPDATE_INDICATION</name>
+                    <name>gpeh.NBAP_SECONDARY_UL_FREQUENCY_REPORT</name>
+                    <name>gpeh.NBAP_SECONDARY_UL_FREQUENCY_UPDATE_INDICATION</name>
+                    <name>gpeh.NBAP_RADIO_LINK_FAILURE_INDICATION</name>
+                    <name>gpeh.NBAP_DL_POWER_CONTROL_REQUEST</name>
+                    <name>gpeh.NBAP_RADIO_LINK_PREEMPTION_REQUIRED_INDICATION</name>
+                    <name>gpeh.RANAP_RAB_ASSIGNMENT_REQUEST</name>
+                    <name>gpeh.RANAP_RAB_ASSIGNMENT_RESPONSE</name>
+                    <name>gpeh.RANAP_IU_RELEASE_REQUEST</name>
+                    <name>gpeh.RANAP_IU_RELEASE_COMMAND</name>
+                    <name>gpeh.RANAP_IU_RELEASE_COMPLETE</name>
+                    <name>gpeh.RANAP_SECURITY_MODE_COMMAND</name>
+                    <name>gpeh.RANAP_SECURITY_MODE_COMPLETE</name>
+                    <name>gpeh.RANAP_SECURITY_MODE_REJECT</name>
+                    <name>gpeh.RANAP_LOCATION_REPORTING_CONTROL</name>
+                    <name>gpeh.RANAP_DIRECT_TRANSFER</name>
+                    <name>gpeh.RANAP_ERROR_INDICATION</name>
+                    <name>gpeh.RANAP_RELOCATION_REQUIRED</name>
+                    <name>gpeh.RANAP_RELOCATION_REQUEST</name>
+                    <name>gpeh.RANAP_RELOCATION_REQUEST_ACKNOWLEDGE</name>
+                    <name>gpeh.RANAP_RELOCATION_COMMAND</name>
+                    <name>gpeh.RANAP_RELOCATION_DETECT</name>
+                    <name>gpeh.RANAP_RELOCATION_COMPLETE</name>
+                    <name>gpeh.RANAP_RELOCATION_PREPARATION_FAILURE</name>
+                    <name>gpeh.RANAP_RELOCATION_FAILURE</name>
+                    <name>gpeh.RANAP_RELOCATION_CANCEL</name>
+                    <name>gpeh.RANAP_RELOCATION_CANCEL_ACKNOWLEDGE</name>
+                    <name>gpeh.RANAP_SRNS_CONTEXT_REQUEST</name>
+                    <name>gpeh.RANAP_SRNS_CONTEXT_RESPONSE</name>
+                    <name>gpeh.RANAP_SRNS_DATA_FORWARD_COMMAND</name>
+                    <name>gpeh.RANAP_LOCATION_REPORT</name>
+                    <name>gpeh.RANAP_RANAP_RELOCATION_INFORMATION</name>
+                    <name>gpeh.RANAP_RAB_RELEASE_REQUEST</name>
+                    <name>gpeh.RNSAP_COMMON_TRANSPORT_CHANNEL_RESOURCES_RELEASE_REQUEST</name>
+                    <name>gpeh.RNSAP_COMMON_TRANSPORT_CHANNEL_RESOURCES_REQUEST</name>
+                    <name>gpeh.RNSAP_COMMON_TRANSPORT_CHANNEL_RESOURCES_RESPONSE</name>
+                    <name>gpeh.RNSAP_COMMON_TRANSPORT_CHANNEL_RESOURCES_FAILURE</name>
+                    <name>gpeh.RNSAP_RADIO_LINK_SETUP_REQUEST</name>
+                    <name>gpeh.RNSAP_RADIO_LINK_SETUP_RESPONSE</name>
+                    <name>gpeh.RNSAP_RADIO_LINK_SETUP_FAILURE</name>
+                    <name>gpeh.RNSAP_RADIO_LINK_ADDITION_REQUEST</name>
+                    <name>gpeh.RNSAP_RADIO_LINK_ADDITION_RESPONSE</name>
+                    <name>gpeh.RNSAP_RADIO_LINK_ADDITION_FAILURE</name>
+                    <name>gpeh.RNSAP_RADIO_LINK_RECONFIGURATION_PREPARE</name>
+                    <name>gpeh.RNSAP_RADIO_LINK_RECONFIGURATION_READY</name>
+                    <name>gpeh.RNSAP_RADIO_LINK_RECONFIGURATION_FAILURE</name>
+                    <name>gpeh.RNSAP_RADIO_LINK_RECONFIGURATION_COMMIT</name>
+                    <name>gpeh.RNSAP_RADIO_LINK_RECONFIGURATION_CANCEL</name>
+                    <name>gpeh.RNSAP_RADIO_LINK_DELETION_REQUEST</name>
+                    <name>gpeh.RNSAP_RADIO_LINK_DELETION_RESPONSE</name>
+                    <name>gpeh.RNSAP_DL_POWER_CONTROL_REQUEST</name>
+                    <name>gpeh.RNSAP_DEDICATED_MEASUREMENT_INITIATION_REQUEST</name>
+                    <name>gpeh.RNSAP_DEDICATED_MEASUREMENT_INITIATION_RESPONSE</name>
+                    <name>gpeh.RNSAP_DEDICATED_MEASUREMENT_INITIATION_FAILURE</name>
+                    <name>gpeh.RNSAP_DEDICATED_MEASUREMENT_REPORT</name>
+                    <name>gpeh.RNSAP_DEDICATED_MEASUREMENT_TERMINATION_REQUEST</name>
+                    <name>gpeh.RNSAP_DEDICATED_MEASUREMENT_FAILURE_INDICATION</name>
+                    <name>gpeh.RNSAP_RADIO_LINK_FAILURE_INDICATION</name>
+                    <name>gpeh.RNSAP_RADIO_LINK_RESTORE_INDICATION</name>
+                    <name>gpeh.RNSAP_COMPRESSED_MODE_COMMAND</name>
+                    <name>gpeh.RNSAP_ERROR_INDICATION</name>
+                    <name>gpeh.RNSAP_UPLINK_SIGNALLING_TRANSFER_INDICATION</name>
+                    <name>gpeh.RNSAP_DOWNLINK_SIGNALLING_TRANSFER_REQUEST</name>
+                    <name>gpeh.RNSAP_RADIO_LINK_PARAMETER_UPDATE_INDICATION</name>
+                </event-type>
+            </event-listening>
+        </service>
+
+        <service service-id="11">
+            <name>UERTTForwarderService</name>
+            <class>com.ericsson.cepmediation.server.service.UERTTDataForwarderServiceProvider</class>
+            <forwarder-type>com.ericsson.cepmediation.forwarding.uertt.UERTTEventForwarder</forwarder-type>
+            <init-method>init</init-method>
+            <proc-enabled>true</proc-enabled>
+            <event-listening>
+                <topic-name>UERTTForwarderTopic</topic-name>
+                <event-type>
+                    <name>gpeh.enrichment.RRC_ACTIVE_SET_UPDATE_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_ACTIVE_SET_UPDATE_COMPLETE_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_ACTIVE_SET_UPDATE_FAILURE_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_CELL_UPDATE_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_CELL_UPDATE_CONFIRM_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_DOWNLINK_DIRECT_TRANSFER_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_MEASUREMENT_CONTROL_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_MEASUREMENT_CONTROL_FAILURE_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_MEASUREMENT_REPORT_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_PAGING_TYPE_2_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_RADIO_BEARER_RECONFIGURATION_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_RADIO_BEARER_RECONFIGURATION_COMPLETE_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_RADIO_BEARER_RECONFIGURATION_FAILURE_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_RADIO_BEARER_RELEASE_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_RADIO_BEARER_RELEASE_COMPLETE_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_RADIO_BEARER_RELEASE_FAILURE_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_RADIO_BEARER_SETUP_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_RADIO_BEARER_SETUP_COMPLETE_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_RADIO_BEARER_SETUP_FAILURE_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_RRC_CONNECTION_RELEASE_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_RRC_CONNECTION_RELEASE_COMPLETE_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_RRC_STATUS_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_SECURITY_MODE_COMMAND_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_SECURITY_MODE_COMPLETE_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_SECURITY_MODE_FAILURE_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_SIGNALLING_CONNECTION_RELEASE_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_SIGNALLING_CONNECTION_RELEASE_INDICATION_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_UE_CAPABILITY_INFORMATION_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_UE_CAPABILITY_INFORMATION_CONFIRM_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_UPLINK_DIRECT_TRANSFER_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_UTRAN_MOBILITY_INFORMATION_CONFIRM_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_HANDOVER_FROM_UTRAN_COMMAND_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_PHYSICAL_CHANNEL_RECONFIGURATION_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_PHYSICAL_CHANNEL_RECONFIGURATION_COMPLETE_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_PHYSICAL_CHANNEL_RECONFIGURATION_FAILURE_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_UTRAN_MOBILITY_INFORMATION_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_UTRAN_MOBILITY_INFORMATION_FAILURE_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_CELL_CHANGE_ORDER_FROM_UTRAN_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_CELL_CHANGE_ORDER_FROM_UTRAN_FAILURE_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_UE_CAPABILITY_ENQUIRY_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_URA_UPDATE_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_URA_UPDATE_CONFIRM_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_TRANSPORT_CHANNEL_RECONFIGURATION_ENRICHED</name>
+                    <name>gpeh.enrichment.RRC_TRANSPORT_CHANNEL_RECONFIGURATION_COMPLETE_ENRICHED</name>
+                    <name>gpeh.enrichment.NBAP_RADIO_LINK_SETUP_REQUEST_ENRICHED</name>
+                    <name>gpeh.enrichment.NBAP_RADIO_LINK_SETUP_RESPONSE_ENRICHED</name>
+                    <name>gpeh.enrichment.NBAP_RADIO_LINK_SETUP_FAILURE_ENRICHED</name>
+                    <name>gpeh.enrichment.NBAP_RADIO_LINK_ADDITION_REQUEST_ENRICHED</name>
+                    <name>gpeh.enrichment.NBAP_RADIO_LINK_ADDITION_RESPONSE_ENRICHED</name>
+                    <name>gpeh.enrichment.NBAP_RADIO_LINK_ADDITION_FAILURE_ENRICHED</name>
+                    <name>gpeh.enrichment.NBAP_RADIO_LINK_RECONFIGURATION_PREPARE_ENRICHED</name>
+                    <name>gpeh.enrichment.NBAP_RADIO_LINK_RECONFIGURATION_READY_ENRICHED</name>
+                    <name>gpeh.enrichment.NBAP_RADIO_LINK_RECONFIGURATION_FAILURE_ENRICHED</name>
+                    <name>gpeh.enrichment.NBAP_RADIO_LINK_RECONFIGURATION_COMMIT_ENRICHED</name>
+                    <name>gpeh.enrichment.NBAP_RADIO_LINK_RECONFIGURATION_CANCEL_ENRICHED</name>
+                    <name>gpeh.enrichment.NBAP_RADIO_LINK_DELETION_REQUEST_ENRICHED</name>
+                    <name>gpeh.enrichment.NBAP_RADIO_LINK_DELETION_RESPONSE_ENRICHED</name>
+                    <name>gpeh.enrichment.NBAP_DL_POWER_CONTROL_REQUEST_ENRICHED</name>
+                    <name>gpeh.enrichment.NBAP_DEDICATED_MEASUREMENT_INITIATION_REQUEST_ENRICHED</name>
+                    <name>gpeh.enrichment.NBAP_DEDICATED_MEASUREMENT_INITIATION_RESPONSE_ENRICHED</name>
+                    <name>gpeh.enrichment.NBAP_DEDICATED_MEASUREMENT_INITIATION_FAILURE_ENRICHED</name>
+                    <name>gpeh.enrichment.NBAP_DEDICATED_MEASUREMENT_REPORT_ENRICHED</name>
+                    <name>gpeh.enrichment.NBAP_DEDICATED_MEASUREMENT_TERMINATION_REQUEST_ENRICHED</name>
+                    <name>gpeh.enrichment.NBAP_DEDICATED_MEASUREMENT_FAILURE_INDICATION_ENRICHED</name>
+                    <name>gpeh.enrichment.NBAP_RADIO_LINK_FAILURE_INDICATION_ENRICHED</name>
+                    <name>gpeh.enrichment.NBAP_RADIO_LINK_RESTORE_INDICATION_ENRICHED</name>
+                    <name>gpeh.enrichment.NBAP_COMPRESSED_MODE_COMMAND_ENRICHED</name>
+                    <name>gpeh.enrichment.NBAP_RADIO_LINK_PARAMETER_UPDATE_INDICATION_ENRICHED</name>
+                    <name>gpeh.enrichment.NBAP_SECONDARY_UL_FREQUENCY_REPORT_ENRICHED</name>
+                    <name>gpeh.enrichment.NBAP_SECONDARY_UL_FREQUENCY_UPDATE_INDICATION_ENRICHED</name>
+                    <name>gpeh.enrichment.NBAP_RADIO_LINK_PREEMPTION_REQUIRED_INDICATION_ENRICHED</name>
+                    <name>gpeh.enrichment.RANAP_RAB_ASSIGNMENT_REQUEST_ENRICHED</name>
+                    <name>gpeh.enrichment.RANAP_RAB_ASSIGNMENT_RESPONSE_ENRICHED</name>
+                    <name>gpeh.enrichment.RANAP_IU_RELEASE_REQUEST_ENRICHED</name>
+                    <name>gpeh.enrichment.RANAP_IU_RELEASE_COMMAND_ENRICHED</name>
+                    <name>gpeh.enrichment.RANAP_IU_RELEASE_COMPLETE_ENRICHED</name>
+                    <name>gpeh.enrichment.RANAP_SECURITY_MODE_COMMAND_ENRICHED</name>
+                    <name>gpeh.enrichment.RANAP_SECURITY_MODE_COMPLETE_ENRICHED</name>
+                    <name>gpeh.enrichment.RANAP_SECURITY_MODE_REJECT_ENRICHED</name>
+                    <name>gpeh.enrichment.RANAP_LOCATION_REPORTING_CONTROL_ENRICHED</name>
+                    <name>gpeh.enrichment.RANAP_DIRECT_TRANSFER_ENRICHED</name>
+                    <name>gpeh.enrichment.RANAP_ERROR_INDICATION_ENRICHED</name>
+                    <name>gpeh.enrichment.RANAP_RELOCATION_REQUIRED_ENRICHED</name>
+                    <name>gpeh.enrichment.RANAP_RELOCATION_REQUEST_ENRICHED</name>
+                    <name>gpeh.enrichment.RANAP_RELOCATION_REQUEST_ACKNOWLEDGE_ENRICHED</name>
+                    <name>gpeh.enrichment.RANAP_RELOCATION_COMMAND_ENRICHED</name>
+                    <name>gpeh.enrichment.RANAP_RELOCATION_DETECT_ENRICHED</name>
+                    <name>gpeh.enrichment.RANAP_RELOCATION_COMPLETE_ENRICHED</name>
+                    <name>gpeh.enrichment.RANAP_RELOCATION_PREPARATION_FAILURE_ENRICHED</name>
+                    <name>gpeh.enrichment.RANAP_RELOCATION_FAILURE_ENRICHED</name>
+                    <name>gpeh.enrichment.RANAP_RELOCATION_CANCEL_ENRICHED</name>
+                    <name>gpeh.enrichment.RANAP_RELOCATION_CANCEL_ACKNOWLEDGE_ENRICHED</name>
+                    <name>gpeh.enrichment.RANAP_SRNS_CONTEXT_REQUEST_ENRICHED</name>
+                    <name>gpeh.enrichment.RANAP_SRNS_CONTEXT_RESPONSE_ENRICHED</name>
+                    <name>gpeh.enrichment.RANAP_SRNS_DATA_FORWARD_COMMAND_ENRICHED</name>
+                    <name>gpeh.enrichment.RANAP_LOCATION_REPORT_ENRICHED</name>
+                    <name>gpeh.enrichment.RANAP_RANAP_RELOCATION_INFORMATION_ENRICHED</name>
+                    <name>gpeh.enrichment.RANAP_RAB_RELEASE_REQUEST_ENRICHED</name>
+                    <name>gpeh.enrichment.RNSAP_COMMON_TRANSPORT_CHANNEL_RESOURCES_RELEASE_REQUEST_ENRICHED</name>
+                    <name>gpeh.enrichment.RNSAP_COMMON_TRANSPORT_CHANNEL_RESOURCES_REQUEST_ENRICHED</name>
+                    <name>gpeh.enrichment.RNSAP_COMMON_TRANSPORT_CHANNEL_RESOURCES_RESPONSE_ENRICHED</name>
+                    <name>gpeh.enrichment.RNSAP_COMMON_TRANSPORT_CHANNEL_RESOURCES_FAILURE_ENRICHED</name>
+                    <name>gpeh.enrichment.RNSAP_RADIO_LINK_SETUP_REQUEST_ENRICHED</name>
+                    <name>gpeh.enrichment.RNSAP_RADIO_LINK_SETUP_RESPONSE_ENRICHED</name>
+                    <name>gpeh.enrichment.RNSAP_RADIO_LINK_SETUP_FAILURE_ENRICHED</name>
+                    <name>gpeh.enrichment.RNSAP_RADIO_LINK_ADDITION_REQUEST_ENRICHED</name>
+                    <name>gpeh.enrichment.RNSAP_RADIO_LINK_ADDITION_RESPONSE_ENRICHED</name>
+                    <name>gpeh.enrichment.RNSAP_RADIO_LINK_ADDITION_FAILURE_ENRICHED</name>
+                    <name>gpeh.enrichment.RNSAP_RADIO_LINK_RECONFIGURATION_PREPARE_ENRICHED</name>
+                    <name>gpeh.enrichment.RNSAP_RADIO_LINK_RECONFIGURATION_READY_ENRICHED</name>
+                    <name>gpeh.enrichment.RNSAP_RADIO_LINK_RECONFIGURATION_FAILURE_ENRICHED</name>
+                    <name>gpeh.enrichment.RNSAP_RADIO_LINK_RECONFIGURATION_COMMIT_ENRICHED</name>
+                    <name>gpeh.enrichment.RNSAP_RADIO_LINK_RECONFIGURATION_CANCEL_ENRICHED</name>
+                    <name>gpeh.enrichment.RNSAP_RADIO_LINK_DELETION_REQUEST_ENRICHED</name>
+                    <name>gpeh.enrichment.RNSAP_RADIO_LINK_DELETION_RESPONSE_ENRICHED</name>
+                    <name>gpeh.enrichment.RNSAP_DL_POWER_CONTROL_REQUEST_ENRICHED</name>
+                    <name>gpeh.enrichment.RNSAP_DEDICATED_MEASUREMENT_INITIATION_REQUEST_ENRICHED</name>
+                    <name>gpeh.enrichment.RNSAP_DEDICATED_MEASUREMENT_INITIATION_RESPONSE_ENRICHED</name>
+                    <name>gpeh.enrichment.RNSAP_DEDICATED_MEASUREMENT_INITIATION_FAILURE_ENRICHED</name>
+                    <name>gpeh.enrichment.RNSAP_DEDICATED_MEASUREMENT_REPORT_ENRICHED</name>
+                    <name>gpeh.enrichment.RNSAP_DEDICATED_MEASUREMENT_TERMINATION_REQUEST_ENRICHED</name>
+                    <name>gpeh.enrichment.RNSAP_DEDICATED_MEASUREMENT_FAILURE_INDICATION_ENRICHED</name>
+                    <name>gpeh.enrichment.RNSAP_RADIO_LINK_FAILURE_INDICATION_ENRICHED</name>
+                    <name>gpeh.enrichment.RNSAP_RADIO_LINK_RESTORE_INDICATION_ENRICHED</name>
+                    <name>gpeh.enrichment.RNSAP_COMPRESSED_MODE_COMMAND_ENRICHED</name>
+                    <name>gpeh.enrichment.RNSAP_ERROR_INDICATION_ENRICHED</name>
+                    <name>gpeh.enrichment.RNSAP_UPLINK_SIGNALLING_TRANSFER_INDICATION_ENRICHED</name>
+                    <name>gpeh.enrichment.RNSAP_DOWNLINK_SIGNALLING_TRANSFER_REQUEST_ENRICHED</name>
+                    <name>gpeh.enrichment.RNSAP_RADIO_LINK_PARAMETER_UPDATE_INDICATION_ENRICHED</name>
+                </event-type>
+            </event-listening>
+        </service>
+    </serviceList>
+    <network-element-configurations>
+        <network-element ne-type="1"><!-- 1:Radio(GPEH) , 2:Core(SGEH) , 3:UserPlane(Captool, TCP) , 4:UE_TRACE TYPE (UE_RTT) -->
+            <service-types>1,3,4,5,6,9</service-types>
+            <memory-size>20000</memory-size>
+            <memory-hint>-XX:+UseParallelGC#-XX:+UseParallelOldGC#-XX:MaxPermSize=900M#-XX:ParallelGCThreads=2#-XX:ConcGCThreads=2</memory-hint>
+            <serial-processing>true</serial-processing>
+            <recommendations>
+                <recommendation>
+                    <memory-size>20000</memory-size>
+                    <includes>
+                        <include>CFA</include>
+                        <include>HFA</include>
+                        <include>SESSION_BROWSER</include>
+                    </includes>
+                </recommendation>
+                <recommendation>
+                    <memory-size>5000</memory-size>
+                    <includes>
+                        <include>HFA</include>
+                    </includes>
+                </recommendation>
+                <recommendation>
+                    <memory-size>12000</memory-size>
+                    <includes>
+                        <include>CFA</include>
+                        <include>HFA</include>
+                    </includes>
+                </recommendation>
+            </recommendations>
+        </network-element>
+        <network-element ne-type="2"><!-- 1:Radio(GPEH) , 2:Core(SGEH) , 3:UserPlane(Captool, TCP) , 4:UE_TRACE TYPE (UE_RTT) -->
+            <service-types>1,3,7,9</service-types>
+            <memory-size>4000</memory-size>
+            <memory-hint>-XX:+UseParallelGC#-XX:+UseParallelOldGC#-XX:MaxPermSize=700M#-XX:ParallelGCThreads=2#-XX:ConcGCThreads=2</memory-hint>
+            <serial-processing>true</serial-processing>
+        </network-element>
+        <network-element ne-type="3"><!-- 1:Radio(GPEH) , 2:Core(SGEH) , 3:UserPlane(Captool, TCP) , 4:UE_TRACE TYPE (UE_RTT) -->
+            <service-types>1,3,8</service-types>
+            <memory-size>9000</memory-size>
+            <memory-hint>-XX:+UseParallelGC#-XX:+UseParallelOldGC#-XX:MaxPermSize=500M#-XX:ParallelGCThreads=2#-XX:ConcGCThreads=2</memory-hint>
+            <serial-processing>true</serial-processing>
+        </network-element>
+        <network-element ne-type="4"> <!-- 1:Radio(GPEH) , 2:Core(SGEH) , 3:UserPlane(Captool, TCP) , 4:UE_TRACE TYPE (UE_RTT) -->
+            <service-types>10,11</service-types>
+            <memory-size>2000</memory-size>
+            <memory-hint>-XX:+UseParallelGC#-XX:+UseParallelOldGC#-XX:MaxPermSize=900M#-XX:ParallelGCThreads=2#-XX:ConcGCThreads=2</memory-hint>
+            <serial-processing>true</serial-processing>
+            <recommendations>
+                <recommendation>
+                    <memory-size>2000</memory-size>
+                    <includes>
+                        <include>UE_RTT</include>
+                    </includes>
+                </recommendation>
+            </recommendations>
+        </network-element>
+    </network-element-configurations>
+</appconfig>
+  

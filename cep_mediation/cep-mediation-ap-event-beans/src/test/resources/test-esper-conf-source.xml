@@ -1,0 +1,68 @@
+<esper-configuration xmlns="http://www.espertech.com/schema/esper" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="esper-configuration-4-0.xsd">
+
+    <engine-settings>
+        <defaults>
+            <logging>
+                <execution-path enabled="false"/>
+                <timer-debug enabled="false"/>
+                <query-plan enabled="false"/>
+                <jdbc enabled="false"/>
+            </logging>
+        </defaults>
+    </engine-settings>
+
+    	<event-type class="com.ericsson.cepmediation.apeventbeans.bearer_plane.CLASSIFICATION_REPORT" name="bearer_plane.CLASSIFICATION_REPORT"/>
+    	
+
+<event-type class="com.ericsson.cepmediation.correlation.enrichment.InternalGpehSession" name="gpeh.InternalGpehSession">
+<legacy-type accessor-style="javabean" code-generation="enabled" copy-method="cloneMe" property-resolution-style="case_insensitive"/>
+</event-type>
+<event-type class="com.ericsson.cepmediation.correlation.enrichment.InternalGpehSession" name="gpeh.InternalGpehSession">
+<legacy-type accessor-style="javabean" code-generation="enabled" copy-method="cloneMe" property-resolution-style="case_insensitive"/>
+</event-type>
+<event-type class="com.ericsson.cepmediation.correlation.enrichment.InternalGpehSession" name="gpeh.InternalGpehSession">
+<legacy-type accessor-style="javabean" code-generation="enabled" copy-method="cloneMe" property-resolution-style="case_insensitive"/>
+</event-type>
+<event-type class="com.ericsson.cepmediation.correlation.enrichment.InternalGpehSession" name="gpeh.InternalGpehSession">
+<legacy-type accessor-style="javabean" code-generation="enabled" copy-method="cloneMe" property-resolution-style="case_insensitive"/>
+</event-type>
+<event-type class="com.ericsson.cepmediation.correlation.enrichment.InternalGpehSession" name="gpeh.InternalGpehSession">
+<legacy-type accessor-style="javabean" code-generation="enabled" copy-method="cloneMe" property-resolution-style="case_insensitive"/>
+</event-type>
+<event-type class="com.ericsson.cepmediation.correlation.enrichment.InternalGpehSession" name="gpeh.InternalGpehSession">
+<legacy-type accessor-style="javabean" code-generation="enabled" copy-method="cloneMe" property-resolution-style="case_insensitive"/>
+</event-type>
+<event-type class="com.ericsson.cepmediation.correlation.enrichment.InternalGpehSession" name="gpeh.InternalGpehSession">
+<legacy-type accessor-style="javabean" code-generation="enabled" copy-method="cloneMe" property-resolution-style="case_insensitive"/>
+</event-type>
+<event-type class="com.ericsson.cepmediation.correlation.enrichment.InternalGpehSession" name="gpeh.InternalGpehSession">
+<legacy-type accessor-style="javabean" code-generation="enabled" copy-method="cloneMe" property-resolution-style="case_insensitive"/>
+</event-type>
+<event-type class="com.ericsson.cepmediation.correlation.enrichment.InternalGpehSession" name="gpeh.InternalGpehSession">
+<legacy-type accessor-style="javabean" code-generation="enabled" copy-method="cloneMe" property-resolution-style="case_insensitive"/>
+</event-type>
+<event-type class="com.ericsson.cepmediation.correlation.enrichment.InternalGpehSession" name="gpeh.InternalGpehSession">
+<legacy-type accessor-style="javabean" code-generation="enabled" copy-method="cloneMe" property-resolution-style="case_insensitive"/>
+</event-type>
+<event-type class="com.ericsson.cepmediation.correlation.enrichment.InternalGpehSession" name="gpeh.InternalGpehSession">
+<legacy-type accessor-style="javabean" code-generation="enabled" copy-method="cloneMe" property-resolution-style="case_insensitive"/>
+</event-type>
+<event-type class="com.ericsson.cepmediation.correlation.enrichment.InternalGpehSession" name="gpeh.InternalGpehSession">
+<legacy-type accessor-style="javabean" code-generation="enabled" copy-method="cloneMe" property-resolution-style="case_insensitive"/>
+</event-type>
+<event-type class="com.ericsson.cepmediation.correlation.enrichment.InternalGpehSession" name="gpeh.InternalGpehSession">
+<legacy-type accessor-style="javabean" code-generation="enabled" copy-method="cloneMe" property-resolution-style="case_insensitive"/>
+</event-type>
+<event-type class="com.ericsson.cepmediation.correlation.enrichment.InternalGpehSession" name="gpeh.InternalGpehSession">
+<legacy-type accessor-style="javabean" code-generation="enabled" copy-method="cloneMe" property-resolution-style="case_insensitive"/>
+</event-type>
+<event-type class="com.ericsson.cepmediation.correlation.enrichment.InternalGpehSession" name="gpeh.InternalGpehSession">
+<legacy-type accessor-style="javabean" code-generation="enabled" copy-method="cloneMe" property-resolution-style="case_insensitive"/>
+</event-type>
+<event-type class="com.ericsson.cepmediation.correlation.enrichment.InternalGpehSession" name="gpeh.InternalGpehSession">
+<legacy-type accessor-style="javabean" code-generation="enabled" copy-method="cloneMe" property-resolution-style="case_insensitive"/>
+</event-type>
+<event-type class="com.ericsson.cepmediation.correlation.enrichment.InternalGpehSession" name="gpeh.InternalGpehSession">
+<legacy-type accessor-style="javabean" code-generation="enabled" copy-method="cloneMe" property-resolution-style="case_insensitive"/>
+</event-type>
+</esper-configuration>

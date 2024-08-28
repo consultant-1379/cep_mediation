@@ -1,0 +1,389 @@
+create window RadioSessionWindow.win:keepall() as RadioSesion;
+
+create schema RADIO_SESSION_START_MARKER as (imsi                    string,
+			                                 timestamp               long,
+			                                 actual_start_time       long,
+											 actual_end_time         long,
+			                                 session_start           long,
+			                                 session_end             long,
+					                         ueContext               short,
+						                     rncModuleId             byte,
+						                     rncId				     short,
+			                                 cell_Id                 int
+			                                ); 
+create schema ENHANCED_RADIO_EVENT as (event com.ericsson.cepmediation.apeventbeans.gpeh.GpehBase);
+			                                
+@Priority(5)			                                  
+@Name('RADIO_SESSION')									   
+on pattern [every a=com.ericsson.cepmediation.apeventbeans.gpeh.GpehBase()]
+select rsw.* from RadioSessionWindow as rsw
+where rsw.sessionEnd<a.timestamp;
+
+
+@Priority(3)		
+@Name('CARRY_OVER_IF_RRC_OR_RAB_ACTIVITY_ON')	                                  
+on pattern [every a=com.ericsson.cepmediation.apeventbeans.gpeh.GpehBase()]
+MERGE RadioSessionWindow AS radio_session_window
+WHERE radio_session_window.sessionEnd<a.timestamp
+  AND (radio_session_window.rabActivityOn = true OR radio_session_window.rrcActivityOn = true)
+WHEN MATCHED AND radio_session_window.rabActivityOn=true AND radio_session_window.rrcActivityOn=true
+        THEN INSERT INTO RadioSessionWindow SELECT
+         	radio_session_window.startRab		        as startRab,
+         	-1						                    as endRab,
+         	radio_session_window.imsi                   as imsi,
+         	radio_session_window.sessionEnd             as sessionStart,
+         	radio_session_window.sessionEnd.
+         	plus(5 minutes)            					as sessionEnd,
+         	radio_session_window.rrcConnectionStart     as rrcConnectionStart,
+         	radio_session_window.psRabActivityStart     as psRabActivityStart,
+         	a.timestamp	                                as rrcConnectionEnd,
+			0l                       		            as psRabActivityEnd,
+			0l						   	              	as rrcDuration,
+			0l						         	     	as psRabDuration,
+			0           				                as psRabEstablishmentCount,
+			0					      				    as csRabEstablishmentCount,
+			0                                           as dropCount,
+			1                                           as totalEventCount,
+			0					                        as hsCellChangeSuccessfulCount,
+			a.getC_ID_1()                    			as startCellId,
+			a.getC_ID_1()                    			as endCellId,
+			a.RNC_ID_1                       			as startRNC,
+			a.RNC_ID_1                                  as endRNC,
+			300l                     				    as sessionDuration,
+			0                                           as ifhoExecSuccessfulCount,
+			0                                           as ifhoExecErrorCount,
+			radio_session_window.rabActivityOn          as rabActivityOn,
+			radio_session_window.rrcActivityOn          as rrcActivityOn,
+			1                                           as rrcConnectionCount
+WHEN MATCHED AND radio_session_window.rabActivityOn=true AND radio_session_window.rrcActivityOn=false
+        THEN INSERT INTO RadioSessionWindow SELECT
+         	radio_session_window.startRab		        as startRab,
+         	-1						                    as endRab,
+         	radio_session_window.imsi                   as imsi,
+         	radio_session_window.sessionEnd             as sessionStart,
+         	radio_session_window.sessionEnd.
+         	plus(5 minutes)            					as sessionEnd,
+         	0l        								    as rrcConnectionStart,
+         	radio_session_window.psRabActivityStart     as psRabActivityStart,
+         	a.timestamp	                                as rrcConnectionEnd,
+			0l                       		            as psRabActivityEnd,
+			0l						   	              	as rrcDuration,
+			0l						         	     	as psRabDuration,
+			0           				                as psRabEstablishmentCount,
+			0					      				    as csRabEstablishmentCount,
+			0                                           as dropCount,
+			1                                           as totalEventCount,
+			0					                        as hsCellChangeSuccessfulCount,
+			a.getC_ID_1()                    			as startCellId,
+			a.getC_ID_1()                    			as endCellId,
+			a.RNC_ID_1                       			as startRNC,
+			a.RNC_ID_1                                  as endRNC,
+			300l                     				    as sessionDuration,
+			0                                           as ifhoExecSuccessfulCount,
+			0                                           as ifhoExecErrorCount,
+			radio_session_window.rabActivityOn          as rabActivityOn,
+			radio_session_window.rrcActivityOn          as rrcActivityOn,
+			1                                           as rrcConnectionCount
+WHEN MATCHED AND radio_session_window.rabActivityOn=false AND radio_session_window.rrcActivityOn=true
+        THEN INSERT INTO RadioSessionWindow SELECT
+         	-1                          		        as startRab,
+         	-1						                    as endRab,
+         	radio_session_window.imsi                   as imsi,
+         	radio_session_window.sessionEnd             as sessionStart,
+         	radio_session_window.sessionEnd.
+         	plus(5 minutes)            					as sessionEnd,
+         	radio_session_window.rrcConnectionStart     as rrcConnectionStart,
+         	radio_session_window.psRabActivityStart     as psRabActivityStart,
+         	a.timestamp	                                as rrcConnectionEnd,
+			0l                       		            as psRabActivityEnd,
+			0l						   	              	as rrcDuration,
+			0l						         	     	as psRabDuration,
+			0           				                as psRabEstablishmentCount,
+			0					      				    as csRabEstablishmentCount,
+			0                                           as dropCount,
+			1                                           as totalEventCount,
+			0					                        as hsCellChangeSuccessfulCount,
+			a.getC_ID_1()                    			as startCellId,
+			a.getC_ID_1()                    			as endCellId,
+			a.RNC_ID_1                       			as startRNC,
+			a.RNC_ID_1                                  as endRNC,
+			300l                     				    as sessionDuration,
+			0                                           as ifhoExecSuccessfulCount,
+			0                                           as ifhoExecErrorCount,
+			radio_session_window.rabActivityOn          as rabActivityOn,
+			radio_session_window.rrcActivityOn          as rrcActivityOn,
+			1                                           as rrcConnectionCount;
+
+on pattern [every a=com.ericsson.cepmediation.apeventbeans.gpeh.GpehBase()]
+delete from RadioSessionWindow as rsw
+where rsw.sessionEnd<a.timestamp;
+
+insert into RADIO_SESSION_START_MARKER (imsi,timestamp,actual_start_time,actual_end_time,session_start,session_end,ueContext,rncModuleId,rncId,cell_Id)
+select b.IMSI 					       as imsi,
+       a.timestamp                     as timestamp,
+       a.timestamp                     as actual_start_time,
+       a.timestamp                     as actual_end_time,
+       a.timestamp.roundFloor('min').minus
+       ((a.timestamp.getMinuteOfHour()%5)*60000)   
+                                       as session_start,
+       
+       a.timestamp.roundFloor('min').minus
+       ((a.timestamp.getMinuteOfHour()%5)*60000).
+       plus(5 minutes)				   as session_end,
+       a.UE_CONTEXT				       as ueContext,
+       b.RNC_MODULE_ID                 as rncModuleId,
+       b.RNC_ID_1                      as rncId,
+       a.getC_ID_1()       	           as cell_Id
+from pattern [
+                every a=com.ericsson.cepmediation.apeventbeans.gpeh.RRC_RRC_CONNECTION_SETUP()
+             -> b=com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_IMSI(b.UE_CONTEXT   = a.UE_CONTEXT,
+						                                                    b.RNC_MODULE_ID = a.RNC_MODULE_ID,
+						                                                    b.RNC_ID_1 = a.RNC_ID_1,
+						                                                    b.timestamp > a.timestamp)
+            ];	
+@Priority(10)	            
+ON RADIO_SESSION_START_MARKER AS start_marker
+	MERGE RadioSessionWindow AS radio_session_window
+	WHERE radio_session_window.imsi = start_marker.imsi
+	  AND start_marker.timestamp.between(radio_session_window.sessionStart,radio_session_window.sessionEnd)
+	WHEN MATCHED  
+		THEN UPDATE SET
+			radio_session_window.rrcConnectionCount  = radio_session_window.rrcConnectionCount +1,
+			radio_session_window.endCellId     		 = start_marker.cell_Id,
+			radio_session_window.totalEventCount     = radio_session_window.totalEventCount+1,
+			radio_session_window.endRNC     		 = start_marker.rncId,
+			radio_session_window.rrcActivityOn       = true
+	WHEN NOT MATCHED  
+        THEN INSERT INTO RadioSessionWindow SELECT
+         	-1 				           					as startRab,
+         	-1						                    as endRab,
+         	start_marker.imsi                           as imsi,
+         	start_marker.session_start                  as sessionStart,
+         	start_marker.session_end                    as sessionEnd,
+         	start_marker.actual_start_time              as rrcConnectionStart,
+         	0l                                          as psRabActivityStart,
+         	0l                                          as rrcConnectionEnd,
+			0l                       		            as psRabActivityEnd,
+			0l						   	              	as rrcDuration,
+			0l						         	     	as psRabDuration,
+			0           				                as psRabEstablishmentCount,
+			0					      				    as csRabEstablishmentCount,
+			0                                           as dropCount,
+			1                                           as totalEventCount,
+			0					                        as hsCellChangeSuccessfulCount,
+			start_marker.cell_Id    				    as startCellId,
+			start_marker.cell_Id    				    as endCellId,
+			start_marker.rncId        			        as startRNC,
+			start_marker.rncId                          as endRNC,
+			300l                     				    as sessionDuration,
+			0                                           as ifhoExecSuccessfulCount,
+			0                                           as ifhoExecErrorCount,
+			false                                       as rabActivityOn,
+			true                                        as rrcActivityOn,
+			1                                           as rrcConnectionCount;
+@Priority(5)		
+@Name('ENHANCED MIDDLE EVENTS BETWEEN CONNECTION SET_UP AND INTERNAL_IMSI')
+insert into ENHANCED_RADIO_EVENT(event)
+select b.setIdentity(c.IMSI)
+       from  pattern[
+                       every a=com.ericsson.cepmediation.apeventbeans.gpeh.RRC_RRC_CONNECTION_SETUP()
+		             ->every b=com.ericsson.cepmediation.apeventbeans.gpeh.GpehBase(b.UE_CONTEXT = a.UE_CONTEXT,
+											                                        b.RNC_MODULE_ID = a.RNC_MODULE_ID,
+											                                        b.RNC_ID_1 = a.RNC_ID_1, 
+											                                        b.timestamp > a.timestamp,
+					                                               		            b.type != 'INTERNAL_SYSTEM_UTILIZATION')
+		                       and not com.ericsson.cepmediation.apeventbeans.gpeh.RRC_RRC_CONNECTION_SETUP()
+		                       and not com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_IMSI()
+		             ->c=com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_IMSI(b.UE_CONTEXT = a.UE_CONTEXT,
+										                                           b.RNC_MODULE_ID = a.RNC_MODULE_ID,
+										                                           b.RNC_ID_1 = a.RNC_ID_1, 
+						                   										   c.timestamp > b.timestamp)
+						  	                                                              
+                    ];				
+@Name('ENHANCED INTERNAL_IMSI')    
+@Priority(3)                 
+insert into ENHANCED_RADIO_EVENT(event) 
+select a.setIdentity(a.IMSI)
+       from  pattern[
+                      every a=com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_IMSI                                                          
+                    ];     
+                    
+@Name('ENHANCED EVENTS AFTER INTERNAL_IMSI')    
+@Priority(1)                 
+insert into ENHANCED_RADIO_EVENT(event)
+select b.setIdentity(a.IMSI)
+	   from pattern [
+	                    every  a=com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_IMSI()
+		     		   ->every b=com.ericsson.cepmediation.apeventbeans.gpeh.GpehBase(b.UE_CONTEXT = a.UE_CONTEXT,
+											                                          b.RNC_MODULE_ID = a.RNC_MODULE_ID,
+											                                          b.RNC_ID_1 = a.RNC_ID_1, 
+											                                          b.timestamp > a.timestamp,
+					                                               		              b.type != 'INTERNAL_SYSTEM_UTILIZATION')
+        	                 and not com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_IMSI()
+        	                 and not com.ericsson.cepmediation.apeventbeans.gpeh.RRC_RRC_CONNECTION_SETUP()
+                    ];	  
+@Name('For each enhanced event update RADIO Session')                                
+ON ENHANCED_RADIO_EVENT AS ere
+    MERGE RadioSessionWindow AS radio_session_window
+	WHERE radio_session_window.imsi = ere.event.identity 
+	  AND ere.event.timestamp.between(radio_session_window.sessionStart,radio_session_window.sessionEnd)
+	  WHEN NOT MATCHED
+	     THEN INSERT INTO RadioSessionWindow
+	     SELECT
+         	-1       				                               as startRab,
+         	-1                                                     as endRab,
+         	ere.event.identity                    				   as imsi,
+         	ere.timestamp.roundFloor('min').minus
+       		((ere.timestamp.getMinuteOfHour()%5)*60000)            as sessionStart,
+       		ere.timestamp.roundFloor('min').minus
+       		((ere.timestamp.getMinuteOfHour()%5)*60000).
+       		plus(5 minutes)										   as sessionEnd,
+			ere.timestamp    									   as rrcConnectionStart,
+			0               	                      			   as psRabActivityStart,
+			ere.timestamp              	             			   as rrcConnectionEnd,
+			0                                                      as psRabActivityEnd,
+			0l					      							   as rrcDuration,
+			0l					                                   as psRabDuration,
+			0        				    				           as psRabEstablishmentCount,
+			0            		 					               as csRabEstablishmentCount,
+			0                           				           as dropCount,
+			1                                                      as totalEventCount,
+			0                                                      as hsCellChangeSuccessfulCount,
+			ere.getC_ID_1()                                        as startCellId,
+			ere.getC_ID_1()                                        as endCellId,
+			ere.RNC_ID_1                                           as startRNC,
+			ere.RNC_ID_1                                           as endRNC,
+			300l                                                   as sessionDuration,
+			0                                                      as ifhoExecSuccessfulCount,
+			0                                                      as ifhoExecErrorCount, 
+			false                                                  as rabActivityOn,
+			true                                                   as rrcActivityOn,
+			0													   as rrcConnectionCount
+	  WHEN MATCHED AND ere.event_type='INTERNAL_RAB_ESTABLISHMENT' AND Util.containsPsRab(1)
+	     THEN UPDATE SET
+	         radio_session_window.totalEventCount       		= radio_session_window.totalEventCount+1,
+			 radio_session_window.endCellId			            = ere.getC_ID_1(),
+			 radio_session_window.endRNC			            = ere.RNC_ID_1,
+		     radio_session_window.startRab				        = 1,
+			 radio_session_window.endRab				        = 1,
+		     radio_session_window.psRabEstablishmentCount       = Util.getPsRabCount(1),
+			 radio_session_window.csRabEstablishmentCount       = Util.getCsRabCount(1),
+             radio_session_window.rabActivityOn                 = true,
+             radio_session_window.psRabActivityStart            = case when radio_session_window.startRab=-1 
+						         								  THEN 
+																    ere.timestamp
+																  END,
+             radio_session_window.psRabActivityEnd              = case when radio_session_window.startRab=-1 
+						         								  THEN 
+																    ere.timestamp
+																  END																  	
+	 WHEN MATCHED AND ere.event_type='INTERNAL_RAB_ESTABLISHMENT' AND Util.isCsRabOnly(1)
+	     THEN UPDATE SET
+	         radio_session_window.totalEventCount       		= radio_session_window.totalEventCount+1,
+			 radio_session_window.endCellId			            = ere.getC_ID_1(),
+			 radio_session_window.endRNC			            = ere.RNC_ID_1,
+			 radio_session_window.csRabEstablishmentCount       = radio_session_window.csRabEstablishmentCount+1
+      WHEN MATCHED AND (ere.event_type='INTERNAL_RAB_RELEASE' AND radio_session_window.rabActivityOn = true AND not Util.containsPsRab(1))
+	     THEN UPDATE SET
+	         radio_session_window.totalEventCount       		= radio_session_window.totalEventCount+1,
+			 radio_session_window.endCellId			            = ere.getC_ID_1(),
+			 radio_session_window.endRNC			            = ere.RNC_ID_1,
+			 radio_session_window.psRabDuration                 = radio_session_window.psRabDuration.plus(ere.timestamp-radio_session_window.psRabActivityEnd),
+		     radio_session_window.endRab				        = 0,
+		     radio_session_window.psRabActivityEnd              = ere.timestamp,
+             radio_session_window.rabActivityOn                 = false
+	WHEN MATCHED AND (ere.event_type='RANAP_IU_RELEASE_COMMAND' AND radio_session_window.rabActivityOn = true )
+	     THEN UPDATE SET
+	         radio_session_window.totalEventCount       		= radio_session_window.totalEventCount+1,
+			 radio_session_window.endCellId			            = ere.getC_ID_1(),
+			 radio_session_window.endRNC			            = ere.RNC_ID_1,
+			 radio_session_window.psRabDuration                 = radio_session_window.psRabDuration.plus(ere.timestamp-radio_session_window.psRabActivityEnd),
+		     radio_session_window.psRabActivityEnd              = ere.timestamp,
+             radio_session_window.rabActivityOn                 = false
+    WHEN MATCHED AND ere.event_type='INTERNAL_SYSTEM_RELEASE'
+	     THEN UPDATE SET
+	        radio_session_window.totalEventCount       		    = radio_session_window.totalEventCount+1,
+		    radio_session_window.endCellId			            = ere.getC_ID_1(),
+		    radio_session_window.endRNC			                = ere.RNC_ID_1,
+			radio_session_window.psRabDuration                  = case when radio_session_window.rabActivityOn = true  AND not Util.containsPsRab(1)
+						         								  THEN 
+																    radio_session_window.psRabDuration.plus(ere.timestamp-radio_session_window.psRabActivityEnd)
+																  END,
+		    radio_session_window.endRab				            = case when radio_session_window.rabActivityOn = true  AND not Util.containsPsRab(1)
+						         								  THEN 
+																    0
+																  END,
+		    radio_session_window.psRabActivityEnd               = case when radio_session_window.rabActivityOn = true  AND not Util.containsPsRab(1)
+						         								  THEN 
+																    ere.timestamp
+																  END,
+            radio_session_window.rabActivityOn                  = case when radio_session_window.rabActivityOn = true  AND not Util.containsPsRab(1)
+						         								  THEN 
+																    false
+																  END,
+            radio_session_window.dropCount                      = radio_session_window.dropCount + 1
+     WHEN MATCHED AND ere.event_type='RRC_RRC_CONNECTION_RELEASE_COMPLETE'
+	     THEN UPDATE SET
+	         radio_session_window.totalEventCount       		= radio_session_window.totalEventCount+1,
+			 radio_session_window.endCellId			            = ere.getC_ID_1(),
+			 radio_session_window.endRNC			            = ere.RNC_ID_1,
+			 radio_session_window.psRabDuration                 = case when radio_session_window.rabActivityOn = true 
+						         								  THEN 
+																    radio_session_window.psRabDuration.plus(ere.timestamp-radio_session_window.psRabActivityEnd)
+																  END,
+		     radio_session_window.psRabActivityEnd              = case when radio_session_window.rabActivityOn = true 
+						         								  THEN 
+																    ere.timestamp
+																  END,
+             radio_session_window.rabActivityOn                 = false,
+             radio_session_window.rrcActivityOn                 = false,
+             radio_session_window.rrcDuration                   = radio_session_window.rrcDuration.plus(ere.timestamp-radio_session_window.rrcConnectionEnd),
+             radio_session_window.rrcConnectionEnd              = ere.timestamp
+     WHEN MATCHED AND ere.event_type='INTERNAL_FAILED_HSDSCH_CELL_CHANGE'
+	     THEN UPDATE SET
+	         radio_session_window.totalEventCount       		= radio_session_window.totalEventCount+1,
+			 radio_session_window.endCellId			            = ere.getC_ID_1(),
+			 radio_session_window.endRNC			            = ere.RNC_ID_1,
+			 radio_session_window.hsCellChangeErrorCount        = radio_session_window.hsCellChangeErrorCount+1
+	 WHEN MATCHED AND ere.event_type='INTERNAL_SUCCESSFUL_HSDSCH_CELL_CHANGE'
+	     THEN UPDATE SET
+	         radio_session_window.totalEventCount       		= radio_session_window.totalEventCount+1,
+			 radio_session_window.endCellId			            = ere.getC_ID_1(),
+			 radio_session_window.endRNC			            = ere.RNC_ID_1,
+			 radio_session_window.hsCellChangeSuccessfulCount   = radio_session_window.hsCellChangeSuccessfulCount+1
+	 WHEN MATCHED AND ere.event_type='INTERNAL_HSDSCH_CELL_SELECTION_NO_CELL_SELECTED'
+	     THEN UPDATE SET
+	         radio_session_window.totalEventCount       		= radio_session_window.totalEventCount+1,
+			 radio_session_window.endCellId			            = ere.getC_ID_1(),
+			 radio_session_window.endRNC			            = ere.RNC_ID_1,
+			 radio_session_window.hasNoCellSelected             = radio_session_window.hasNoCellSelected+1
+	 WHEN MATCHED AND ere.event_type='INTERNAL_OUT_HARD_HANDOVER_FAILURE'
+	     THEN UPDATE SET
+	         radio_session_window.totalEventCount       		= radio_session_window.totalEventCount+1,
+			 radio_session_window.endCellId			            = ere.getC_ID_1(),
+			 radio_session_window.endRNC			            = ere.RNC_ID_1,
+			 radio_session_window.internalOutHardHandoverFailure= radio_session_window.internalOutHardHandoverFailure+1
+	WHEN MATCHED AND ere.event_type='INTERNAL_IFHO_EXECUTION_ACTIVE'
+	     THEN UPDATE SET
+	         radio_session_window.totalEventCount       		= radio_session_window.totalEventCount+1,
+			 radio_session_window.endCellId			            = ere.getC_ID_1(),
+			 radio_session_window.endRNC			            = ere.RNC_ID_1,
+			 radio_session_window.internalIfhoExecutionSuccessCount= radio_session_window.internalIfhoExecutionSuccessCount+1
+	WHEN MATCHED AND ere.event_type='INTERNAL_SOFT_HANDOVER_EXECUTION'
+	     THEN UPDATE SET
+	         radio_session_window.totalEventCount       		= radio_session_window.totalEventCount+1,
+			 radio_session_window.endCellId			            = ere.getC_ID_1(),
+			 radio_session_window.endRNC			            = ere.RNC_ID_1,
+			 radio_session_window.softHandoverExecutionSuccessCount = radio_session_window.softHandoverExecutionSuccessCount+1
+	WHEN MATCHED AND ere.event_type='INTERNAL_CMODE_ACTIVATE'
+	     THEN UPDATE SET
+	         radio_session_window.totalEventCount       	    = radio_session_window.totalEventCount+1,
+			 radio_session_window.endCellId			            = ere.getC_ID_1(),
+			 radio_session_window.endRNC			            = ere.RNC_ID_1,
+			 radio_session_window.internalCModeActivateCount    = radio_session_window.internalCModeActivateCount+1
+	WHEN MATCHED AND ere.event_type='INTERNAL_CMODE_DEACTIVATE'
+	     THEN UPDATE SET
+	         radio_session_window.totalEventCount       	    = radio_session_window.totalEventCount+1,
+			 radio_session_window.endCellId			            = ere.getC_ID_1(),
+			 radio_session_window.endRNC			            = ere.RNC_ID_1,
+			 radio_session_window.internalCModeDeactivateCount  = radio_session_window.internalCModeDeactivateCount+1;

@@ -1,0 +1,233 @@
+// Declare the name for the module
+module UserPlaneSessionCorrelation;
+
+// Imports
+import com.ericsson.cepmediation.eventbeans.celltrace.*;
+import com.ericsson.cepmediation.eventbeans.ctum.*;
+import com.ericsson.cepmediation.eventbeans.ebm.*;
+import java.lang.Math;
+
+@Name('select-LOG_EVENT')
+@Description('Select all LOG_EVENT events for storage')
+//@Audit
+select * from correlation.LOG_EVENT.win:length(1);
+
+@Name('UPS-create-window')
+@Description('Create a window for handling X2 handover events')
+//@Audit
+create window UPSWindow.win:keepall() as correlation.USER_PLANE_SESSION;
+
+@Name('UPS-flush-window')
+@Description('Flush the named window for X2 handover correlations')
+//@Audit
+on pattern [every timer:interval(1 min)]
+	delete from UPSWindow as upswin
+	where (upswin.IPUTR); // Correlation complete
+	//or current_timestamp - upswin.CORRELATION_TIME > 5000; // Correlation times out after 5000 ms 
+
+	
+@Name('UPS-handle-INTERNAL_PER_UE_TRAFFIC_REP')
+@Description('Handle INTERNAL_PER_UE_TRAFFIC_REP events')
+//@Hint('reclaim_group_aged=60')
+//@Hint('set_noindex')
+//@Audit
+insert into correlation.USER_PLANE_SESSION select
+	'USER_PLANE_SESSION'       																as name,
+	iputr.version       																	as 	version,
+	iputr.timestamp     																	as 	timestamp,
+	current_timestamp() 																	as 	CORRELATION_TIME,
+	iputr.timestamp     																	as 	END_TIMESTAMP,
+	iputr.subNetwork       																	as 	subNetwork,
+	iputr.ne            																	as 	ne,
+	60																						as  DURATION,
+	iputr.GLOBAL_CELL_ID																	as 	GLOBAL_CELL_ID,
+	iputr.RAC_UE_REF    																	as 	RAC_UE_REF,
+	iputr.ENBS1APID     																	as 	ENBS1APID,
+	iputr.MMES1APID     																	as 	MMES1APID,
+	iputr.GUMMEI        																	as 	GUMMEI,
+	iputr.TIMESTAMP_MINUTE																	as 	TIMESTAMP_MINUTE,
+	(sum( PER_UE_THP_DL_DRB / 8.0 * PER_UE_THP_TIME_DL) + sum(PER_UE_THP_PDCPVOL_TRUNK_DL)) as  VOL_TOTAL_DL,
+	(sum(PER_UE_THP_UL_DRB / 8.0 *PER_UE_THP_TIME_UL) + sum(PER_UE_THP_PDCPVOL_TRUNK_UL)) 	as  VOL_TOTAL_UL,
+	(sum( PER_UE_THP_DL_DRB / 8.0 * PER_UE_THP_TIME_DL)) 									as 	VOL_THP_DL,
+ 	(sum( PER_UE_THP_UL_DRB / 8.0 * PER_UE_THP_TIME_UL))									as	VOL_THP_UL,
+	(sum(PER_UE_THP_TIME_DL) / 1000.0) 														as  TIME_THP_DL,
+	(sum(PER_UE_THP_TIME_UL) / 1000.0) 														as  TIME_THP_UL,
+	Math.rint(avg (((sum( PER_UE_THP_DL_DRB / 8.0 * PER_UE_THP_TIME_DL))*8.0)/	
+													(sum(PER_UE_THP_TIME_DL) ) 	))			as	THP_AVE_DL,
+	(avg ((sum( PER_UE_THP_UL_DRB / 8.0 * PER_UE_THP_TIME_UL))*8.0/
+													(sum(PER_UE_THP_TIME_UL)) ))			as	THP_AVE_UL,
+	// LATENCY 
+	 sum(PER_UE_LAT_TIME_DL)/sum(PER_UE_LAT_SAMPL_DL) 										as  LATENCY_DL,
+
+	sum(PER_UE_DL_RLC_DELAY)/sum(PER_UE_DL_RLC_DELAY_SAMPL_DL)  							as  DL_RLC_DELAY,
+
+	sum(PER_UE_DL_MAC_DELAY)/sum(PER_UE_DL_RLC_DELAY_SAMPL_DL)  							as  DL_MAC_DELAY,
+
+	sum(PER_UE_DL_RLC_DELAY_SAMPL_DL)  														as  DELAY_SAMPLES,
+
+	//scheduling
+	sum(PER_SCHED_RESTRICT_UE_CAT_UL)  														as  SCHED_RESTRICT_UE_CAT_UL,
+	sum(PER_SCHED_RESTRICT_UE_CAT_DL)   													as  SCHED_RESTRICT_UE_CAT_DL,
+	sum(PER_SCHED_ACTIVITY_UE_UL)   														as  SCHED_ACTIVITY_UE_UL,
+	sum(PER_SCHED_ACTIVITY_UE_DL)   														as  SCHED_ACTIVITY_UE_DL,
+
+	
+	//packet
+	
+	sum(PER_UE_PACKET_TR_DL)  																as  PACKET_TR_DL,
+	sum(PER_UE_PACKET_REC_DL)  																as  PACKET_REC_DL,
+	sum(PER_UE_PACKET_LOST_HO_DL)   														as  PACKET_LOST_HO_DL,
+	sum(PER_UE_PACKET_LOST_PELR_DL)   														as  PACKET_LOST_PELR_DL,
+	sum(PER_UE_PACKET_REC_UL)    															as  PACKET_REC_UL,
+	sum(PER_UE_PACKET_LOST_UL)    															as  PACKET_LOST_UL,
+	sum(PER_UE_PACKET_LOST_PELR_UU_DL_RLCUM)  												as  PACKET_LOST_PELR_UU_DL_RLCUM,
+	sum(PER_UE_PACKET_FWD_DL)  																as  PACKET_FWD_DL,
+	sum(PER_UE_PACKET_LOST_PELR_UU_DL)														as	PACKET_LOST_PERL_UU_DL,
+	
+	//rlc
+	
+	sum(PER_UE_RLC_ACK_DL) 																	as  RLC_ACK_DL,
+	sum(PER_UE_RLC_NACK_DL)  																as  RLC_NACK_DL,
+	sum(PER_UE_RLC_ACK_UL)   																as  RLC_ACK_UL,
+	sum(PER_UE_RLC_NACK_UL)     															as  RLC_NACK_UL,
+	
+	
+	
+	//HARQ
+	
+	sum(UE_HARQ_DL_ACK_QPSK)    															as  HARQ_DL_ACK_QPSK,
+	sum(UE_HARQ_DL_NACK_QPSK)   															as  HARQ_DL_NACK_QPSK,
+	sum(UE_HARQ_UL_SUCC_QPSK)   															as  HARQ_UL_SUCC_QPSK,
+	sum(UE_HARQ_UL_FAIL_QPSK)   															as  HARQ_UL_FAIL_QPSK,
+	sum(UE_HARQ_DL_ACK_16QAM)   															as  HARQ_DL_ACK_16QAM,
+	sum(UE_HARQ_DL_NACK_16QAM)   															as  HARQ_DL_NACK_16QAM,
+	sum(UE_HARQ_UL_SUCC_16QAM)  															as  HARQ_UL_SUCC_16QAM,
+	sum(UE_HARQ_UL_FAIL_16QAM)   															as  HARQ_UL_FAIL_16QAM,
+	sum(UE_HARQ_DL_ACK_64QAM)   															as  HARQ_DL_ACK_64QAM,
+	sum(UE_HARQ_DL_NACK_64QAM)   															as  HARQ_DL_NACK_64QAM,
+	sum(PER_UE_MAC_DTX_UL_QPSK)   															as  MAC_DTX_UL_QPSK,
+	sum(PER_UE_MAC_DTX_DL_QPSK)   															as  MAC_DTX_DL_QPSK,
+	sum(PER_UE_MAC_DTX_DL_16QAM)  															as  MAC_DTX_DL_16QAM,
+	sum(PER_UE_MAC_DTX_UL_16QAM)   															as  MAC_DTX_UL_16QAM,
+	sum(PER_UE_MAC_DTX_DL_64QAM)   															as  MAC_DTX_DL_64QAM,
+	
+	//R THP
+	sum(RADIOTHP_VOL_DL)   																	as RADIOTHP_VOL_DL,
+	sum(RADIOTHP_RES_DL)  																	as RADIOTHP_RES_DL,
+	sum(RADIOTHP_VOL_UL)  																	as RADIO_VOL_UL,
+	sum(RADIOTHP_RES_UL)   																	as RADIOTHP_RES_UL,
+		
+	cast(iputr.ne,int) 	 																	as ENB_ID,
+	true                as IPUTR         // INTERNAL_PER_UE_TRAFFIC_REP has been received
+	from celltrace.INTERNAL_PER_UE_TRAFFIC_REP  as iputr   
+	where iputr.ENBS1APID=ENBS1APID and iputr.TIMESTAMP_MINUTE=TIMESTAMP_MINUTE and
+		iputr.MMES1APID=MMES1APID and iputr.ne=ne and iputr.subNetwork=subNetwork  
+	group by ENBS1APID,MMES1APID,TIMESTAMP_MINUTE,ne,subNetwork output  snapshot every 1 minute;
+																
+																
+// Insert the new X2 Handover event into the named window
+@Name('UPS-handle-new-X2_HANDOVER')
+@Description('Handle new X2_HANDOVER event for X2 handover Correlation')
+//@Audit
+on correlation.USER_PLANE_SESSION new_upswin
+	merge UPSWindow upswin
+	where upswin.MMES1APID = -1 
+	when matched
+		then insert into LOG_EVENT select
+		'INTERNAL_PER_UE_TRAFFIC_REP'  														as name,
+		new_upswin.version  																as version,
+		new_upswin.timestamp  																as timestamp,
+		new_upswin.subNetwork																as subNetwork,
+		new_upswin.ne 																		as ne,
+		2  																					as RESULT, // ABORT value
+		new_upswin.getCSVStringQuoted()  													as LOG_MESSAGE
+	when not matched
+		then insert select *;
+																
+			
+		
+// Declare the name for the module
+@Name('snapshot-UE_MEAS_INTRAFREQ1-AGR')
+@Description('Handle UE_MEAS_INTRAFREQ1 events')
+ select
+	subNetwork,
+ 	ne,
+	timestamp,
+	GLOBAL_CELL_ID,
+	ENBS1APID,
+	MMES1APID,
+	TIMESTAMP_MINUTE,
+	name																					as TYPE_EVENT,
+	RAC_UE_REF,
+	RSRPSERVING 																			as 	RSRPSERVING,
+	RSRQSERVING 																			as	RSRQSERVING
+	from celltrace.UE_MEAS_INTRAFREQ1.win:length(1 ).std:unique(subNetwork).std:unique(ne).std:unique(ENBS1APID).std:unique(MMES1APID).std:unique(GLOBAL_CELL_ID).std:unique(TIMESTAMP_MINUTE)  as umeas
+	output  snapshot every 1 events;
+			
+
+// Declare the name for the module
+@Name('snapshot-INTERNAL_PER_UE_RB_TRAFFIC_REPORT-AGR')
+@Description('Handle INTERNAL_PER_UE_RB_TRAFFIC_REPORT events')
+ select	
+ 	subNetwork,
+ 	ne,
+	timestamp,
+	ENBS1APID,
+	MMES1APID,
+	TIMESTAMP_MINUTE,
+	name as TYPE_EVENT,
+	BEARER_ID,
+	BEARER_TYPE,
+	ERAB_ID,
+	PER_PDCPVOL_DL_RB,
+	PER_DRB_PDCP_TRANSVOL_DL,
+	PER_DRB_PDCP_RECVOL_UL,
+	PER_DRB_LAT_TIME_DL,
+	PER_DRB_LAT_SAMPL_DL,
+	PER_DRB_DL_RLC_DELAY,
+	PER_DRB_DL_RLC_DELAY_SAMPL,
+	RAC_UE_REF
+	from celltrace.INTERNAL_PER_UE_RB_TRAFFIC_REP.win:length(1 ) 	output  snapshot every 1 events;	
+																	
+		
+// Declare the name for the module
+@Name('snapshot-RADIO_UE_MEASUREMENT-AGR')
+@Description('Handle RADIO_UE_MEASUREMENT events')
+ select 
+ 	subNetwork,
+ 	ne,
+	timestamp,
+	GLOBAL_CELL_ID,
+	ENBS1APID,
+	MMES1APID,
+	TIMESTAMP_MINUTE,
+	name																					as TYPE_EVENT,
+	RAC_UE_REF,
+	{CQI_REPORTED_0,
+	CQI_REPORTED_1,
+	CQI_REPORTED_2,
+	CQI_REPORTED_3,
+	CQI_REPORTED_4,
+	CQI_REPORTED_5,
+	CQI_REPORTED_6,
+	CQI_REPORTED_7,
+	CQI_REPORTED_8,
+	CQI_REPORTED_9,
+	CQI_REPORTED_10,
+	CQI_REPORTED_11,
+	CQI_REPORTED_12,
+	CQI_REPORTED_13,
+	CQI_REPORTED_14,
+	CQI_REPORTED_15} 																		as	CQI_MEDS,
+	{RANK_REPORTED_0,RANK_REPORTED_1}														as  CH_RANK_REPS,
+	{RANK_TX_0,
+	RANK_TX_1,
+	RANK_TX_2,
+	RANK_TX_3,
+	RANK_TX_4}																				as TX_MODE,
+	TBSPWRRESTRICTED																		as POWER_RESTRICT,
+	TBSPWRUNRESTRICTED																		as POWER_NO_RESTRICT
+	
+	from celltrace.INTERNAL_PER_RADIO_UE_MEASUREMENT.win:length(1 ) output  snapshot every 1 events;
+	
+	

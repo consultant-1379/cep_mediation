@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="utf-8"?>
+<eventspecification xmlns="http://www.ericsson.com/PmEvents">
+	<general>
+		<docno>LMI-11:0000</docno>
+		<revision>PA1</revision>
+		<date>2011-11-01</date>
+		<author>Liam Fallon</author>
+		<ffv>1</ffv>
+		<fiv>1</fiv>
+		<revisionhistory>
+			<revisionhistoryelem>
+				<revision>PA1</revision>
+				<comment>2011-11-01, LMI/LXR/SH Liam Fallon</comment>
+			</revisionhistoryelem>
+		</revisionhistory>
+		<protocols>
+			<protocol>
+				<name>GTPV1</name>
+				<specification>29.060</specification>
+				<version>9.2.0</version>
+			</protocol>
+			<protocol>
+				<name>GTPV2</name>
+				<specification>29.274</specification>
+				<version>9.2.0</version>
+			</protocol>
+		</protocols>
+	</general>
+	<!-- Note: <extracolumns> and <extracolumn> are tags used to add extra columns 
+		at the beginning of an event table. These columns are added by the parser. -->
+	<extracolumns>
+		<extracolumn type="TIMESTAMP">EVENT_TIME</extracolumn>
+		<extracolumn type="TEXT">SUBNET_NAME</extracolumn>
+		<extracolumn type="TEXT">NE_NAME</extracolumn>
+		<extracolumn type="TEXT">EVENT_NAME</extracolumn>
+		<extracolumn type="TEXT">EVENT_VERSION</extracolumn>
+	</extracolumns>
+	<parametertypes>
+		<parametertype>
+			<name>TIMESTAMP</name>
+			<type>TIMESTAMP</type>
+			<description>A time stamp</description>
+			<numberofbytes>4</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>2147483647</high>
+			</range>
+		</parametertype>
+		<parametertype>
+			<name>BOOLEAN</name>
+			<type>BOOLEAN</type>
+			<description>A boolean value</description>
+			<numberofbytes>1</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>1</high>
+			</range>
+		</parametertype>
+		<parametertype>
+			<name>PDN_SESSION_STATE</name>
+			<type>ENUM</type>
+			<description>The state of a PDN session</description>
+			<numberofbytes>1</numberofbytes>
+			<enumeration>
+				<enum internal="INITIATE_REQUEST" value="0">Message to create a PDN session received</enum>
+				<enum internal="INITIATE_RESPONSE" value="1">Response to message to create a PDN session received</enum>
+				<enum internal="UPDATE_REQUEST" value="2">Message to update a PDN session received</enum>
+				<enum internal="UPDATE_RESPONSE" value="3">Response to message to update a PDN session received</enum>
+				<enum internal="TERMINATE_REQUEST" value="4">Message to terminate a PDN session received</enum>
+				<enum internal="TERMINATE_RESPONSE" value="5">Response to message to terminate a PDN session received</enum>
+			</enumeration>
+		</parametertype>
+		<parametertype>
+			<name>CAUSE</name>
+			<type>UINT</type>
+			<description>A GTP V1 cause code from 3GPP 29.060 (GTP V1) or 29.274
+				(GTP V2)</description>
+			<numberofbytes>1</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>255</high>
+			</range>
+		</parametertype>
+		<parametertype>
+			<name>IMSI</name>
+			<type>TBCD</type>
+			<description>International Mobile Subscriber Identity</description>
+			<detaileddescription>
+				5-15 digits, TBCD (Telephony Binary Coded
+				Decimal), each digit
+				represented by 4 bits.Padded with '1111' for
+				each unused digit up to
+				a total length of 8 octets/16 digits.For more
+				information see:3GPP
+				TS 23.003 (ch 2.2) for the composition and TS
+				29.060 (ch 7.7.2) for
+				the coding.
+     		 </detaileddescription>
+			<numberofbytes>8</numberofbytes>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+		<parametertype>
+			<name>MSISDN</name>
+			<type>TBCD</type>
+			<description>Mobile Subscriber Integrated Services Digital Network
+				Number</description>
+			<numberofbytes>9</numberofbytes>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+		<parametertype>
+			<name>IMEISV</name>
+			<type>TBCD</type>
+			<description>International Mobile Equipment Identity Software Version
+			</description>
+			<numberofbytes>8</numberofbytes>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+		<parametertype>
+			<name>RAT</name>
+			<type>ENUM</type>
+			<description>Radio Access Type, either GSM, WCDMA or LTE</description>
+			<numberofbytes>1</numberofbytes>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+			<enumeration>
+				<enum internal="GSM" value="0">GSM</enum>
+				<enum internal="WCDMA" value="1">WCDMA</enum>
+				<enum internal="LTE" value="2">~LTE</enum>
+			</enumeration>
+		</parametertype>
+		<parametertype>
+			<name>APN</name>
+			<type>STRING</type>
+			<description>Access Point Name</description>
+			<numberofbytes>256</numberofbytes>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+		<parametertype>
+			<name>MCC</name>
+			<type>IBCD</type>
+			<description>Mobile Country Code. The MCC identifies uniquely the
+				country of domicile of the mobile subscriber</description>
+			<numberofbytes>2</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>1023</high>
+			</range>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+		<parametertype>
+			<name>MNC</name>
+			<type>IBCD</type>
+			<description>Mobile Network Code. The MNC identifies the home PLMN of
+				the mobile subscriber.</description>
+			<numberofbytes>2</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>1023</high>
+			</range>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+		<parametertype>
+			<name>LAC</name>
+			<type>UINT</type>
+			<description>Location Area Code</description>
+			<numberofbytes>2</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>65535</high>
+			</range>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+		<parametertype>
+			<name>RAC</name>
+			<type>UINT</type>
+			<description>Routing Area Code</description>
+			<numberofbytes>1</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>255</high>
+			</range>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+		<parametertype>
+			<name>CI</name>
+			<type>UINT</type>
+			<description>Cell Identity</description>
+			<numberofbytes>2</numberofbytes>
+			<range>
+				<low>1</low>
+				<high>65535</high>
+			</range>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+		<parametertype>
+			<name>SAC</name>
+			<type>UINT</type>
+			<description>Service Area Code</description>
+			<numberofbytes>2</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>65535</high>
+			</range>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+		<parametertype>
+			<name>TAC</name>
+			<type>UINT</type>
+			<description>Tracking Area Code. This element is used to uniquely
+				identify a Tracking Area Code.</description>
+			<numberofbytes>2</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>65535</high>
+			</range>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+		<parametertype>
+			<name>ECI</name>
+			<type>UINT</type>
+			<description>E-UTRAN Cell Identity. Used to identify cells within a
+				PLMN. </description>
+			<numberofbytes>4</numberofbytes>
+			<range>
+				<low>1</low>
+				<high>268435455</high>
+			</range>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+		<parametertype>
+			<name>NSAPI</name>
+			<type>UINT</type>
+			<description>Network Service Access Point Identifier</description>
+			<numberofbytes>1</numberofbytes>
+			<range>
+				<low>5</low>
+				<high>15</high>
+			</range>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+		<parametertype>
+			<name>BEARER_ID</name>
+			<type>UINT</type>
+			<description>The EPS Bearer ID identifies one of several bearers in a
+				bearer setup list</description>
+			<numberofbytes>1</numberofbytes>
+			<range>
+				<low>5</low>
+				<high>15</high>
+			</range>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+		<parametertype>
+			<name>BEARER_QCI</name>
+			<type>UINT</type>
+			<description>Provides information on a QoS class identifier for each
+				bearer in a bearer setup list</description>
+			<numberofbytes>2</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>255</high>
+			</range>
+		</parametertype>
+		<parametertype>
+			<name>DURATION</name>
+			<type>UINT</type>
+			<description>Duration of this correlated event, this is a long time
+				value in milliseconds</description>
+			<numberofbytes>4</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>2147483647</high>
+			</range>
+		</parametertype>
+		<parametertype>
+			<name>IPV4</name>
+			<type>IPADDRESS</type>
+			<description>IP address V4</description>
+			<numberofbytes>4</numberofbytes>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+		<parametertype>
+			<name>IPV6</name>
+			<type>IPADDRESSV6</type>
+			<description>IP address V6</description>
+			<numberofbytes>16</numberofbytes>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+		<parametertype>
+			<name>IPV4STRING</name>
+			<type>STRING</type>
+			<description>IP address V4</description>
+			<numberofbytes>256</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>IPV6STRING</name>
+			<type>STRING</type>
+			<description>IP address V6</description>
+			<numberofbytes>256</numberofbytes>
+		</parametertype>
+		<parametertype>
+			<name>TEID</name>
+			<type>UINT</type>
+			<description>Tunnel Endpoint Identifier</description>
+			<numberofbytes>3</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>16777215</high>
+			</range>
+			<comment>From 3GPP TS 29.060 (GTP V1) and 3GPP TS 29.274 (GTP V2)
+			</comment>
+		</parametertype>
+	</parametertypes>
+	<structuretypes>
+	  	<structuretype>
+			<name>CGI</name>
+			<elements>
+				<param type="MCC">MCC</param>
+				<param type="MNC">MNC</param>
+				<param type="LAC">LAC</param>
+				<param type="CI">CI</param>
+			</elements>
+		</structuretype>
+	  	<structuretype>
+			<name>SAI</name>
+			<elements>
+				<param type="MCC">MCC</param>
+				<param type="MNC">MNC</param>
+				<param type="LAC">LAC</param>
+				<param type="SAC">SAC</param>
+			</elements>
+		</structuretype>
+		<structuretype>
+			<name>RAI</name>
+			<elements>
+				<param type="MCC">MCC</param>
+				<param type="MNC">MNC</param>
+				<param type="LAC">LAC</param>
+				<param type="RAC">RAC</param>
+			</elements>
+		</structuretype>
+		<structuretype>
+			<name>TAI</name>
+			<elements>
+				<param type="MCC">MCC</param>
+				<param type="MNC">MNC</param>
+				<param type="TAC">TAC</param>
+			</elements>
+		</structuretype>
+		<structuretype>
+			<name>ECGI</name>
+			<elements>
+				<param type="MCC">MCC</param>
+				<param type="MNC">MNC</param>
+				<param type="ECI">ECI</param>
+			</elements>
+		</structuretype>
+		<structuretype>
+			<name>LAI</name>
+			<elements>
+				<param type="MCC">MCC</param>
+				<param type="MNC">MNC</param>
+				<param type="LAC">LAC</param>
+			</elements>
+		</structuretype>
+		<structuretype>
+			<name>BEARER</name>
+			<elements>
+				<param type="BEARER_ID">EPS_BEARER_ID</param>
+				<param type="BEARER_QCI">BEARER_QCI</param>
+				<param type="CAUSE">BEARER_CAUSE</param>
+				<param type="BEARER_ID">DEFAULT_BEARER_ID</param>
+			</elements>
+		</structuretype>
+	</structuretypes>
+	<!-- Note: Events or parameters can be removed from parsing by adding the 
+		attribute "ignore" to the event or parameter definition. To ignore an event: 
+		<event ignore="true"> To ignore a parameter in an event: <param ignore="true"> -->
+	<events>
+		<event>
+			<name>PDN_SESSION_REPORT</name>
+			<id>25000</id>
+			<comment>This event is reported by a probe for a PDN session
+				initiation and termination</comment>
+			<elements>
+				<param type="PDN_SESSION_STATE">PDN_SESSION_STATE</param>
+				<param type="TIMESTAMP">REQUEST_TIMESTAMP</param>
+				<param type="TIMESTAMP">RESPONSE_TIMESTAMP</param>
+				<param type="IMSI">IMSI</param>
+				<param type="MSISDN">MSISDN</param>
+				<param type="IMEISV">IMEISV</param>
+				<param type="RAT">RAT</param>
+				<param type="APN">APN</param>
+				<struct type="CGI">CGI</struct>
+				<struct type="SAI">SAI</struct>
+				<struct type="RAI">RAI</struct>
+				<struct type="TAI">TAI</struct>
+				<struct type="ECGI">ECGI</struct>
+				<struct type="LAI">LAI</struct>
+				<param type="NSAPI">NSAPI</param>
+				<struct seqmaxlen="16" type="BEARER">BEARERS</struct>
+				<param type="IPV4STRING">UE_IP_V4</param>
+				<param type="IPV6STRING">UE_IP_V6</param>
+				<param type="IPV4">MME_IP_V4</param>
+				<param type="IPV6">MME_IP_V6</param>
+				<param type="TEID">MME_TEID</param>
+				<param type="IPV4">SGW_CONTROL_IP_V4</param>
+				<param type="IPV6">SGW_CONTROL_IP_V6</param>
+				<param type="TEID">SGW_CONTROL_TEID</param>
+				<param type="IPV4">SGW_DATA_IP_V4</param>
+				<param type="IPV6">SGW_DATA_IP_V6</param>
+				<param type="TEID">SGW_DATA_TEID</param>
+				<param type="IPV4">ENB_IP_V4</param>
+				<param type="IPV6">ENB_IP_V6</param>
+				<param type="TEID">ENB_TEID</param>
+				<param type="CAUSE">CAUSE</param>
+			</elements>
+		</event>
+	</events>
+</eventspecification>

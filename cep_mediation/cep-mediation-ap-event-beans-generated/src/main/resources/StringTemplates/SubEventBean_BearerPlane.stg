@@ -1,0 +1,72 @@
+group EventClassMap;
+
+/**
+ * The main template that generates the class
+ */
+main(schema, schemaType, event, parameter) ::= <<
+package com.ericsson.cepmediation.apeventbeans.<schema>;
+
+/**
+ * This class is as java bean that holds a single <event> event for schema <schema>
+ * 
+ * This code is generated using java string templates
+ * see http://www.stringtemplate.org
+ */
+
+import java.io.Serializable;
+import java.util.Iterator;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import com.ericsson.cepmediation.base.meta.schema.Event;
+import com.ericsson.cepmediation.base.meta.schema.EventParameter;
+import com.ericsson.cepmediation.base.util.DataConverters;
+
+@SuppressWarnings("serial")
+public class <event> extends com.ericsson.cepmediation.apeventbeans.<schemaType>.<event> implements Serializable {
+    /**
+     * Define a default constructor
+     */
+    public <event>() {
+        super();
+    }
+     
+    /**
+     * Define a constructor for the base properties
+     * @param timestamp
+     * @param ne
+     * @param name
+     * @param version
+     */
+    public <event>(long timestamp, String subNetwork, String ne, String name, String version) {
+        super(timestamp, subNetwork, ne, name, version);
+    }
+
+    /**
+     * Set each field of the <event> event from a string array, this method is generated from
+     * the XML schema for the <event> event
+     * @param event The <event> event for which data is to be set
+     * @param fields The string array
+     */
+    public void setFields(final Event event, final String[] fields, final int startIndex) {
+        // get an iterator to iterate over the parameters
+	    Iterator\<EventParameter\> parameterIterator = event.getParameterList().iterator();
+	    EventParameter parameter = null;
+		
+		AtomicInteger inc = new AtomicInteger(startIndex);
+		
+    	<parameter:createSetFields()>        	
+    	
+    }
+}
+>>
+
+/**
+ * The template to create setFields statements
+ */
+createSetFields(parameter) ::= <<
+
+	parameter = parameterIterator.next();		
+    <parameter.name> = DataConverters.getField(fields, inc, <parameter.name>, "<parameter.name>");
+    
+>>
+

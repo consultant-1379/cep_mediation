@@ -1,0 +1,795 @@
+<?xml version="1.0" encoding="utf-8"?>
+<eventspecification xmlns="http://www.ericsson.com/PmEvents">
+	<general>
+		<docno>TBD</docno>
+		<revision>PA1</revision>
+		<date>2011-10-20</date>
+		<author>Liam Fallon</author>
+		<ffv>1</ffv>
+		<fiv>1</fiv>
+		<revisionhistory>
+			<revisionhistoryelem>
+				<revision>PA1</revision>
+				<comment>2011-10-20, LMI/LXR/SH Liam Fallon</comment>
+			</revisionhistoryelem>
+		</revisionhistory>
+		<protocols>
+			<protocol>
+				<name>WEB</name>
+				<specification>EAB-11:054275</specification>
+				<version>PA2</version>
+			</protocol>
+			<protocol>
+				<name>VOD</name>
+				<specification>EAB-11:054274</specification>
+				<version>PA2</version>
+			</protocol>
+			<protocol>
+				<name>FT</name>
+				<specification>EAB-11:054273</specification>
+				<version>PA2</version>
+			</protocol>
+		</protocols>
+	</general>
+	<!-- Note: <extracolumns> and <extracolumn> are tags used to add extra columns 
+		at the beginning of an event table. These columns are added by the parser. -->
+	<extracolumns>
+		<extracolumn type="TIMESTAMP">EVENT_TIME</extracolumn>
+		<extracolumn type="TEXT">SUBNET_NAME</extracolumn>
+		<extracolumn type="TEXT">NE_NAME</extracolumn>
+		<extracolumn type="TEXT">EVENT_NAME</extracolumn>
+		<extracolumn type="TEXT">EVENT_VERSION</extracolumn>
+	</extracolumns>
+
+	<parametertypes>
+		<parametertype>
+			<name>EVENT_NAME</name>
+			<type>STRING</type>
+			<description>The name of an event used in a correlation</description>
+			<numberofbytes>256</numberofbytes>
+		</parametertype>
+
+		<parametertype>
+			<name>SESSION_ID</name>
+			<type>UINT</type>
+			<description>A unique identifier for this session in the system</description>
+			<numberofbytes>4</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>2147483647</high>
+			</range>
+		</parametertype>
+
+		<parametertype>
+			<name>MESSAGE_SEQUENCE_NO</name>
+			<type>UINT</type>
+			<description>The sequence number of this session record in reporting on a particular session ID</description>
+			<numberofbytes>4</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>2147483647</high>
+			</range>
+		</parametertype>
+
+		<parametertype>
+			<name>DURATION</name>
+			<type>UINT</type>
+			<description>Time values are always expressed as
+			millisecond long values, even if they are specified as being in
+			seconds in the S-KPI definition documents.</description>
+			<numberofbytes>4</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>2147483647</high>
+			</range>
+		</parametertype>
+
+		<parametertype>
+			<name>IMSI</name>
+			<type>TBCD</type>
+			<description>International Mobile Subscriber Identity</description>
+			<detaileddescription>
+				5-15 digits, TBCD (Telephony Binary Coded
+				Decimal), each digit
+				represented by 4 bits.Padded with '1111' for
+				each unused digit up to
+				a total length of 8 octets/16 digits.For more
+				information see:3GPP
+				TS 23.003 (ch 2.2) for the composition and TS
+				29.060 (ch 7.7.2) for
+				the coding.
+      		</detaileddescription>
+			<numberofbytes>8</numberofbytes>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+
+		<parametertype>
+			<name>MSISDN</name>
+			<type>TBCD</type>
+			<description>Mobile Subscriber Integrated Services Digital Network Number</description>
+			<numberofbytes>9</numberofbytes>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+
+		<parametertype>
+			<name>IMEISV</name>
+			<type>TBCD</type>
+			<description>International Mobile Equipment Identity Software Version
+			</description>
+			<detaileddescription>
+				3 sets of digits, 8, 6, and 2 digits
+				respectively. TBCD (Telephony
+				Binary Coded Decimal), each digit
+				represented by 4 bits.Padded with
+				'1111' for each unused digit upto a
+				total length of 8 octets/16
+				digits. A value of all zeros indicates
+				that IMEISV is not available.
+			</detaileddescription>
+			<numberofbytes>8</numberofbytes>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+
+		<parametertype>
+			<name>HSDPA_CATEGORY</name>
+			<type>STRING</type>
+			<description>The HSDPA category as defined in 3GPP</description>
+			<numberofbytes>256</numberofbytes>
+		</parametertype>
+
+		<parametertype>
+			<name>EUL_CATEGORY</name>
+			<type>STRING</type>
+			<description>The EUL category as defined in 3GPP</description>
+			<numberofbytes>256</numberofbytes>
+		</parametertype>
+
+		<parametertype>
+			<name>IPV4</name>
+			<type>IPADDRESS</type>
+			<description>IP address V4</description>
+			<numberofbytes>4</numberofbytes>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+
+		<parametertype>
+			<name>IPV6</name>
+			<type>IPADDRESSV6</type>
+			<description>IP address V6</description>
+			<numberofbytes>16</numberofbytes>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+
+		<parametertype>
+			<name>GLOBAL_CELL_ID</name>
+			<type>UINT</type>
+			<description>Identity of the cell, defined in MOM (eNB ID (20 bits) +
+				Cell ID (8 bits)</description>
+			<numberofbytes>4</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>2147483647</high>
+			</range>
+			<comment>ECGI, E-UTRAN Cell Global Identifier. The eNB ID part will
+				not be set in iteration 9. From Cell Trace 10/1022-HRB105500</comment>
+		</parametertype>
+
+		<parametertype>
+			<name>APN</name>
+			<type>STRING</type>
+			<description>Access Point Name</description>
+			<numberofbytes>256</numberofbytes>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+
+		<parametertype>
+			<name>NSAPI</name>
+			<type>UINT</type>
+			<description>Network Service Access Point Identifier</description>
+			<numberofbytes>1</numberofbytes>
+			<range>
+				<low>5</low>
+				<high>15</high>
+			</range>
+			<comment>From SGEH 2/1551-CRA 250 58</comment>
+		</parametertype>
+
+		<parametertype>
+			<name>THROUGHPUT</name>
+			<type>UINT</type>
+			<description>Throughput values are always expressed
+			as Kbits/Second long values, even if they are specified as
+			being in Mbits/Second in the S-KPI definition documents.
+			</description>
+			<numberofbytes>8</numberofbytes>
+		</parametertype>
+
+		<parametertype>
+			<name>PACKET_SIZE</name>
+			<type>UINT</type>
+			<description>IP data packet size [bytes]</description>
+			<numberofbytes>4</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>2147483647</high>
+			</range>
+		</parametertype>
+
+		<parametertype>
+			<name>PACKET_LOSS_RATIO</name>
+			<type>FLOAT</type>
+			<description>The ratio of packets lost to the total packets carried</description>
+			<numberofbytes>8</numberofbytes>
+		</parametertype>
+
+		<parametertype>
+			<name>VIDEO_ON_DEMAND_TYPE</name>
+			<type>ENUM</type>
+			<description>Identifies the type of Video on demand in this session</description>
+			<numberofbytes>1</numberofbytes>
+			<enumeration>
+				<enum internal="RTSP" value="0">Real Time Streaming protocol</enum>
+				<enum internal="HTTP" value="1">3GPP HTTP Streaming, MS Smooth Streaming, Apple Live Streaming</enum>
+				<enum internal="RTMP" value="2">Real Time Messaging Protocol</enum>
+			</enumeration>
+		</parametertype>
+
+		<parametertype>
+			<name>VIDEO_REBUFFERING_COUNT</name>
+			<type>UINT</type>
+			<description>The amount of times that rebuggering has occured</description>
+			<numberofbytes>4</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>2147483647</high>
+			</range>
+		</parametertype>
+
+		<parametertype>
+			<name>VIDEO_QOE</name>
+			<type>FLOAT</type>
+			<description>The estimated QoE value of video on this session</description>
+			<numberofbytes>8</numberofbytes>
+		</parametertype>
+
+		<parametertype>
+			<name>FILE_TRANSFER_TYPE</name>
+			<type>ENUM</type>
+			<description>Identifies the type of file transfer in this session</description>
+			<numberofbytes>1</numberofbytes>
+			<enumeration>
+				<enum internal="FTP" value="0">File Transfer Protocol</enum>
+				<enum internal="HTTP" value="1">HTTP file transfer</enum>
+			</enumeration>
+		</parametertype>
+
+		<parametertype>
+			<name>TRANSMISSION_DIRECTION</name>
+			<type>ENUM</type>
+			<description>The direction in which transfer is occuring</description>
+			<numberofbytes>1</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>1</high>
+			</range>
+			<enumeration>
+				<enum internal="UE_TO_NETWORK" value="0" />
+				<enum internal="NETWORK_TO_UE" value="1" />
+			</enumeration>
+		</parametertype>
+
+		<parametertype>
+			<name>EVENT_RESULT</name>
+			<type>ENUM</type>
+			<description>Result of the Event Procedure</description>
+			<numberofbytes>4</numberofbytes>
+			<enumeration>
+				<enum internal="SUCCESS" value="0">SUCCESS</enum>
+				<enum internal="PARTIAL" value="1">PARTIAL</enum>
+				<enum internal="FAILED" value="2">FAILED</enum>
+			</enumeration>
+		</parametertype>
+
+		<parametertype>
+			<name>SESSION_CAUSE_CODE</name>
+			<type>ENUM</type>
+			<description>Cause codes for web session</description>
+			<numberofbytes>1</numberofbytes>
+			<enumeration>
+				<enum internal="SUCCESS" value="0">Success</enum>
+				<enum internal="RAT_FAILURE" value="1">Access failed due to a radio access technology fault, see RAT_CAUSE_CODE</enum>
+				<enum internal="IP_FAILURE" value="2">Access failed due to a failure in the IP layer, see IP_CAUSE_CODE</enum>
+				<enum internal="APPLICATION_FAILURE" value="3">Access failed due to a failure in HTTP, see relevant application cause code</enum>
+			</enumeration>
+		</parametertype>
+
+		<parametertype>
+			<name>RAT_CAUSE_CODE</name>
+			<type>ENUM</type>
+			<description>Cause codes for Radio Access Technology failures, this field is preliminary</description>
+			<numberofbytes>1</numberofbytes>
+			<enumeration>
+				<enum internal="SUCCESS" value="0">Success</enum>
+				<enum internal="SIGNALLING_FAULT" value="1">RAT Signalling Fault</enum>
+				<enum internal="BEARER_FAULT" value="2">RAT bearer fault</enum>
+				<enum internal="OTHER" value="3">Other RAT fault</enum>
+			</enumeration>
+		</parametertype>
+
+		<parametertype>
+			<name>IP_CAUSE_CODE</name>
+			<type>ENUM</type>
+			<description>Cause codes for IP layer failures, this field is preliminary</description>
+			<numberofbytes>1</numberofbytes>
+			<enumeration>
+				<enum internal="SUCCESS" value="0">Success</enum>
+				<enum internal="DNS_LOOKUP_FAILURE" value="1">DNS lookup failed</enum>
+				<enum internal="SERVER_TIMED_OUT" value="2">Connection to server timed out</enum>
+				<enum internal="OTHER" value="3">Other RAT fault</enum>
+			</enumeration>
+		</parametertype>
+
+		<parametertype>
+			<name>HTTP_STATUS_CODE</name>
+			<type>UINT</type>
+			<description>Status codes for HTTP as defined in RFC 2616</description>
+			<numberofbytes>1</numberofbytes>
+			<range>
+				<low>100</low>
+				<high>505</high>
+			</range>
+		</parametertype>
+
+		<parametertype>
+			<name>STREAMING_CAUSE_CODE</name>
+			<type>UINT</type>
+			<description>Cause codes for streaming protocols, will differ depending on if
+			streaming is RTSP, HTTP, or RTMP, this field is preliminary</description>
+			<numberofbytes>1</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>65535</high>
+			</range>
+		</parametertype>
+
+		<parametertype>
+			<name>FTP_CODE</name>
+			<type>UINT</type>
+			<description>FTP codes as defined in RFC 959</description>
+			<numberofbytes>1</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>65535</high>
+			</range>
+		</parametertype>
+
+		<parametertype>
+			<name>TIMESTAMP</name>
+			<type>TIMESTAMP</type>
+			<description>A time stamp</description>
+			<numberofbytes>4</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>2147483647</high>
+			</range>
+		</parametertype>
+
+		<parametertype>
+			<name>BOOLEAN</name>
+			<type>BOOLEAN</type>
+			<description>A boolean value</description>
+			<numberofbytes>1</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>1</high>
+			</range>
+		</parametertype>
+
+		<parametertype>
+			<name>EVENT_TIME_REL</name>
+			<type>DOUBLE</type>
+			<description>Relative event time during the correlation period.
+			</description>
+			<numberofbytes>8</numberofbytes>
+			<range>
+				<low>0</low>
+				<high>100000000000</high>
+			</range>
+		</parametertype>
+
+		<parametertype>
+			<name>MILESTONE_NAME</name>
+			<type>STRING</type>
+			<description>The name of a milestone in a correlation</description>
+			<numberofbytes>256</numberofbytes>
+		</parametertype>
+
+	</parametertypes>
+
+	<structuretypes>
+		<structuretype>
+			<name>EVENTS</name>
+			<elements>
+				<param type="EVENT_NAME">EVENT_NAME</param>
+				<param type="EVENT_TIME_REL">TIME_REL</param>
+			</elements>
+		</structuretype>
+		<structuretype>
+			<name>MILESTONES</name>
+			<elements>
+				<param type="MILESTONE_NAME">MILESTONE_NAME</param>
+				<param type="TIMESTAMP">MILESTONE_TIMESTAMP</param>
+			</elements>
+		</structuretype>
+	</structuretypes>
+
+	<!-- Note: Events or parameters can be removed from parsing by adding the 
+		attribute "ignore" to the event or parameter definition. To ignore an event: 
+		<event ignore="true"> To ignore a parameter in an event: <param ignore="true"> -->
+	<events>
+		<event>
+			<name>WEB_ACCESS_ATTEMPT</name>
+			<id>1000</id>
+			<comment>This event is reported at the end of all web access attempts</comment>
+			<elements>
+				<param type="SESSION_ID">SESSION_ID</param>
+				<param type="MESSAGE_SEQUENCE_NO">MESSAGE_SEQUENCE_NO</param>
+				<param type="DURATION">SESSION_DURATION</param>
+				<param type="DURATION">REPORTING_DURATION</param>
+				<param type="TIMESTAMP">END_TIMESTAMP</param>
+				<param type="IMSI">IMSI</param>
+				<param type="MSISDN">MSISDN</param>
+				<param type="IMEISV">IMEISV</param>
+				<param type="IMEISV">IMEITAC</param>
+				<param type="HSDPA_CATEGORY">HSDPA_CATEGORY</param>
+				<param type="EUL_CATEGORY">EUL_CATEGORY</param>
+				<param type="IPV4">SGW_ADDR_V4</param>
+				<param type="IPV6">SGW_ADDR_V6</param>
+				<param type="IPV4">PGW_ADDR_V4</param>
+				<param type="IPV6">PGW_ADDR_V6</param>
+				<param type="GLOBAL_CELL_ID">CELL_ID</param>
+				<param type="APN">APN</param>
+				<param type="NSAPI">NSAPI</param>
+				<param type="IPV4">UE_ADDR_V4</param>
+				<param type="IPV6">UE_ADDR_V6</param>
+				<param type="EVENT_RESULT">RESULT</param>
+				<param type="SESSION_CAUSE_CODE">SESSION_CAUSE_CODE</param>
+				<param type="RAT_CAUSE_CODE">RAT_CAUSE_CODE</param>
+				<param type="IP_CAUSE_CODE">IP_CAUSE_CODE</param>
+				<param type="HTTP_STATUS_CODE">HTTP_STATUS_CODE</param>
+				<struct seqmaxlen="4" type="EVENTS">EVENTS</struct>
+				<struct seqmaxlen="4" type="MILESTONES">TRIGGER_POINT_MILESTONES</struct>
+				<param type="TIMESTAMP">CORRELATION_TIME</param>
+				<param type="BOOLEAN">NETWORK_ACCESS_REQUEST</param>
+				<param type="BOOLEAN">DNS_QUERY</param>
+				<param type="BOOLEAN">SYN_MESSAGE</param>
+				<param type="BOOLEAN">HTTP_GET</param>
+				<param type="BOOLEAN">HTTP_RESULT</param>
+			</elements>
+		</event>
+
+		<event>
+			<name>WEB_ACCESS_DATA_TRANSFER_END</name>
+			<id>1001</id>
+			<comment>This event is reported on completion of a web data transfer</comment>
+			<elements>
+				<param type="SESSION_ID">SESSION_ID</param>
+				<param type="MESSAGE_SEQUENCE_NO">MESSAGE_SEQUENCE_NO</param>
+				<param type="DURATION">SESSION_DURATION</param>
+				<param type="DURATION">REPORTING_DURATION</param>
+				<param type="TIMESTAMP">END_TIMESTAMP</param>
+				<param type="IMSI">IMSI</param>
+				<param type="MSISDN">MSISDN</param>
+				<param type="IMEISV">IMEISV</param>
+				<param type="IMEISV">IMEITAC</param>
+				<param type="HSDPA_CATEGORY">HSDPA_CATEGORY</param>
+				<param type="EUL_CATEGORY">EUL_CATEGORY</param>
+				<param type="IPV4">SGW_ADDR_V4</param>
+				<param type="IPV6">SGW_ADDR_V6</param>
+				<param type="IPV4">PGW_ADDR_V4</param>
+				<param type="IPV6">PGW_ADDR_V6</param>
+				<param type="GLOBAL_CELL_ID">CELL_ID</param>
+				<param type="APN">APN</param>
+				<param type="NSAPI">NSAPI</param>
+				<param type="IPV4">UE_ADDR_V4</param>
+				<param type="IPV6">UE_ADDR_V6</param>
+				<param type="THROUGHPUT">DOWNLOADED_DATA</param>
+				<param type="THROUGHPUT">UPLOADED_DATA</param>
+				<param type="PACKET_SIZE">MAX_DATA_PACKET</param>
+				<param type="PACKET_LOSS_RATIO">PACKET_LOSS_TERM</param>
+				<param type="PACKET_LOSS_RATIO">PACKET_LOSS_NET</param>
+				<param type="EVENT_RESULT">RESULT</param>
+				<param type="SESSION_CAUSE_CODE">SESSION_CAUSE_CODE</param>
+				<param type="RAT_CAUSE_CODE">RAT_CAUSE_CODE</param>
+				<param type="IP_CAUSE_CODE">IP_CAUSE_CODE</param>
+				<param type="HTTP_STATUS_CODE">HTTP_STATUS_CODE</param>
+				<struct seqmaxlen="2" type="EVENTS">EVENTS</struct>
+				<struct seqmaxlen="2" type="MILESTONES">TRIGGER_POINT_MILESTONES</struct>
+				<param type="TIMESTAMP">CORRELATION_TIME</param>
+				<param type="BOOLEAN">FIRST_DATA_PACKET</param>
+				<param type="BOOLEAN">LAST_DATA_PACKET</param>
+			</elements>
+		</event>
+
+		<event>
+			<name>VIDEO_ON_DEMAND_SESSION_ATTEMPT</name>
+			<id>2000</id>
+			<comment>This event is reported on for all video on demand session establishment attempts</comment>
+			<elements>
+				<param type="SESSION_ID">SESSION_ID</param>
+				<param type="MESSAGE_SEQUENCE_NO">MESSAGE_SEQUENCE_NO</param>
+				<param type="DURATION">SESSION_DURATION</param>
+				<param type="DURATION">REPORTING_DURATION</param>
+				<param type="TIMESTAMP">END_TIMESTAMP</param>
+				<param type="IMSI">IMSI</param>
+				<param type="MSISDN">MSISDN</param>
+				<param type="IMEISV">IMEISV</param>
+				<param type="IMEISV">IMEITAC</param>
+				<param type="HSDPA_CATEGORY">HSDPA_CATEGORY</param>
+				<param type="EUL_CATEGORY">EUL_CATEGORY</param>
+				<param type="IPV4">SGW_ADDR_V4</param>
+				<param type="IPV6">SGW_ADDR_V6</param>
+				<param type="IPV4">PGW_ADDR_V4</param>
+				<param type="IPV6">PGW_ADDR_V6</param>
+				<param type="GLOBAL_CELL_ID">CELL_ID</param>
+				<param type="APN">APN</param>
+				<param type="NSAPI">NSAPI</param>
+				<param type="IPV4">UE_ADDR_V4</param>
+				<param type="IPV6">UE_ADDR_V6</param>
+				<param type="VIDEO_ON_DEMAND_TYPE">VIDEO_ON_DEMAND_TYPE</param>
+				<param type="EVENT_RESULT">RESULT</param>
+				<param type="SESSION_CAUSE_CODE">SESSION_CAUSE_CODE</param>
+				<param type="RAT_CAUSE_CODE">RAT_CAUSE_CODE</param>
+				<param type="IP_CAUSE_CODE">IP_CAUSE_CODE</param>
+				<param type="HTTP_STATUS_CODE">HTTP_STATUS_CODE</param>
+				<param type="STREAMING_CAUSE_CODE">STREAMING_CAUSE_CODE</param>
+				<struct seqmaxlen="6" type="EVENTS">EVENTS</struct>
+				<struct seqmaxlen="6" type="MILESTONES">TRIGGER_POINT_MILESTONES</struct>
+				<param type="TIMESTAMP">CORRELATION_TIME</param>
+				<param type="BOOLEAN">NETWORK_ACCESS_REQUEST</param>
+				<param type="BOOLEAN">DNS_QUERY</param>
+				<param type="BOOLEAN">SYN_MESSAGE</param>
+				<param type="BOOLEAN">HTTP_GET</param>
+				<param type="BOOLEAN">STREAMING_SETUP_START</param>
+				<param type="BOOLEAN">STREAMING_SETUP_COMPLETE</param>
+			</elements>
+		</event>
+
+		<event>
+			<name>VIDEO_ON_DEMAND_SESSION_INTERMEDIATE</name>
+			<id>2001</id>
+			<comment>This event is reported periodically during video on demand sessions, all field
+			values such as throughput, max packet size, and QoS are reported for the reporting duration</comment>
+			<elements>
+				<param type="SESSION_ID">SESSION_ID</param>
+				<param type="MESSAGE_SEQUENCE_NO">MESSAGE_SEQUENCE_NO</param>
+				<param type="DURATION">SESSION_DURATION</param>
+				<param type="DURATION">REPORTING_DURATION</param>
+				<param type="TIMESTAMP">END_TIMESTAMP</param>
+				<param type="IMSI">IMSI</param>
+				<param type="MSISDN">MSISDN</param>
+				<param type="IMEISV">IMEISV</param>
+				<param type="IMEISV">IMEITAC</param>
+				<param type="HSDPA_CATEGORY">HSDPA_CATEGORY</param>
+				<param type="EUL_CATEGORY">EUL_CATEGORY</param>
+				<param type="IPV4">SGW_ADDR_V4</param>
+				<param type="IPV6">SGW_ADDR_V6</param>
+				<param type="IPV4">PGW_ADDR_V4</param>
+				<param type="IPV6">PGW_ADDR_V6</param>
+				<param type="GLOBAL_CELL_ID">CELL_ID</param>
+				<param type="APN">APN</param>
+				<param type="NSAPI">NSAPI</param>
+				<param type="IPV4">UE_ADDR_V4</param>
+				<param type="IPV6">UE_ADDR_V6</param>
+				<param type="VIDEO_ON_DEMAND_TYPE">VIDEO_ON_DEMAND_TYPE</param>
+				<param type="VIDEO_REBUFFERING_COUNT">VIDEO_REBUFFERING_COUNT</param>
+				<param type="VIDEO_QOE">VIDEO_QOE</param>
+				<param type="THROUGHPUT">DOWNLOADED_DATA</param>
+				<param type="THROUGHPUT">UPLOADED_DATA</param>
+				<param type="PACKET_SIZE">MAX_DATA_PACKET</param>
+				<param type="PACKET_LOSS_RATIO">PACKET_LOSS_TERM</param>
+				<param type="PACKET_LOSS_RATIO">PACKET_LOSS_NET</param>
+				<param type="EVENT_RESULT">RESULT</param>
+				<param type="SESSION_CAUSE_CODE">SESSION_CAUSE_CODE</param>
+				<param type="RAT_CAUSE_CODE">RAT_CAUSE_CODE</param>
+				<param type="IP_CAUSE_CODE">IP_CAUSE_CODE</param>
+				<param type="HTTP_STATUS_CODE">HTTP_STATUS_CODE</param>
+				<param type="STREAMING_CAUSE_CODE">STREAMING_CAUSE_CODE</param>
+				<struct seqmaxlen="1" type="EVENTS">EVENTS</struct>
+				<struct seqmaxlen="1" type="MILESTONES">TRIGGER_POINT_MILESTONES</struct>
+				<param type="TIMESTAMP">CORRELATION_TIME</param>
+				<param type="BOOLEAN">LAST_REBUFFERING</param>
+			</elements>
+		</event>
+
+		<event>
+			<name>VIDEO_ON_DEMAND_SESSION_END</name>
+			<id>2002</id>
+			<comment>This event is reported on completion of a video on demand session, all field
+			values such as throughput, max packet size, and QoS are reported for the reporting duration</comment>
+			<elements>
+				<param type="SESSION_ID">SESSION_ID</param>
+				<param type="MESSAGE_SEQUENCE_NO">MESSAGE_SEQUENCE_NO</param>
+				<param type="DURATION">DURATION</param>
+				<param type="DURATION">REPORTING_DURATION</param>
+				<param type="TIMESTAMP">END_TIMESTAMP</param>
+				<param type="IMSI">IMSI</param>
+				<param type="MSISDN">MSISDN</param>
+				<param type="IMEISV">IMEISV</param>
+				<param type="IMEISV">IMEITAC</param>
+				<param type="HSDPA_CATEGORY">HSDPA_CATEGORY</param>
+				<param type="EUL_CATEGORY">EUL_CATEGORY</param>
+				<param type="IPV4">SGW_ADDR_V4</param>
+				<param type="IPV6">SGW_ADDR_V6</param>
+				<param type="IPV4">PGW_ADDR_V4</param>
+				<param type="IPV6">PGW_ADDR_V6</param>
+				<param type="GLOBAL_CELL_ID">CELL_ID</param>
+				<param type="APN">APN</param>
+				<param type="NSAPI">NSAPI</param>
+				<param type="IPV4">UE_ADDR_V4</param>
+				<param type="IPV6">UE_ADDR_V6</param>
+				<param type="VIDEO_ON_DEMAND_TYPE">VIDEO_ON_DEMAND_TYPE</param>
+				<param type="VIDEO_REBUFFERING_COUNT">VIDEO_REBUFFERING_COUNT</param>
+				<param type="VIDEO_QOE">VIDEO_QOE</param>
+				<param type="THROUGHPUT">DOWNLOADED_DATA</param>
+				<param type="THROUGHPUT">UPLOADED_DATA</param>
+				<param type="PACKET_SIZE">MAX_DATA_PACKET</param>
+				<param type="PACKET_LOSS_RATIO">PACKET_LOSS_TERM</param>
+				<param type="PACKET_LOSS_RATIO">PACKET_LOSS_NET</param>
+				<param type="EVENT_RESULT">RESULT</param>
+				<param type="SESSION_CAUSE_CODE">SESSION_CAUSE_CODE</param>
+				<param type="RAT_CAUSE_CODE">RAT_CAUSE_CODE</param>
+				<param type="IP_CAUSE_CODE">IP_CAUSE_CODE</param>
+				<param type="HTTP_STATUS_CODE">HTTP_STATUS_CODE</param>
+				<param type="STREAMING_CAUSE_CODE">STREAMING_CAUSE_CODE</param>
+				<struct seqmaxlen="2" type="EVENTS">EVENTS</struct>
+				<struct seqmaxlen="2" type="MILESTONES">TRIGGER_POINT_MILESTONES</struct>
+				<param type="TIMESTAMP">CORRELATION_TIME</param>
+				<param type="BOOLEAN">STREAMING_SETUP_COMPLETE</param>
+				<param type="BOOLEAN">STREAMING_TERMINATION_COMPLETE</param>
+			</elements>
+		</event>
+
+		<event>
+			<name>FILE_TRANSFER_SESSION_ATTEMPT</name>
+			<id>3000</id>
+			<comment>This event is reported on for all file transfer session establishment attempts</comment>
+			<elements>
+				<param type="SESSION_ID">SESSION_ID</param>
+				<param type="MESSAGE_SEQUENCE_NO">MESSAGE_SEQUENCE_NO</param>
+				<param type="DURATION">SESSION_DURATION</param>
+				<param type="DURATION">REPORTING_DURATION</param>
+				<param type="TIMESTAMP">END_TIMESTAMP</param>
+				<param type="IMSI">IMSI</param>
+				<param type="MSISDN">MSISDN</param>
+				<param type="IMEISV">IMEISV</param>
+				<param type="IMEISV">IMEITAC</param>
+				<param type="HSDPA_CATEGORY">HSDPA_CATEGORY</param>
+				<param type="EUL_CATEGORY">EUL_CATEGORY</param>
+				<param type="IPV4">SGW_ADDR_V4</param>
+				<param type="IPV6">SGW_ADDR_V6</param>
+				<param type="IPV4">PGW_ADDR_V4</param>
+				<param type="IPV6">PGW_ADDR_V6</param>
+				<param type="GLOBAL_CELL_ID">CELL_ID</param>
+				<param type="APN">APN</param>
+				<param type="NSAPI">NSAPI</param>
+				<param type="IPV4">UE_ADDR_V4</param>
+				<param type="IPV6">UE_ADDR_V6</param>
+				<param type="FILE_TRANSFER_TYPE">FILE_TRANSFER_TYPE</param>
+				<param type="TRANSMISSION_DIRECTION">FILE_TRANSMISSION_DIRECTION</param>
+				<param type="EVENT_RESULT">RESULT</param>
+				<param type="SESSION_CAUSE_CODE">SESSION_CAUSE_CODE</param>
+				<param type="RAT_CAUSE_CODE">RAT_CAUSE_CODE</param>
+				<param type="IP_CAUSE_CODE">IP_CAUSE_CODE</param>
+				<param type="HTTP_STATUS_CODE">HTTP_STATUS_CODE</param>
+				<param type="FTP_CODE">FTP_CODE</param>
+				<struct seqmaxlen="8" type="EVENTS">EVENTS</struct>
+				<struct seqmaxlen="8" type="MILESTONES">TRIGGER_POINT_MILESTONES</struct>
+				<param type="TIMESTAMP">CORRELATION_TIME</param>
+				<param type="BOOLEAN">NETWORK_ACCESS_REQUEST</param>
+				<param type="BOOLEAN">DNS_QUERY</param>
+				<param type="BOOLEAN">SYN_MESSAGE</param>
+				<param type="BOOLEAN">HTTP_GET</param>
+				<param type="BOOLEAN">FILE_TRANSFER_SETUP_START</param>
+				<param type="BOOLEAN">FILE_TRANSFER_AUTHENTICATION_START</param>
+				<param type="BOOLEAN">FILE_TRANSFER_AUTHENTICATION_COMPELTE</param>
+				<param type="BOOLEAN">FILE_TRANSFER_SETUP_COMPLETE</param>
+			</elements>
+		</event>
+
+		<event>
+			<name>FILE_TRANSFER_SESSION_INTERMEDIATE</name>
+			<id>3001</id>
+			<comment>This event is reported periodically during file transfer sessions, all field
+			values such as throughput, and max packet size are reported for the reporting duration</comment>
+			<elements>
+				<param type="SESSION_ID">SESSION_ID</param>
+				<param type="MESSAGE_SEQUENCE_NO">MESSAGE_SEQUENCE_NO</param>
+				<param type="DURATION">SESSION_DURATION</param>
+				<param type="DURATION">REPORTING_DURATION</param>
+				<param type="TIMESTAMP">END_TIMESTAMP</param>
+				<param type="IMSI">IMSI</param>
+				<param type="MSISDN">MSISDN</param>
+				<param type="IMEISV">IMEISV</param>
+				<param type="IMEISV">IMEITAC</param>
+				<param type="HSDPA_CATEGORY">HSDPA_CATEGORY</param>
+				<param type="EUL_CATEGORY">EUL_CATEGORY</param>
+				<param type="IPV4">SGW_ADDR_V4</param>
+				<param type="IPV6">SGW_ADDR_V6</param>
+				<param type="IPV4">PGW_ADDR_V4</param>
+				<param type="IPV6">PGW_ADDR_V6</param>
+				<param type="GLOBAL_CELL_ID">CELL_ID</param>
+				<param type="APN">APN</param>
+				<param type="NSAPI">NSAPI</param>
+				<param type="IPV4">UE_ADDR_V4</param>
+				<param type="IPV6">UE_ADDR_V6</param>
+				<param type="FILE_TRANSFER_TYPE">FILE_TRANSFER_TYPE</param>
+				<param type="TRANSMISSION_DIRECTION">FILE_TRANSMISSION_DIRECTION</param>
+				<param type="THROUGHPUT">DOWNLOADED_DATA</param>
+				<param type="THROUGHPUT">UPLOADED_DATA</param>
+				<param type="PACKET_SIZE">MAX_DATA_PACKET</param>
+				<param type="PACKET_LOSS_RATIO">PACKET_LOSS_TERM</param>
+				<param type="PACKET_LOSS_RATIO">PACKET_LOSS_NET</param>
+				<param type="EVENT_RESULT">RESULT</param>
+				<param type="SESSION_CAUSE_CODE">SESSION_CAUSE_CODE</param>
+				<param type="RAT_CAUSE_CODE">RAT_CAUSE_CODE</param>
+				<param type="IP_CAUSE_CODE">IP_CAUSE_CODE</param>
+				<param type="HTTP_STATUS_CODE">HTTP_STATUS_CODE</param>
+				<param type="FTP_CODE">FTP_CODE</param>
+				<struct seqmaxlen="1" type="EVENTS">EVENTS</struct>
+				<struct seqmaxlen="1" type="MILESTONES">TRIGGER_POINT_MILESTONES</struct>
+				<param type="TIMESTAMP">CORRELATION_TIME</param>
+				<param type="BOOLEAN">LAST_DATA_TRANSFER</param>
+			</elements>
+		</event>
+
+		<event>
+			<name>FILE_TRANSFER_SESSION_END</name>
+			<id>3002</id>
+			<comment>This event is reported on completion of a video on demand session, all field
+			values such as throughput, and max packet size are reported for the reporting duration</comment>
+			<elements>
+				<param type="SESSION_ID">SESSION_ID</param>
+				<param type="MESSAGE_SEQUENCE_NO">MESSAGE_SEQUENCE_NO</param>
+				<param type="DURATION">DURATION</param>
+				<param type="DURATION">REPORTING_DURATION</param>
+				<param type="TIMESTAMP">END_TIMESTAMP</param>
+				<param type="IMSI">IMSI</param>
+				<param type="MSISDN">MSISDN</param>
+				<param type="IMEISV">IMEISV</param>
+				<param type="IMEISV">IMEITAC</param>
+				<param type="HSDPA_CATEGORY">HSDPA_CATEGORY</param>
+				<param type="EUL_CATEGORY">EUL_CATEGORY</param>
+				<param type="IPV4">SGW_ADDR_V4</param>
+				<param type="IPV6">SGW_ADDR_V6</param>
+				<param type="IPV4">PGW_ADDR_V4</param>
+				<param type="IPV6">PGW_ADDR_V6</param>
+				<param type="GLOBAL_CELL_ID">CELL_ID</param>
+				<param type="APN">APN</param>
+				<param type="NSAPI">NSAPI</param>
+				<param type="IPV4">UE_ADDR_V4</param>
+				<param type="IPV6">UE_ADDR_V6</param>
+				<param type="FILE_TRANSFER_TYPE">FILE_TRANSFER_TYPE</param>
+				<param type="TRANSMISSION_DIRECTION">FILE_TRANSMISSION_DIRECTION</param>
+				<param type="THROUGHPUT">DOWNLOADED_DATA</param>
+				<param type="THROUGHPUT">UPLOADED_DATA</param>
+				<param type="PACKET_SIZE">MAX_DATA_PACKET</param>
+				<param type="PACKET_LOSS_RATIO">PACKET_LOSS_TERM</param>
+				<param type="PACKET_LOSS_RATIO">PACKET_LOSS_NET</param>
+				<param type="EVENT_RESULT">RESULT</param>
+				<param type="SESSION_CAUSE_CODE">SESSION_CAUSE_CODE</param>
+				<param type="RAT_CAUSE_CODE">RAT_CAUSE_CODE</param>
+				<param type="IP_CAUSE_CODE">IP_CAUSE_CODE</param>
+				<param type="FTP_CODE">FTP_CODE</param>
+				<param type="STREAMING_CAUSE_CODE">STREAMING_CAUSE_CODE</param>
+				<struct seqmaxlen="2" type="EVENTS">EVENTS</struct>
+				<struct seqmaxlen="2" type="MILESTONES">TRIGGER_POINT_MILESTONES</struct>
+				<param type="TIMESTAMP">CORRELATION_TIME</param>
+				<param type="BOOLEAN">FILE_TRANSFER_SETUP_COMPLETE</param>
+				<param type="BOOLEAN">FILE_TRANSFER_TERMINATION_COMPLETE</param>
+			</elements>
+		</event>
+
+	</events>
+</eventspecification>
+  

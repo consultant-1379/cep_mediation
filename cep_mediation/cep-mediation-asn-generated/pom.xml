@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>cep-mediation</artifactId>
+		<groupId>com.ericsson.eniq.events.cepmediation</groupId>
+		<version>2.2.7</version>
+	</parent>
+
+	<artifactId>cep-mediation-asn-generated</artifactId>
+	<name>${eniq.events.app.name} :: CEP Mediation ASN</name>
+	<packaging>jar</packaging>
+
+	
+
+
+
+
+	<dependencies>
+		<dependency>
+			<groupId>com.oss.asn1</groupId>
+			<artifactId>com.oss.asn1</artifactId>
+			<version>4.1.0</version>
+		</dependency>
+	</dependencies>
+</project>

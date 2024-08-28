@@ -1,0 +1,141 @@
+group EventClassMap;
+
+/**
+ * The main template that generates the class
+ */
+main(schemaType, event, parameter) ::= <<
+package com.ericsson.cepmediation.apeventbeans.<schemaType>;
+
+/**
+ * This class is as java bean that wraps a single event of type  <event.extends>
+ * adding some enrichment fields.
+ * 
+ * This code is generated using java string templates
+ * see http://www.stringtemplate.org
+ */
+
+import com.ericsson.cepmediation.base.apeventbeans.ApEventBean;
+import com.ericsson.cepmediation.base.meta.schema.Event;
+
+@SuppressWarnings("serial")
+public class <event.name> extends ApEventBean {
+   // Set the absolute name of this <event.name> topic
+    public static final String ABSOLUTE_NAME = "<schemaType>.enrichment.<event.name>";
+     
+    private <event.extends> base;
+    
+    /**
+     * Default constructor  
+     */
+    public <event.name>() {}
+    
+    /**
+     * Define a constructor 
+     */
+    public <event.name>(<event.extends> base) {
+        if (base == null) {
+            throw new IllegalArgumentException("Null provided for base.");
+        }
+        this.base = base;
+    }
+    
+    /**
+     * Get the absolute name for <event.name> events
+     * @return the absolute name
+     */
+     @Override
+     public String getAbsoluteName() {
+         return ABSOLUTE_NAME;
+     }
+     
+     public void setBase(<event.extends> base) {
+        this.base = base;
+     }
+     
+     public <event.extends> getBase() {
+        return base;
+     }
+     
+   /**
+     * This method is necessary only for the base event.
+     */
+    @Override
+    public void setData(final Event event, final byte[] data, int offset) {
+        throw new UnsupportedOperationException();
+    }
+    
+    
+    /**
+     * Legacy method that is added only for backward compatibility reasons.
+     */
+     @Override
+    public String getCSVString() {
+        return "base csvString: " + base.getCSVString();
+    }
+        
+    /**
+     * Legacy method that is added only for backward compatibility reasons.
+     */
+    public String getCSVStringQuoted() {
+        return "\"" + getCSVString().replaceAll("\"","") + "\"";
+    }
+ 
+    /**
+     * Legacy method that is added only for backward compatibility reasons.
+     */
+    public String getDecodedString() {
+        return "base decodedString: " + base.getDecodedString();
+    }
+
+    /**
+     * Legacy method that is added only for backward compatibility reasons.
+     */
+    public String getDecodedStringQuoted() {
+        return "\"" + getDecodedString().replaceAll("\"","") + "\"";
+    }
+
+    // The member data, one for each parameter in the <event.name> event
+    <parameter:createParameter()>
+    
+    <parameter:createGetter()>
+    
+    <parameter:createSetter()>
+}
+>>
+
+/**
+ * The template to create parameters
+ */
+createParameter(parameter) ::= <<
+protected <parameter.type> <parameter.name> = <parameter.initValue>;<\n>
+>>
+
+/**
+ * The template to create parameter getters
+ */
+createGetter(parameter) ::= <<
+
+/**
+ * Get the value of the <parameter.name> parameter
+ * @return The value of the <parameter.name> parameter
+ */
+public <parameter.type> get<parameter.name>() {
+    return <parameter.name>;
+}
+
+>>
+
+/**
+ * The template to create parameter setters
+ */
+createSetter(parameter) ::= <<
+
+/**
+ * Set the value of the <parameter.name> parameter
+ * @param <parameter.name> The new value of the parameter
+ */
+public void set<parameter.name>(final <parameter.type> <parameter.name>) {
+    this.<parameter.name> = <parameter.name>;
+}
+
+>>

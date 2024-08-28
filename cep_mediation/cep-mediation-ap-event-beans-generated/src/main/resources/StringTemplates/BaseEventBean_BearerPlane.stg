@@ -1,0 +1,289 @@
+group EventClassMap;
+
+/**
+ * The main template that generates the class
+ */
+main(schemaType, event, parameter, field) ::= <<
+package com.ericsson.cepmediation.apeventbeans.<schemaType>;
+
+/**
+ * This class is as java bean that holds a single <event.name> event and is the
+ * base class for all <event.name> events
+ * 
+ * This code is generated using java string templates
+ * see http://www.stringtemplate.org
+ */
+
+import java.io.Serializable;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
+
+import com.ericsson.cepmediation.base.apeventbeans.ApEventBean;
+import com.ericsson.cepmediation.base.meta.schema.Event;
+import java.io.OutputStream;
+<if (event.dataConvertersNeeded)>
+import com.ericsson.cepmediation.base.util.DataConverters;
+<endif>
+
+
+@SuppressWarnings("serial")
+public class <event.name> extends <event.superClassName> implements Serializable {
+    // Set the absolute name of this <event.name> topic
+    public static final String ABSOLUTE_NAME = "<schemaType>.<event.name>";
+    
+    /**
+     * Define a default constructor
+     */
+    public <event.name>() {
+        super();
+    }
+     
+    /**
+     * Define a constructor for the base properties
+     * @param timestamp
+     * @param ne
+     * @param name
+     * @param version
+     * @param subNetwork
+     */
+    public <event.name>(long timestamp, String subNetwork, String ne, String name, String version) {
+        super(timestamp, subNetwork, ne, name, version);
+    }
+
+    // The member data, one for each parameter in the <event.name> event
+    <field:createParameter()>
+    
+    /**
+     * Get the absolute name for <event.name> events
+     * @return the absolute name
+     */
+     public String getAbsoluteName() {
+         return ABSOLUTE_NAME;
+     }
+     
+    /**
+	 * Getter for ASN.1 data
+	 */
+	public byte[] getAsn1Data() {
+		return <event.asn1Parameter>;
+	}
+
+    <field:createGetter()>
+    <field:createSetter()>
+
+    /**
+     * Set the data of the <event> event from a byte array, this method is generated from
+     * the XML schema for the <event> event
+     * @param event The <event> event for which data is to be set
+     * @param data The byte array
+     * @param offset The offset in the array to start at
+     */
+    public void setData(final Event event, final byte[] data, int offset) {
+        // not used by this class
+    }
+    
+    /**
+     * Set each field of the <event> event from a string array, this method is generated from
+     * the XML schema for the <event> event
+     * @param event The <event> event for which data is to be set
+     * @param fields The string array
+     */
+    public void setFields(final Event event, final String[] fields, final int startIndex) {
+        // Implemented only on sub classes of this class
+    }
+
+    /**
+     * Output the <event.name> event as a CSV string
+     * @return The <event.name> event data as a CSV string
+     */
+    public String getCSVString() {
+        // Output the parameter data as a CSV string
+        StringBuilder builder = new StringBuilder();
+        
+        // Add the time stamp and the NE logical name to the CSV string
+        builder.append(dateFormat.format(new Timestamp(timestamp)));
+        builder.append(',');
+        builder.append('"');
+        builder.append(subNetwork);
+        builder.append('"');
+        builder.append(',');
+        builder.append('"');
+        builder.append(ne);
+        builder.append('"');
+        builder.append(',');
+        builder.append('"');
+        builder.append(name);
+        builder.append('"');
+        builder.append(',');
+        builder.append('"');
+        builder.append(version);
+        builder.append('"');
+        <parameter:createCSVOutput()>
+
+        // Return the formatted CSV string
+        return builder.toString();
+    }
+        
+    /**
+     * Method to decode the <event.name> event, prefixing each parameter with its name, and
+     * replacing commas for storage in a database friendly string
+     * @return string containing the <event.name> event
+     */
+    public String getCSVStringQuoted() {
+        return "\"" + getCSVString().replaceAll("\"","") + "\"";
+    }
+ 
+    /**
+     * Method to decode the <event.name> event, prefixing each parameter with its name
+     * @return string containing the <event.name> event
+     */
+    public String getDecodedString() {
+        // Output the parameter data as a detailed string
+        StringBuilder builder = new StringBuilder();
+        
+        // Add the time stamp and the NE logical name to the CSV string
+        builder.append(dateFormat.format(new Timestamp(timestamp)));
+        builder.append(",SN=");
+        builder.append(subNetwork);
+        builder.append(",NE=");
+        builder.append(ne);
+        builder.append(',');
+        builder.append(name);
+        builder.append(",VERSION=");
+        builder.append(version);
+        <parameter:createDecodeOutput()>
+        
+        // Return the formatted CSV string
+        return builder.toString();
+    }
+
+    /**
+     * Method to decode the <event.name> event, prefixing each parameter with its name, and
+     * replacing commas for storage in a database friendly string
+     * @return string containing the <event.name> event
+     */
+    public String getDecodedStringQuoted() {
+        return "\"" + getDecodedString().replaceAll("\"","") + "\"";
+    }
+}
+>>
+
+/**
+ * The template to create parameters
+ */
+createParameter(field) ::= <<
+protected <field.type> <field.name> = <field.initValue>;<\n>
+>>
+
+/**
+ * The template to create parameter getters
+ */
+createGetter(field) ::= <<
+
+/**
+ * Get the value of the <field.name> parameter
+ * @return The value of the <field.name> parameter
+ */
+public <field.type> get<field.name>() {
+    return <field.name>;
+}
+
+>>
+
+/**
+ * The template to create parameter setters
+ */
+createSetter(field) ::= <<
+
+/**
+ * Set the value of the <field.name> parameter
+ * @param <field.name> new value of the parameter
+ */
+public void set<field.name>(final <field.type> <field.name>) {
+    this.<field.name> = <field.name>;
+}
+
+>>
+
+/**
+ * The template to create CSV output statements for each parameter
+ */
+createCSVOutput(parameter) ::= <<
+    builder.append(',');
+    <if (parameter.arrayElements)>
+    builder.append("\"{");
+    for (int i = 0; i \< <parameter.name>.length; i++) {
+        if (i != 0) {
+            builder.append(',');
+        }
+        <parameter:createArrayOutput()>
+    }
+    builder.append("}\"");
+    <else>
+    <parameter:createNormalOutput()>
+    <endif>
+    
+>>
+
+/**
+ * The template to create decode output statements for each parameter
+ */
+createDecodeOutput(parameter) ::= <<
+    builder.append(",<parameter.name>=");
+    <if (parameter.arrayElements)>
+    builder.append('{');
+    for (int i = 0; i \< <parameter.name>.length; i++) {
+        if (i != 0) {
+            builder.append(',');
+        }
+        <parameter:createArrayOutput()>
+    }
+    builder.append('}');
+    <else>
+    <parameter:createNormalOutput()>
+    <endif>
+    
+>>
+
+/**
+ * The template to create decode output statements for an array parameter
+ */
+createArrayOutput(parameter) ::= <<
+<if (parameter.isByteArray)>
+if (<parameter.name>[i].length > 0) {
+	builder.append(DataConverters.getByteArrayHexString(<parameter.name>[i], 0, <parameter.name>[i].length));
+}
+else {
+	builder.append("-1");
+}
+<elseif (parameter.isTimestamp)>
+builder.append(dateFormat.format(new Timestamp(<parameter.name>[i])));
+<else>
+builder.append(<parameter.name>[i]);
+<endif>
+>>
+
+/**
+ * The template to create decode output statements for a normal parameter
+ */
+createNormalOutput(parameter) ::= <<
+<if (parameter.isByteArray)>
+if (<parameter.name>.length > 0) {
+	builder.append(DataConverters.getByteArrayHexString(<parameter.name>, 0, <parameter.name>.length));
+}
+else {
+	builder.append("-1");
+}
+<elseif (parameter.isTimestamp)>
+builder.append(dateFormat.format(new Timestamp(<parameter.name>)));
+<elseif (parameter.isString)>
+builder.append('"');
+builder.append(<parameter.name>);
+builder.append('"');
+<else>
+builder.append(<parameter.name>);
+<endif>
+    
+>>

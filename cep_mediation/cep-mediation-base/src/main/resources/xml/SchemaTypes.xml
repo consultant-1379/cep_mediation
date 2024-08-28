@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schemaTypes xmlns="http://www.ericsson.com/SchemaTypes">
+
+    <!-- Configuration for schemas. Schema revisions should increase lexically,
+        with the highest schema revision being the highest lexically; Mappings will
+        be generated towards the highest lexical schema from other schemas -->
+
+    <eventNamespace>http://www.ericsson.com/PmEvents</eventNamespace>
+    <eventSchemaFile>xml/EventFormat.xsd</eventSchemaFile>
+
+
+    <!-- EBM -->
+    <schemaType>
+        <name>ebm</name>
+        <idLength>8</idLength>       <!-- in bits -->
+        <idStartPos>0</idStartPos>   <!-- in bits -->
+        <idInEvent>true</idInEvent>  <!-- true if the event ID is included in the event as a field -->
+        <schemaVersion>
+            <name>ebm_10b</name>
+            <xmlFile>xml/EBM_E-L10B.xml</xmlFile>
+        </schemaVersion>
+        <schemaVersion>
+            <name>ebm_11a</name>
+            <xmlFile>xml/EBM_G1-11A.xml</xmlFile>
+        </schemaVersion>
+        <schemaVersion>
+            <name>ebm_11a_fp01</name>
+            <xmlFile>xml/EBM_H-11A_FP01.xml</xmlFile>
+        </schemaVersion>
+        <schemaVersion>
+            <name>ebm_11b</name>
+            <xmlFile>xml/EBM_J1-11B.xml</xmlFile>
+        </schemaVersion>
+        <schemaVersion>
+            <name>ebm_12a</name>
+            <xmlFile>xml/EBM_K-12A.xml</xmlFile>
+        </schemaVersion>
+        <schemaVersion>
+            <name>ebm_13a</name>
+            <xmlFile>xml/EBM_L-13A.xml</xmlFile>
+        </schemaVersion>
+        <schemaVersion>
+            <name>ebm_13b</name>
+            <xmlFile>xml/EBM_N1-13B.xml</xmlFile>
+        </schemaVersion>
+        <schemaVersion>
+            <name>ebm_15b</name>
+            <xmlFile>xml/EBM_U_15B.xml</xmlFile>
+        </schemaVersion>
+    </schemaType>
+
+    <!-- GPEH -->
+    <schemaType>
+        <name>gpeh</name>
+        <idLength>11</idLength>      <!-- in bits -->
+        <idStartPos>52</idStartPos>  <!-- in bits -->
+        <idInEvent>true</idInEvent>  <!-- true if the event ID is included in the event as a field -->
+        <paramPreamble>EVENT_PARAM_</paramPreamble>
+        <valuePreamble>EVENT_VALUE_</valuePreamble>
+        <schemaVersion>
+            <name>gpeh_10b</name>
+            <xmlFile>xml/GPEH_BU-L10B_transformed.xml</xmlFile>
+        </schemaVersion>
+        <schemaVersion>
+            <name>gpeh_11b_12a</name>
+            <xmlFile>xml/GPEH_CF2-W11B_W12A_transformed.xml</xmlFile>
+        </schemaVersion>
+        <schemaVersion>
+            <name>gpeh_12b</name>
+            <xmlFile>xml/GPEH_CJ1-W12B_transformed.xml</xmlFile>
+        </schemaVersion>
+        <schemaVersion>
+            <name>gpeh_13a</name>
+            <xmlFile>xml/GPEH_CN1-W13A_transformed.xml</xmlFile>
+        </schemaVersion>
+        <schemaVersion>
+            <name>gpeh_13b_1</name>
+            <xmlFile>xml/GPEH_CV1-W13B_1_transformed.xml</xmlFile>
+        </schemaVersion>
+        <schemaVersion>
+            <name>gpeh_14b</name>
+            <xmlFile>xml/GPEH_DC5-W14B_transformed.xml</xmlFile>
+        </schemaVersion>
+        <schemaVersion>
+            <name>gpeh_15a</name>
+            <xmlFile>xml/GPEH_B1_W15A_transformed.xml</xmlFile>
+        </schemaVersion>
+        <schemaVersion>
+            <name>gpeh_15b</name>
+            <xmlFile>xml/GPEH_G1-W15B_transformed.xml</xmlFile>
+        </schemaVersion>
+        <schemaVersion>
+            <name>gpeh_16a</name>
+            <xmlFile>xml/GPEH_J-W16A_transformed.xml</xmlFile>
+        </schemaVersion>
+        <extension>
+            <xmlFile>xml/GpehMetadataExtension.xml</xmlFile>
+        </extension>
+    </schemaType>
+
+    <!-- Bearer Plane -->
+    <schemaType>
+        <name>bearer_plane</name>
+        <idLength>0</idLength>       <!-- in bits -->
+        <idStartPos>0</idStartPos>   <!-- in bits -->
+        <idInEvent>false</idInEvent> <!-- true if the event ID is included in the event as a field -->
+        <schemaVersion>
+            <name>bearer_plane_pa1</name>
+            <xmlFile>xml/BearerPlane_PA1.xml</xmlFile>
+        </schemaVersion>
+    </schemaType>
+
+    <!-- Control Plane -->
+    <schemaType>
+        <name>control_plane</name>
+        <idLength>0</idLength>       <!-- in bits -->
+        <idStartPos>0</idStartPos>   <!-- in bits -->
+        <idInEvent>false</idInEvent> <!-- true if the event ID is included in the event as a field -->
+        <schemaVersion>
+            <name>control_plane_pa1</name>
+            <xmlFile>xml/ControlPlane_PA1.xml</xmlFile>
+        </schemaVersion>
+    </schemaType>
+
+    <!-- Correlation -->
+    <schemaType>
+        <name>correlation</name>
+        <idLength>0</idLength>       <!-- in bits -->
+        <idStartPos>0</idStartPos>   <!-- in bits -->
+        <idInEvent>false</idInEvent> <!-- true if the event ID is included in the event as a field -->
+        <schemaVersion>
+            <name>correlation_11b</name>
+            <xmlFile>xml/CorrelatedEvents_PA1.xml</xmlFile>
+        </schemaVersion>
+    </schemaType>
+
+
+</schemaTypes>

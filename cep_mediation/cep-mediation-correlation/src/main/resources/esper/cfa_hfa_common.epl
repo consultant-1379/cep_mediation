@@ -1,0 +1,83 @@
+module cfa_hfa_common_module;
+
+uses raw_events_base_module;
+
+create window RrcUplinkDTEnrichedWindow.win:keepall() as gpeh.RRC_UPLINK_DIRECT_TRANSFER_ENRICHED;
+// Time window is used to ensure that event will not be kept forever if there was no imsi or rrc set/release for that ueContext, rncModule combination
+create window RrcUplinkDTUnenrichedWindow.win:time(EXPIRY_TIME msec) as gpeh.RRC_UPLINK_DIRECT_TRANSFER_ENRICHED;
+
+
+// Delete any unenriched events when there is a flush, only needed for unenriched window as enriched events are output periodically 
+@Name('Flush-IncompleteRrcUplinkDirectTransfer')
+@Priority(31)
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RrcUplinkDTUnenrichedWindow;
+
+
+// ************************************ Timer for CFA/HFA events    ***********************
+@Name('CFA-HFA-Timer-Produce-Output')
+on pattern[every timer:interval(TIMER_INTERVAL_PRODUCE_OUTPUT)]
+insert into PRODUCE_OUTPUT_TIMER
+  select 1 as produceOutputFlag;
+
+@Name('CFA-HFA-Timer-Check-Expiry')  
+on pattern[every timer:interval(TIMER_INTERVAL_CHECK_EXPIRY)]
+insert into CLEANUP_EXPIRED_DATA
+  select 1 as checkExpiryFlag;
+
+// ********************************************************************************************
+
+// ************************************ RRC Uplink Direct Transfer Handling    ***********************
+@Name('RrcUplinkDirectTransfer-Capturing')
+@Priority(12)
+on gpeh.RRC_UPLINK_DIRECT_TRANSFER(rrcUplinkDTEvent.getAsn1MessageList() is not null and rrcUplinkDTEvent.getAsn1MessageList().size > 0) as rrcUplinkDTEvent
+merge ImsiMapWindow as imw
+where imw.UE_CONTEXT     = rrcUplinkDTEvent.UE_CONTEXT
+  and imw.RNC_MODULE_ID  = rrcUplinkDTEvent.RNC_MODULE_ID
+  and imw.IMSI != -1l
+when matched  
+  then insert into
+  RrcUplinkDTEnrichedWindow select
+        rrcUplinkDTEvent                              as base,
+        imw.IMSI                                      as IMSI
+when not matched  
+  then insert into
+  RrcUplinkDTUnenrichedWindow select
+        rrcUplinkDTEvent                              as base;
+        
+@Priority(5)
+@Name('RrcUplinkDirectTransfer-Enrichment')
+on PRODUCE_OUTPUT_TIMER as produceOutputTimer
+delete from RrcUplinkDTEnrichedWindow;
+
+@Priority(11)
+@Name('Imsi-Arrives-After-RrcUplinkDirectTransfer')
+on gpeh.INTERNAL_IMSI as imsi
+merge RrcUplinkDTUnenrichedWindow as rrcUplinkDTUnenrichedWindow
+where imsi.UE_CONTEXT     = rrcUplinkDTUnenrichedWindow.base.UE_CONTEXT
+  and imsi.RNC_MODULE_ID  = rrcUplinkDTUnenrichedWindow.base.RNC_MODULE_ID
+when matched  
+  then update set
+        IMSI         = cast(imsi.IMSI, long);
+  
+@Priority(5)
+@Name('IncompleteRrcUplinkDirectTransfer-Enrichment')
+on PRODUCE_OUTPUT_TIMER as produceOutputTimer
+  delete from RrcUplinkDTUnenrichedWindow rrcUplinkDTUnenrichedWindow
+  where rrcUplinkDTUnenrichedWindow.IMSI != -1l;
+
+@Name('Cleanup-IncompleteRrcUplinkDirectTransfer-On-Connection-Setup')
+@Priority(11)
+on gpeh.RRC_RRC_CONNECTION_SETUP setup
+delete from RrcUplinkDTUnenrichedWindow as rrcUplinkDTUnenrichedWindow
+  where rrcUplinkDTUnenrichedWindow.base.UE_CONTEXT = setup.UE_CONTEXT
+  and rrcUplinkDTUnenrichedWindow.base.RNC_MODULE_ID = setup.RNC_MODULE_ID;
+ 
+@Name('Cleanup-IncompleteRrcUplinkDirectTransfer-On-Connection-Release')
+@Priority(11)
+on gpeh.RRC_RRC_CONNECTION_RELEASE_COMPLETE release
+delete from RrcUplinkDTUnenrichedWindow as rrcUplinkDTUnenrichedWindow
+  where rrcUplinkDTUnenrichedWindow.base.UE_CONTEXT = release.UE_CONTEXT
+  and rrcUplinkDTUnenrichedWindow.base.RNC_MODULE_ID = release.RNC_MODULE_ID;
+
+// ********************************************************************************************

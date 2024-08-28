@@ -1,0 +1,3523 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pojos that are going to be stored in text file. -->
+<persistence xmlns="http://www.ericsson.com/Persistence">
+
+    <persistent-entity className="RRC_ACTIVE_SET_UPDATE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_ACTIVE_SET_UPDATE_COMPLETE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_ACTIVE_SET_UPDATE_FAILURE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_CELL_UPDATE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_CELL_UPDATE_CONFIRM_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_DOWNLINK_DIRECT_TRANSFER_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_MEASUREMENT_CONTROL_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_MEASUREMENT_CONTROL_FAILURE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_MEASUREMENT_REPORT_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_PAGING_TYPE_2_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_RADIO_BEARER_RECONFIGURATION_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_RADIO_BEARER_RECONFIGURATION_COMPLETE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_RADIO_BEARER_RECONFIGURATION_FAILURE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_RADIO_BEARER_RELEASE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_RADIO_BEARER_RELEASE_COMPLETE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_RADIO_BEARER_RELEASE_FAILURE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_RADIO_BEARER_SETUP_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_RADIO_BEARER_SETUP_COMPLETE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_RADIO_BEARER_SETUP_FAILURE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_RRC_CONNECTION_RELEASE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_RRC_CONNECTION_RELEASE_COMPLETE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_RRC_STATUS_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_SECURITY_MODE_COMMAND_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_SECURITY_MODE_COMPLETE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_SECURITY_MODE_FAILURE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_SIGNALLING_CONNECTION_RELEASE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity
+        className="RRC_SIGNALLING_CONNECTION_RELEASE_INDICATION_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_UE_CAPABILITY_INFORMATION_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_UE_CAPABILITY_INFORMATION_CONFIRM_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_UPLINK_DIRECT_TRANSFER_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_UTRAN_MOBILITY_INFORMATION_CONFIRM_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_HANDOVER_FROM_UTRAN_COMMAND_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_HANDOVER_FROM_UTRAN_FAILURE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_PHYSICAL_CHANNEL_RECONFIGURATION_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity
+        className="RRC_PHYSICAL_CHANNEL_RECONFIGURATION_COMPLETE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity
+        className="RRC_PHYSICAL_CHANNEL_RECONFIGURATION_FAILURE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_UTRAN_MOBILITY_INFORMATION_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_UTRAN_MOBILITY_INFORMATION_FAILURE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_CELL_CHANGE_ORDER_FROM_UTRAN_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_CELL_CHANGE_ORDER_FROM_UTRAN_FAILURE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_UE_CAPABILITY_ENQUIRY_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_URA_UPDATE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_URA_UPDATE_CONFIRM_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RRC_TRANSPORT_CHANNEL_RECONFIGURATION_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity
+        className="RRC_TRANSPORT_CHANNEL_RECONFIGURATION_COMPLETE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="NBAP_RADIO_LINK_SETUP_REQUEST_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="NBAP_RADIO_LINK_SETUP_RESPONSE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="NBAP_RADIO_LINK_SETUP_FAILURE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="NBAP_RADIO_LINK_ADDITION_REQUEST_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="NBAP_RADIO_LINK_ADDITION_RESPONSE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="NBAP_RADIO_LINK_ADDITION_FAILURE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="NBAP_RADIO_LINK_RECONFIGURATION_PREPARE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="NBAP_RADIO_LINK_RECONFIGURATION_READY_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="NBAP_RADIO_LINK_RECONFIGURATION_FAILURE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="NBAP_RADIO_LINK_RECONFIGURATION_COMMIT_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="NBAP_RADIO_LINK_RECONFIGURATION_CANCEL_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="NBAP_RADIO_LINK_DELETION_REQUEST_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="NBAP_RADIO_LINK_DELETION_RESPONSE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="NBAP_DL_POWER_CONTROL_REQUEST_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity
+        className="NBAP_DEDICATED_MEASUREMENT_INITIATION_REQUEST_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity
+        className="NBAP_DEDICATED_MEASUREMENT_INITIATION_RESPONSE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity
+        className="NBAP_DEDICATED_MEASUREMENT_INITIATION_FAILURE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="NBAP_DEDICATED_MEASUREMENT_REPORT_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity
+        className="NBAP_DEDICATED_MEASUREMENT_TERMINATION_REQUEST_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity
+        className="NBAP_DEDICATED_MEASUREMENT_FAILURE_INDICATION_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="NBAP_RADIO_LINK_FAILURE_INDICATION_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="NBAP_RADIO_LINK_RESTORE_INDICATION_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="NBAP_COMPRESSED_MODE_COMMAND_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity
+        className="NBAP_RADIO_LINK_PARAMETER_UPDATE_INDICATION_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="NBAP_SECONDARY_UL_FREQUENCY_REPORT_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity
+        className="NBAP_SECONDARY_UL_FREQUENCY_UPDATE_INDICATION_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity
+        className="NBAP_RADIO_LINK_PREEMPTION_REQUIRED_INDICATION_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RANAP_RAB_ASSIGNMENT_REQUEST_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RANAP_RAB_ASSIGNMENT_RESPONSE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RANAP_IU_RELEASE_REQUEST_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RANAP_IU_RELEASE_COMMAND_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RANAP_IU_RELEASE_COMPLETE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RANAP_SECURITY_MODE_COMMAND_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RANAP_SECURITY_MODE_COMPLETE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RANAP_SECURITY_MODE_REJECT_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RANAP_LOCATION_REPORTING_CONTROL_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RANAP_DIRECT_TRANSFER_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RANAP_ERROR_INDICATION_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RANAP_RELOCATION_REQUIRED_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RANAP_RELOCATION_REQUEST_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RANAP_RELOCATION_REQUEST_ACKNOWLEDGE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RANAP_RELOCATION_COMMAND_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RANAP_RELOCATION_DETECT_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RANAP_RELOCATION_COMPLETE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RANAP_RELOCATION_PREPARATION_FAILURE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RANAP_RELOCATION_FAILURE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RANAP_RELOCATION_CANCEL_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RANAP_RELOCATION_CANCEL_ACKNOWLEDGE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RANAP_SRNS_CONTEXT_REQUEST_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RANAP_SRNS_CONTEXT_RESPONSE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RANAP_SRNS_DATA_FORWARD_COMMAND_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RANAP_LOCATION_REPORT_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RANAP_RANAP_RELOCATION_INFORMATION_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RANAP_RAB_RELEASE_REQUEST_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity
+        className="RNSAP_COMMON_TRANSPORT_CHANNEL_RESOURCES_RELEASE_REQUEST_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity
+        className="RNSAP_COMMON_TRANSPORT_CHANNEL_RESOURCES_REQUEST_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity
+        className="RNSAP_COMMON_TRANSPORT_CHANNEL_RESOURCES_RESPONSE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity
+        className="RNSAP_COMMON_TRANSPORT_CHANNEL_RESOURCES_FAILURE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RNSAP_RADIO_LINK_SETUP_REQUEST_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RNSAP_RADIO_LINK_SETUP_RESPONSE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RNSAP_RADIO_LINK_SETUP_FAILURE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RNSAP_RADIO_LINK_ADDITION_REQUEST_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RNSAP_RADIO_LINK_ADDITION_RESPONSE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RNSAP_RADIO_LINK_ADDITION_FAILURE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RNSAP_RADIO_LINK_RECONFIGURATION_PREPARE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RNSAP_RADIO_LINK_RECONFIGURATION_READY_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RNSAP_RADIO_LINK_RECONFIGURATION_FAILURE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RNSAP_RADIO_LINK_RECONFIGURATION_COMMIT_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RNSAP_RADIO_LINK_RECONFIGURATION_CANCEL_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RNSAP_RADIO_LINK_DELETION_REQUEST_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RNSAP_RADIO_LINK_DELETION_RESPONSE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RNSAP_DL_POWER_CONTROL_REQUEST_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity
+        className="RNSAP_DEDICATED_MEASUREMENT_INITIATION_REQUEST_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity
+        className="RNSAP_DEDICATED_MEASUREMENT_INITIATION_RESPONSE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity
+        className="RNSAP_DEDICATED_MEASUREMENT_INITIATION_FAILURE_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RNSAP_DEDICATED_MEASUREMENT_REPORT_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity
+        className="RNSAP_DEDICATED_MEASUREMENT_TERMINATION_REQUEST_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity
+        className="RNSAP_DEDICATED_MEASUREMENT_FAILURE_INDICATION_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RNSAP_RADIO_LINK_FAILURE_INDICATION_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RNSAP_RADIO_LINK_RESTORE_INDICATION_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RNSAP_COMPRESSED_MODE_COMMAND_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity className="RNSAP_ERROR_INDICATION_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity
+        className="RNSAP_UPLINK_SIGNALLING_TRANSFER_INDICATION_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity
+        className="RNSAP_DOWNLINK_SIGNALLING_TRANSFER_REQUEST_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+    <persistent-entity
+        className="RNSAP_RADIO_LINK_PARAMETER_UPDATE_INDICATION_ENRICHED"
+        packageName="com.ericsson.cepmediation.apeventbeans.gpeh" enriches="true">
+        <columns>
+            <column type="unsignedbigint" enriched="true">IMSI</column>
+            <column type="unsignedbigint">Timestamp</column>
+            <column type="smallint">EVENT_ID</column>
+            <column type="varchar">Name</column>
+            <column type="unsignedint">PROTOCOL_ID</column>
+            <column type="bit">MESSAGE_DIRECTION</column>
+            <column type="unsignedint">SCANNER_ID</column>
+            <column type="smallint">UE_CONTEXT</column>
+            <column type="int">RNC_MODULE_ID</column>
+            <column type="unsignedint">C_ID_1</column>
+            <column type="smallint">RNC_ID_1</column>
+            <column type="unsignedint">C_ID_2</column>
+            <column type="smallint">RNC_ID_2</column>
+            <column type="unsignedint">C_ID_3</column>
+            <column type="smallint">RNC_ID_3</column>
+            <column type="unsignedint">C_ID_4</column>
+            <column type="smallint">RNC_ID_4</column>
+            <column type="unsignedint">PDU_TYPE</column>
+            <column type="smallint">MESSAGE_LENGTH</column>
+            <column type="varchar">MESSAGE_CONTENTS</column>
+
+        </columns>
+    </persistent-entity>
+
+</persistence>

@@ -1,0 +1,9 @@
+// copy this into GPEH if you want to debug from JUnit
+@Name('Capture-All-Events-For-Test')
+@Description('Only used for JUnit testing')
+ON ApEventBean AS ev
+	MERGE RadioSessionWindow AS rsw
+	WHERE rsw.sessionId = ev.sessionId
+	WHEN MATCHED
+   THEN UPDATE SET   
+   rsw.reset = Util.addEvent(rsw, ev); 

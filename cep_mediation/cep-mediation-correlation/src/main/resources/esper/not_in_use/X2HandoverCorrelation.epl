@@ -1,0 +1,360 @@
+// Declare the name for the module
+module X2HandoverCorrelation;
+
+// Imports
+import com.ericsson.cepmediation.eventbeans.celltrace.*;
+import com.ericsson.cepmediation.eventbeans.ctum.*;
+import com.ericsson.cepmediation.eventbeans.ebm.*;
+import  com.ericsson.cepmediation.correlation.support.Util;
+@Name('select-LOG_EVENT')
+@Description('Select all LOG_EVENT events for storage')
+//@Audit
+select * from correlation.LOG_EVENT.win:length(1);
+
+@Name('X2-Handover-create-window')
+@Description('Create a window for handling X2 handover events')
+//@Audit
+create window X2HoWindow.win:keepall() as correlation.X2_HANDOVER;
+
+@Name('X2-Handover-flush-window')
+@Description('Flush the named window for X2 handover correlations')
+//@Audit
+on pattern [every timer:interval(10 sec)]
+	delete from X2HoWindow as x2ho
+	where (x2ho.IEBCE and x2ho.HPXO and x2ho.HPXI and x2ho.HEXO and x2ho.HEXI  and  x2ho.RRCR and  x2ho.RRCRC and  x2ho.PSR and  x2ho.PSRA and  x2ho.UCR) // Correlation complete
+	or current_timestamp - x2ho.CORRELATION_TIME > 60000; // Correlation times out after 5000 ms 
+
+@Name('X2-Handover-handle-INTERNAL_EVENT_BEST_CELL_EVAL')
+@Description('Handle INTERNAL_EVENT_BEST_CELL_EVAL events for X2 handover Correlation, create a new X2_HANDOVER event')
+@Audit
+
+on celltrace.INTERNAL_EVENT_BEST_CELL_EVAL iebce
+ merge X2HoWindow x2ho
+	where x2ho.MMES1APID_SOURCE = iebce.MMES1APID  and Arrays.equals(x2ho.GUMMEI_SOURCE, iebce.GUMMEI) 
+	when matched
+		then update	set
+		x2ho.name										=	'X2_HANDOVER' ,
+		x2ho.version									=	iebce.version,
+		x2ho.timestamp 									=	iebce.timestamp ,
+		x2ho.subNetwork									=	iebce.subNetwork,
+		x2ho.ne 										=	iebce.ne,
+		x2ho.CORRELATION_TIME 							=	current_timestamp(),
+		x2ho.ENBS1APID_SOURCE 							=	iebce.ENBS1APID ,
+		x2ho.MMES1APID_SOURCE 							=	iebce.MMES1APID ,   
+		x2ho.GUMMEI_SOURCE								=	iebce.GUMMEI ,
+		x2ho.MILESTONES_MILESTONE_NAME					=	{iebce.name},
+		x2ho.MILESTONES_MILESTONE_TIMESTAMP				=	Util.castArrayType({iebce.timestamp}),
+		x2ho.PCI										=	iebce.NEIGHBOR_PCI  ,
+		x2ho.RAC_UE_REF_SOURCE							=	iebce.RAC_UE_REF,
+		x2ho.ENB_ID_SOURCE								=	cast(iebce.ne,int),
+		x2ho.RSRP_SOURCE								=	iebce.SERVING_RSRP,
+		x2ho.RSRQ_SOURCE								=	iebce.SERVING_RSRQ ,
+		x2ho.RSRQ_OLD									=	iebce.NEIGHBOR_RSRP ,
+		x2ho.RSRQ_OLD									=	iebce.NEIGHBOR_RSRQ ,
+		x2ho.IEBCE										=	true where iebce.BEST_CELL_DECISION>0
+		
+	when not matched
+		then insert into correlation.X2_HANDOVER  select
+		'X2_HANDOVER'       							as name,
+		iebce.version       							as version,
+		iebce.timestamp     							as timestamp,
+		iebce.subNetwork          						as subNetwork,
+		iebce.ne            							as ne,
+		current_timestamp()								as CORRELATION_TIME,
+		iebce.timestamp     							as END_TIMESTAMP,
+		iebce.ENBS1APID     							as ENBS1APID_SOURCE,
+		iebce.MMES1APID     							as MMES1APID_SOURCE,
+		iebce.GUMMEI        							as GUMMEI_SOURCE,
+		iebce.NEIGHBOR_PCI  							as PCI,
+		{iebce.name}									as MILESTONES_MILESTONE_NAME,
+		Util.castArrayType({iebce.timestamp})			as MILESTONES_MILESTONE_TIMESTAMP,
+		iebce.RAC_UE_REF								as RAC_UE_REF_SOURCE,
+		cast(iebce.ne,int)								as ENB_ID_SOURCE,
+		iebce.SERVING_RSRP  							as RSRP_SOURCE,
+		iebce.SERVING_RSRQ  							as RSRQ_SOURCE,
+		iebce.NEIGHBOR_RSRP 							as RSRP_OLD,
+		iebce.NEIGHBOR_RSRQ 							as RSRQ_OLD,
+		true                							as IEBCE  where iebce.BEST_CELL_DECISION>0;   
+		
+		
+@Name('X2-Handover-handle-INTERNAL_PROC_HO_PREP_X2_OUT')
+@Description('Handle INTERNAL_PROC_HO_PREP_X2_OUT event for X2 handover Correlation')
+//@Audit
+on celltrace.INTERNAL_PROC_HO_PREP_X2_OUT hpxo
+	merge X2HoWindow x2ho
+	where x2ho.MMES1APID_SOURCE = hpxo.MMES1APID  and Arrays.equals(x2ho.GUMMEI_SOURCE, hpxo.GUMMEI)
+	when matched
+		then update	set
+			x2ho.HPXO                         			= true,
+			x2ho.DURATION                     			= cast(hpxo.timestamp - x2ho.timestamp, int),
+			x2ho.END_TIMESTAMP                			= hpxo.timestamp,
+			x2ho.HANDOVER_TYPE               			= hpxo.HO_TYPE,
+			x2ho.ENBS1APID_SOURCE						= hpxo.ENBS1APID,   
+			x2ho.MMES1APID_SOURCE 						= hpxo.MMES1APID,   
+			x2ho.RAC_UE_REF_SOURCE						= hpxo.RAC_UE_REF,
+			x2ho.CGI_SOURCE								= hpxo.NEIGHBOR_CGI,
+			x2ho.GUMMEI_SOURCE							= hpxo.GUMMEI,
+			x2ho.IMSI									= Util.getImsi(hpxo.ENBS1APID,hpxo.MMES1APID),
+			x2ho.HO_CAUSE                    			= hpxo.PROC_HO_PREP_OUT_ATTEMPT_CAUSE,
+			x2ho.HO_ATTEMPT_CAUSE               		= hpxo.PROC_HO_PREP_OUT_ATTEMPT_CAUSE,
+			x2ho.ENB_SRC_HO_PREP_RESULT       			= hpxo.PROC_HO_PREP_OUT_RESULT,
+			x2ho.CELL_ID_SOURCE               			= hpxo.GLOBAL_CELL_ID,
+			x2ho.TARGET_SELECTION_TYPE					= hpxo.HO_TARGET_SELECTION_TYPE,
+			x2ho.HO_OUT_PREP_ERAB_REQ_BITMAP  			= hpxo.HO_OUT_PREP_ERAB_REQ_BITMAP,
+			x2ho.HO_OUT_PREP_ERAB_FAIL_BITMAP 			= hpxo.HO_OUT_PREP_ERAB_FAIL_BITMAP
+	when not matched
+		then insert into correlation.X2_HANDOVER   select
+		'X2_HANDOVER'       							as name,
+		hpxo.version       								as version,
+		hpxo.timestamp     								as timestamp,
+		hpxo.subNetwork            						as subNetwork,
+		hpxo.ne            								as ne,
+		current_timestamp()								as CORRELATION_TIME,
+		hpxo.timestamp     								as END_TIMESTAMP,
+		hpxo.ENBS1APID     								as ENBS1APID_SOURCE,
+		hpxo.MMES1APID     								as MMES1APID_SOURCE,
+		hpxo.GUMMEI        								as GUMMEI_SOURCE,
+		hpxo.RAC_UE_REF									as RAC_UE_REF_SOURCE,
+		Util.getImsi(hpxo.ENBS1APID,hpxo.MMES1APID)		as IMSI,
+		cast(hpxo.ne,int)								as ENB_ID_SOURCE,
+ 		hpxo.HO_TYPE 									as HANDOVER_TYPE ,
+		hpxo.PROC_HO_PREP_OUT_ATTEMPT_CAUSE  			as HO_CAUSE,
+		{"INTERNAL_EVENT_BEST_CELL_EVAL"}				as MILESTONES_MILESTONE_NAME,
+		Util.castArrayType({hpxo.timestamp})			as MILESTONES_MILESTONE_TIMESTAMP,
+ 		hpxo.PROC_HO_PREP_OUT_RESULT 					as ENB_SRC_HO_PREP_RESULT,
+  		hpxo.GLOBAL_CELL_ID 							as CELL_ID_SOURCE,
+   		hpxo.HO_TARGET_SELECTION_TYPE 					as TARGET_SELECTION_TYPE,
+  		hpxo.HO_OUT_PREP_ERAB_REQ_BITMAP 				as HO_OUT_PREP_ERAB_REQ_BITMAP,
+   		hpxo.HO_OUT_PREP_ERAB_FAIL_BITMAP 				as HO_OUT_PREP_ERAB_FAIL_BITMAP,
+   		true											as HPXO;
+			
+		
+		
+		
+@Name('X2-Handover-handle-RRC_RRC_CONNECTION_RECONFIGURATION')
+@Description('Handle RRC_RRC_CONNECTION_RECONFIGURATION_COMPLETE event for X2 handover Correlation')
+//@Audit
+on celltrace.RRC_RRC_CONNECTION_RECONFIGURATION rrcrconf
+	merge X2HoWindow x2ho
+	where x2ho.MMES1APID_TARGET = rrcrconf.MMES1APID and Arrays.equals(x2ho.GUMMEI_SOURCE, rrcrconf.GUMMEI) and   
+	x2ho.ENBS1APID_SOURCE = rrcrconf.ENBS1APID
+			
+	when matched
+		then update	set
+			x2ho.RRCR									=	true,
+			x2ho.DURATION      							= 	cast(rrcrconf.timestamp - x2ho.timestamp, int),
+			x2ho.MILESTONES_MILESTONE_NAME				=	Util.buildMilestone(x2ho,rrcrconf.name,rrcrconf.name,rrcrconf.timestamp),
+			x2ho.END_TIMESTAMP 							=	rrcrconf.timestamp;
+			
+
+		
+						
+@Name('X2-Handover-handle-INTERNAL_PROC_HO_EXEC_X2_OUT')
+@Description('Handle INTERNAL_PROC_HO_EXEC_X2_OUT event for X2 handover Correlation')
+//@Audit
+on celltrace.INTERNAL_PROC_HO_EXEC_X2_OUT hexo
+	merge X2HoWindow x2ho
+	where x2ho.MMES1APID_SOURCE = hexo.MMES1APID and Arrays.equals(x2ho.GUMMEI_SOURCE, hexo.GUMMEI) and 
+	x2ho.ENBS1APID_SOURCE = hexo.ENBS1APID
+	when matched
+		then update	set
+			x2ho.RESULT = case when x2ho.IEBCE and x2ho.HPXI and x2ho.HEXO and x2ho.HEXI and x2ho.XSST and x2ho.RRCRC  then 1 else 2 end,
+			x2ho.HEXO                         			= true,
+			x2ho.DURATION                     			= cast(hexo.timestamp - x2ho.timestamp, int),
+			x2ho.END_TIMESTAMP               			= hexo.timestamp,
+			//x2ho.HO_PACKET_FORWARD                    = hexo.HO_PACKET_FORWARD,this need to be enabled in the 12B 
+			x2ho.ENB_SRC_HO_EXEC_RESULT       			= hexo.PROC_HO_EXEC_OUT_RESULT,
+			x2ho.HO_OUT_PREP_ERAB_REQ_BITMAP  			= hexo.HO_OUT_EXEC_ERAB_REQ_BITMAP,
+			x2ho.HO_OUT_PREP_ERAB_FAIL_BITMAP 			= hexo.HO_OUT_EXEC_ERAB_FAIL_BITMAP
+			
+			
+	when not matched
+		// INTERNAL_PROC_HO_PREP_X2_OUT out of sequence for this UE
+		then insert into correlation.LOG_EVENT select
+		'INTERNAL_PROC_HO_EXEC_X2_OUT' 					as name,
+		hexo.version 									as version,
+		hexo.timestamp 									as timestamp,
+		hexo.subNetwork            						as subNetwork,
+		hexo.ne 										as ne,
+		2 												as RESULT, // ABORT value
+		hexo.getCSVStringQuoted() 						as LOG_MESSAGE;
+		
+			
+	
+		
+		
+		
+		
+@Name('X2-Handover-handle-INTERNAL_PROC_HO_PREP_X2_IN')
+@Description('Handle INTERNAL_PROC_HO_PREP_X2_IN event for X2 handover Correlation')
+@Audit
+on celltrace.INTERNAL_PROC_HO_PREP_X2_IN hpxi
+	merge X2HoWindow x2ho
+	where Util.validate(x2ho.IMSI,hpxi.ENBS1APID,hpxi.MMES1APID) 
+	when matched
+		then update	set
+			x2ho.RESULT = case when x2ho.IEBCE and x2ho.HPXO and x2ho.HEXO and x2ho.HEXI and x2ho.XSST and x2ho.RRCRC  then 1 else 2 end,
+			x2ho.HPXI                        			= true,
+			x2ho.DURATION                   			= cast(hpxi.timestamp - x2ho.timestamp, int),
+			x2ho.ENBS1APID_TARGET						= hpxi.ENBS1APID,
+			x2ho.MMES1APID_TARGET						= hpxi.MMES1APID,
+			x2ho.END_TIMESTAMP               			= hpxi.timestamp,
+			x2ho.ENB_ID_TARGET							= cast(hpxi.ne,int),
+			x2ho.CELL_ID_TARGET							= hpxi.GLOBAL_CELL_ID,
+			x2ho.GUMMEI_TARGET							= hpxi.GUMMEI,
+			x2ho.CGI_TARGET								= hpxi.NEIGHBOR_CGI,
+			x2ho.RAC_UE_REF_TARGET						= hpxi.RAC_UE_REF,
+			x2ho.ENB_TRG_HO_PREP_RESULT      			= hpxi.PROC_HO_PREP_IN_RESULT,
+			x2ho.HO_IN_PREP_ERAB_REQ_BITMAP  			= hpxi.HO_IN_PREP_ERAB_REQ_BITMAP,
+			x2ho.HO_IN_PREP_ERAB_SUCC_BITMAP 			= hpxi.HO_IN_PREP_ERAB_SUCC_BITMAP
+	when not matched
+		// INTERNAL_PROC_HO_PREP_X2_IN out of sequence for this UE
+		then insert into correlation.LOG_EVENT select
+		'INTERNAL_PROC_HO_PREP_X2_IN' 					as name,
+		hpxi.version 									as version,
+		hpxi.timestamp 									as timestamp,
+		hpxi.subNetwork 								as subNetwork,
+		hpxi.ne 										as ne,
+		2 												as RESULT, // ABORT value
+		hpxi.getCSVStringQuoted() 						as LOG_MESSAGE;
+
+@Name('X2-Handover-handle-INTERNAL_PROC_HO_EXEC_X2_IN')
+@Description('Handle INTERNAL_PROC_HO_EXEC_X2_IN event for X2 handover Correlation')
+//@Audit
+on celltrace.INTERNAL_PROC_HO_EXEC_X2_IN hexi
+	merge X2HoWindow x2ho
+	where x2ho.MMES1APID_TARGET = hexi.MMES1APID and  Arrays.equals(x2ho.GUMMEI_TARGET, hexi.GUMMEI) and 
+	x2ho.ENBS1APID_TARGET = hexi.ENBS1APID
+	when matched
+		then update	set
+			x2ho.RESULT = case when x2ho.IEBCE and x2ho.HPXO and x2ho.HPXI and x2ho.HEXO and x2ho.XSST and x2ho.RRCRC  then 1 else 2 end,
+			x2ho.HEXI                         			= true,
+			x2ho.DURATION                    			= cast(hexi.timestamp - x2ho.timestamp, int),
+			x2ho.END_TIMESTAMP                			= hexi.timestamp,
+			x2ho.RANDOM_ACCESS_TYPE 					= hexi.RANDOM_ACCESS_TYPE,
+			x2ho.ENB_TRG_HO_EXEC_RESULT       			= hexi.PROC_HO_EXEC_IN_RESULT
+	when not matched
+		// INTERNAL_PROC_HO_EXEC_X2_IN out of sequence for this UE
+		then insert into correlation.LOG_EVENT select
+		'INTERNAL_PROC_HO_EXEC_X2_IN' as name,
+		hexi.version 									as version,
+		hexi.timestamp 									as timestamp,
+		hexi.subNetwork 								as subNetwork,
+		hexi.ne 										as ne,
+		2 												as RESULT, // ABORT value
+		hexi.getCSVStringQuoted() 						as LOG_MESSAGE;		
+		
+		
+		
+		
+				
+@Name('X2-Handover-handle-X2_SN_STATUS_TRANSFER')
+@Description('Handle X2_SN_STATUS_TRANSFER event for X2 handover Correlation')
+//@Audit
+on celltrace.X2_SN_STATUS_TRANSFER xsst
+	merge X2HoWindow x2ho
+	where x2ho.MMES1APID_TARGET = xsst.MMES1APID and   x2ho.ENBS1APID_TARGET = xsst.ENBS1APID and Arrays.equals(x2ho.GUMMEI_TARGET, xsst.GUMMEI)
+	when matched
+		then update	set
+			x2ho.RESULT = case when x2ho.IEBCE and x2ho.HPXO and x2ho.HPXI and x2ho.HEXO and x2ho.HEXI and x2ho.RRCRC  then 1 else 2 end,
+			x2ho.XSST          							= true,
+			x2ho.DURATION      							= cast(xsst.timestamp - x2ho.timestamp, int),
+			x2ho.MILESTONES_MILESTONE_NAME				= Util.buildMilestone(x2ho,xsst.name,xsst.name,xsst.timestamp),
+			x2ho.END_TIMESTAMP 							= xsst.timestamp
+	when not matched
+		// X2_SN_STATUS_TRANSFER out of sequence for this UE
+		then insert into correlation.LOG_EVENT select
+		'X2_SN_STATUS_TRANSFER' as name,
+		xsst.version 									as version,
+		xsst.timestamp 									as timestamp,
+		xsst.subNetwork 								as subNetwork,
+		xsst.ne 										as ne,
+		2 												as RESULT, // ABORT value
+		xsst.getCSVStringQuoted() 						as LOG_MESSAGE;
+
+@Name('X2-Handover-handle-RRC_RRC_CONNECTION_RECONFIGURATION_COMPLETE')
+@Description('Handle RRC_RRC_CONNECTION_RECONFIGURATION_COMPLETE event for X2 handover Correlation')
+//@Audit
+on celltrace.RRC_RRC_CONNECTION_RECONFIGURATION_COMPLETE rrcrc
+	merge X2HoWindow x2ho
+	where x2ho.MMES1APID_TARGET = rrcrc.MMES1APID and Arrays.equals(x2ho.GUMMEI_TARGET, rrcrc.GUMMEI) and   
+	x2ho.ENBS1APID_TARGET = rrcrc.ENBS1APID
+	when matched
+		then update	set
+			x2ho.RESULT 								= 	case when x2ho.IEBCE and x2ho.HPXO and x2ho.HPXI and x2ho.HEXO and x2ho.HEXI and x2ho.XSST then 0 else -1 end,
+			x2ho.RRCRC        							= 	true,
+			x2ho.MILESTONES_MILESTONE_NAME				=	Util.buildMilestone(x2ho,rrcrc.name,rrcrc.name,rrcrc.timestamp),
+			x2ho.DURATION      							= 	cast(rrcrc.timestamp - x2ho.timestamp, int),
+			x2ho.END_TIMESTAMP 							= 	rrcrc.timestamp;
+			
+
+			
+			
+@Name('X2-Handover-handle-S1_PATH_SWITCH_REQUEST')
+@Description('Handle S1_PATH_SWITCH_REQUEST event for X2 handover Correlation')
+//@Audit
+on celltrace.S1_PATH_SWITCH_REQUEST psr
+	merge X2HoWindow x2ho
+	where x2ho.MMES1APID_TARGET = psr.MMES1APID and Arrays.equals(x2ho.GUMMEI_TARGET, psr.GUMMEI) and    
+	x2ho.ENBS1APID_TARGET = psr.ENBS1APID 
+	when matched
+		then update	set
+			x2ho.PSR									=	true,
+			x2ho.DURATION      							= 	cast(psr.timestamp - x2ho.timestamp, int),
+			x2ho.MILESTONES_MILESTONE_NAME				=	Util.buildMilestone(x2ho,psr.name,"PATH_SWITCH_REQ",psr.timestamp),
+			x2ho.END_TIMESTAMP 							= 	psr.timestamp;
+			
+
+			
+@Name('X2-Handover-handle-S1_PATH_SWITCH_REQUEST_ACKNOWLEDGE')
+@Description('Handle S1_PATH_SWITCH_REQUEST_ACKNOWLEDGE event for X2 handover Correlation')
+//@Audit
+on celltrace.S1_PATH_SWITCH_REQUEST_ACKNOWLEDGE psra
+	merge X2HoWindow x2ho
+	where x2ho.MMES1APID_TARGET = psra.MMES1APID and Arrays.equals(x2ho.GUMMEI_TARGET, psra.GUMMEI) and    
+	x2ho.ENBS1APID_TARGET = psra.ENBS1APID 
+	when matched
+		then update	set
+			x2ho.PSRA									=	true,
+			x2ho.DURATION      							= 	cast(psra.timestamp - x2ho.timestamp, int),
+			x2ho.MILESTONES_MILESTONE_NAME				=	Util.buildMilestone(x2ho,psra.name,"PATH_SWITCH_REQ_ACK",psra.timestamp),
+			x2ho.END_TIMESTAMP 							= 	psra.timestamp;
+			
+	
+			
+			
+@Name('X2-Handover-handle-X2_UE_CONTEXT_RELEASE')
+@Description('Handle X2_UE_CONTEXT_RELEASE event for X2 handover Correlation')
+//@Audit
+on celltrace.X2_UE_CONTEXT_RELEASE ucr
+	merge X2HoWindow x2ho
+	where x2ho.MMES1APID_TARGET = ucr.MMES1APID and Arrays.equals(x2ho.GUMMEI_TARGET, ucr.GUMMEI)  and   x2ho.ENBS1APID_TARGET = ucr.ENBS1APID
+	when matched
+		then update	set
+			x2ho.UCR									=	true,	
+			x2ho.DURATION      							= 	cast(ucr.timestamp - x2ho.timestamp, int),
+			x2ho.MILESTONES_MILESTONE_NAME				=	Util.buildMilestone(x2ho,ucr.name,"UE_CONTEXT_RELEASE",ucr.timestamp),
+			x2ho.END_TIMESTAMP 							= 	ucr.timestamp;
+			
+			
+			
+// Insert the new X2 Handover event into the named window
+@Name('X2-Handover-handle-new-X2_HANDOVER')
+@Description('Handle new X2_HANDOVER event for X2 handover Correlation')
+//@Audit
+on correlation.X2_HANDOVER new_x2ho
+	merge X2HoWindow x2ho
+	where x2ho.MMES1APID_SOURCE = new_x2ho.MMES1APID_SOURCE and Arrays.equals(x2ho.GUMMEI_SOURCE, new_x2ho.GUMMEI_SOURCE)
+	when matched
+		// INTERNAL_EVENT_BEST_CELL_EVAL on UE with ongoing handover
+		then insert into correlation.LOG_EVENT select
+		'X2_HANDOVER' 								as name,
+		new_x2ho.version 							as version,
+		new_x2ho.timestamp 							as timestamp,
+		new_x2ho.subNetwork 						as subNetwork,
+		new_x2ho.ne 								as ne,
+		2 											as RESULT, // ABORT value
+		new_x2ho.getCSVStringQuoted() 				as LOG_MESSAGE	
+	when not matched
+		then insert select *;
+	

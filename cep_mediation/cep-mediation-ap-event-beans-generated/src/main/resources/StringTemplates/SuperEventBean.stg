@@ -1,0 +1,98 @@
+group EventClassMap;
+
+/**
+ * The main template that generates the class
+ */
+main(schemaType, event, field) ::= <<
+package com.ericsson.cepmediation.apeventbeans.<schemaType>;
+
+/**
+ * This class is as java bean that holds a single <event.name> event and is the
+ * base class for all <event.name> events
+ * 
+ * This code is generated using java string templates
+ * see http://www.stringtemplate.org
+ */
+
+import java.io.Serializable;
+
+import com.ericsson.cepmediation.base.apeventbeans.ApEventBean;
+
+@SuppressWarnings("serial")
+public abstract class <event.name> extends ApEventBean implements Serializable {
+    /**
+     * Define a default constructor
+     */
+    public <event.name>() {
+        super();
+    }
+     
+    /**
+     * Define a constructor for the base properties
+     * @param timestamp
+     * @param ne
+     * @param name
+     * @param version
+     * @param subNetwork
+     */
+    public <event.name>(long timestamp, String subNetwork, String ne, String name, String version) {
+        super(timestamp, subNetwork, ne, name, version);
+    }
+    
+    // The member data, one for each parameter in the <event.name> event
+    <field:createParameter()>
+    
+    <field:createGetter()>
+    
+    <field:createSetter()>
+    
+    public String getType(){
+	   return this.getClass().getSimpleName();
+    }
+    private String identity;
+    public String getIdentity() {
+		return identity;
+	}
+	public GpehBase setIdentity(String identity) {
+		this.identity = identity;
+		return this;
+	}
+}
+>>
+
+/**
+ * The template to create parameters
+ */
+createParameter(field) ::= <<
+protected <field.type> <field.name> = <field.initValue>;<\n>
+>>
+
+/**
+ * The template to create parameter getters
+ */
+createGetter(field) ::= <<
+
+/**
+ * Get the value of the <field.name> parameter
+ * @return The value of the <field.name> parameter
+ */
+public <field.type> get<field.name>() {
+    return <field.name>;
+}
+
+>>
+
+/**
+ * The template to create parameter setters
+ */
+createSetter(field) ::= <<
+
+/**
+ * Set the value of the <field.name> parameter
+ * @param <field.name> new value of the parameter
+ */
+public void set<field.name>(final <field.type> <field.name>) {
+    this.<field.name> = <field.name>;
+}
+
+>>

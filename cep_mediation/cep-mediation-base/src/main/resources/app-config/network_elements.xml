@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appconfig xmlns="http://www.ericsson.com/app-config">
+<hosts>
+	<host master="true" ip="150.132.181.238">
+	  <process procid="1">
+	  		<!-- Unique label should be defined for every network element. The label should contain only letters and/or digits. -->			
+			<network-elements>
+				<network-element ne-type="1"> 
+				 	<label>RNC01</label>
+				 	<directory>/eniq/data/eventdata/events_oss_1/GPEHEvents_CEP/SubNetwork=RNC01</directory>
+				</network-element>
+			</network-elements>
+		</process>
+		 <process procid="2">			
+			<network-elements>
+				<network-element ne-type="1"> 
+				 	<label>RNC02</label>
+				 	<directory>/eniq/data/eventdata/events_oss_1/GPEHEvents_CEP/SubNetwork=RNC02</directory>
+				</network-element>
+			</network-elements>
+		</process>
+		 <process procid="3">			
+			<network-elements>
+				<network-element ne-type="1"> 
+				 	<label>RNC03</label>
+				 	<directory>/eniq/data/eventdata/events_oss_1/GPEHEvents_CEP/SubNetwork=RNC03</directory>
+				</network-element>
+			</network-elements>
+		</process>
+		 <process procid="4">			
+			<network-elements>
+				<network-element ne-type="1"> 
+				 	<label>RNC04</label>
+				 	<directory>/eniq/data/eventdata/events_oss_1/GPEHEvents_CEP/SubNetwork=RNC04</directory>
+				</network-element>
+			</network-elements>
+		</process>
+		 <process procid="5">			
+			<network-elements>
+				<network-element ne-type="1"> 
+				 	<label>RNC05</label>
+				 	<directory>/eniq/data/eventdata/events_oss_1/GPEHEvents_CEP/SubNetwork=RNC05</directory>
+				</network-element>
+			</network-elements>
+		</process>
+		<process procid="6">			
+			<network-elements>
+				<network-element ne-type="1"> 
+				 	<label>RNC06</label>
+				 	<directory>/eniq/data/eventdata/events_oss_1/GPEHEvents_CEP/SubNetwork=RNC06</directory>
+				</network-element>
+			</network-elements>
+		</process>
+		<process procid="7">			
+			<network-elements>
+				<network-element ne-type="1"> 
+				 	<label>RNC07</label>
+				 	<directory>/eniq/data/eventdata/events_oss_1/GPEHEvents_CEP/SubNetwork=RNC07</directory>
+				</network-element>
+			</network-elements>
+		</process>
+		<process procid="8">			
+			<network-elements>
+				<network-element ne-type="1"> 
+				 	<label>RNC08</label>
+				 	<directory>/eniq/data/eventdata/events_oss_1/GPEHEvents_CEP/SubNetwork=RNC08</directory>
+				</network-element>
+			</network-elements>
+		</process>
+		
+		<process procid="9">	
+			<network-elements>
+				<network-element ne-type="2"> 
+				 	<label>SGSN01</label>
+				 	<directory>/eniq/data/eventdata/events_oss_1/sgeh_cep/ManagedElement=SGSN01</directory>
+				</network-element>
+				<network-element ne-type="2"> 
+				 	<label>SGSN02</label>
+				 	<directory>/eniq/data/eventdata/events_oss_1/sgeh_cep/ManagedElement=SGSN02</directory>
+				</network-element>
+			</network-elements>
+		</process>
+		
+		<process procid="10">	
+			<network-elements>
+				<network-element ne-type="2"> 
+				 	<label>SGSN03</label>
+				 	<directory>/eniq/data/eventdata/events_oss_1/sgeh_cep/ManagedElement=SGSN03</directory>
+				</network-element>
+				<network-element ne-type="2"> 
+				 	<label>SGSN04</label>
+				 	<directory>/eniq/data/eventdata/events_oss_1/sgeh_cep/ManagedElement=SGSN04</directory>
+				</network-element>
+			</network-elements>
+		</process>
+		
+		<process procid="11">	
+			<network-elements>
+				<network-element ne-type="3">
+					<ip>IP-ADDRESS</ip>
+		 			<uname>UNAME</uname>
+		   			<password>PASSWORD</password>
+				 	<label>PCP1</label>
+				 	<directory>/var/opt/ericsson/pcp/output/</directory>
+				</network-element>
+			</network-elements>
+		</process>
+		
+		<process procid="12">	
+			<network-elements>
+				<network-element ne-type="3"> 
+				 	<ip>IP-ADDRESS</ip>
+		 			<uname>UNAME</uname>
+		   			<password>PASSWORD</password>
+				 	<label>PCP2</label>
+				 	<directory>/var/opt/ericsson/pcp/output/</directory>
+				</network-element>
+			</network-elements>
+	   </process>
+	   
+	   <process procid="13">			
+			<network-elements>
+				<network-element ne-type="4"> 
+				 	<label>UE_TRACE</label>
+				 	<directory>/var/opt/ericsson/ue_trace/output/</directory>
+				</network-element>
+			</network-elements>
+		</process>
+	</host>
+</hosts>
+</appconfig>
+
+		

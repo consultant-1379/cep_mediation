@@ -1,0 +1,90 @@
+// Declare the name for the module
+module UECtxReleaseCorrelation;
+
+// Imports
+import com.ericsson.perfmon.eventbeans.celltrace.*;
+import com.ericsson.perfmon.eventbeans.ctum.*;
+import com.ericsson.perfmon.eventbeans.ebm.*;
+import com.ericsson.cepmediation.correlation.support.TimeUtil;
+import com.ericsson.cepmediation.correlation.support.Util;
+@Name('select-LOG_EVENT')
+@Description('Select all LOG_EVENT events for storage')
+//@Audit
+select * from correlation.LOG_EVENT.win:length(1);
+
+@Name('UECtxRelease-create-window')
+@Description('Create a window for handling UECtxRelease events')
+//@Audit
+create window UeCtxReleaseWindow.win:keepall() as correlation.UE_CONTEXT_RELEASE_CORR;
+
+@Name('UeCtxRelease-flush-window')
+@Description('Flush the named window for UeCtxRelease correlations')
+//@Audit
+on pattern [every timer:interval(30 sec)]
+	delete from UeCtxReleaseWindow as uectx
+	where (uectx.IPUCRE) // Correlation complete
+	or current_timestamp - uectx.CORRELATION_TIME > 30000; // Correlation times out after 5000 ms
+	
+ 
+	
+@Name('UeCtxRelease-handle-INTERNAL_PROC_UE_CTXT_RELEASE_ENB')
+@Description('Handle INTERNAL_PROC_UE_CTXT_RELEASE_ENB events for UeCtxRelease Correlation, create a new UE_CONTEXT_RELEASE_CORR event')
+//@Audit
+insert into correlation.UE_CONTEXT_RELEASE_CORR select
+	'UE_CONTEXT_RELEASE_CORR'       					as name,
+	ipucre.subNetwork      								as subNetwork,
+	ipucre.ne            								as ne,
+	ipucre.version      								as version,
+	ipucre.timestamp     								as timestamp,
+	TimeUtil.getStartStopTime(
+	ipucre.TIMESTAMP_START_HOUR,
+	ipucre.TIMESTAMP_START_MINUTE,
+	ipucre.TIMESTAMP_START_SECOND,
+	ipucre.TIMESTAMP_START_MILLISEC,
+	ipucre.timestamp)									as START_TIMESTAMP,
+	TimeUtil.getStartStopTime(
+	ipucre.TIMESTAMP_STOP_HOUR,
+	ipucre.TIMESTAMP_STOP_MINUTE,
+	ipucre.TIMESTAMP_STOP_SECOND,
+	ipucre.TIMESTAMP_STOP_MILLISEC,
+	ipucre.timestamp)								    as END_TIMESTAMP,
+	TimeUtil.getDuration(
+	
+	ipucre.TIMESTAMP_START_HOUR,
+	ipucre.TIMESTAMP_START_MINUTE,
+	ipucre.TIMESTAMP_START_SECOND,
+	ipucre.TIMESTAMP_START_MILLISEC,
+	ipucre.TIMESTAMP_STOP_HOUR,
+	ipucre.TIMESTAMP_STOP_MINUTE,
+	ipucre.TIMESTAMP_STOP_SECOND,
+	ipucre.TIMESTAMP_STOP_MILLISEC,
+	ipucre.timestamp)									as DURATION,
+	current_timestamp() 								as CORRELATION_TIME,
+	ipucre.ENBS1APID     								as ENBS1APID,
+	ipucre.MMES1APID     								as MMES1APID,
+	ipucre.RAC_UE_REF									as RAC_UE_REF,
+	ipucre.GUMMEI        								as GUMMEI,
+	ipucre.GLOBAL_CELL_ID 								as CELL_ID,
+	cast(ipucre.ne,int) 								as ENB_ID,
+	ipucre.TRIGGERING_NODE 								as TRIGGERING_NODE,
+	ipucre.UE_RELEASE_CAUSE 							as UE_RELEASE_CLAUSE,
+	true                								as IPUCRE         // INTERNAL_PROC_UE_CTXT_RELEASE_ENB has been received
+	from celltrace.INTERNAL_PROC_UE_CTXT_RELEASE_ENB as ipucre ;
+	
+	
+	
+	
+// Insert the new UeCtxReleaseWindow event into the named window
+@Name('UeCtxRelease-handle-new-UE_CONTEXT_RELEASE_CORR')
+@Description('Handle new UE_CONTEXT_RELEASE_CORR event for UeCtxRelease Correlation')
+//@Audit
+on correlation.UE_CONTEXT_RELEASE_CORR new_ucrc
+	merge UeCtxReleaseWindow ucrw
+	where ucrw.MMES1APID = new_ucrc.MMES1APID and Arrays.equals(ucrw.GUMMEI, new_ucrc.GUMMEI)
+	when matched
+		then update set
+			ucrw.CORRELATION_TIME 						= new_ucrc.timestamp
+	when not matched
+		then insert select *;
+		
+		

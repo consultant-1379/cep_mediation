@@ -1,0 +1,28 @@
+#
+# 1 for upgrade, 0 for un-installation
+#
+if [ "$1" = "0" ]; then
+	# Remove OSS file directory
+	rm -rf /output
+	echo File directory "/var/opt/ericsson/cep-mediation/output" removed
+	
+	# Remove the soft link for last version of cep-mediation if it exists
+	if [ -L "/opt/ericsson/cep-mediation/cep-mediation" ]; then
+		rm /opt/ericsson/cep-mediation/cep-mediation
+	fi
+	
+			
+	# Delete CEP Mediation directories
+	rm -fr /var/log/ericsson/cep-mediation
+	echo log directory "/var/log/ericsson/cep-mediation" removed
+	
+	# Check if a soft link for the cep-mediation start-stop init.d script exists
+	if [ -L "/etc/init.d/cep-mediation" ]; then
+		# Remove the soft link
+		rm /etc/init.d/cep-mediation
+	fi
+		
+	# Remove the dcuser user, group and home directory
+	# userdel dcuser
+	# rm -rf /home/dcuser
+fi

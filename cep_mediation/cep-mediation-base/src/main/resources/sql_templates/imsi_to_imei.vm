@@ -1,0 +1,7 @@
+SELECT
+    imsi,
+    imeisv
+FROM
+    DIM_E_IMSI_IMEI
+ORDER BY
+    MODIFIED

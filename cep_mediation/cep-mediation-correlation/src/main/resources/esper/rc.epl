@@ -1,0 +1,1803 @@
+IMPORT com.ericsson.cepmediation.correlation.lookup.impl.DefaultLookupService;
+
+create window RadioSessionWindow.win:keepall() as correlation.CUSTOM_ENHANCED_GPEH_SESSION;
+create window MeasurementWindow.win:ext_timed(timestamp,X seconds) as correlation.MeasurementWindow;
+create window EE_RRC_Measurement_Temporary.win:keepall() as correlation.EE_RRC_MEASUREMENT;
+create window partial.win:keepall() as correlation.Partial;
+create window HandoverWindow.win:keepall() as gpeh.INTERNAL_OUT_HARD_HANDOVER_FAILURE_ENRICHED;
+create window CellChangeWindow.win:keepall() as gpeh.INTERNAL_SUCCESSFUL_HSDSCH_CELL_CHANGE_ENRICHED;
+create window SohoWindow.win:keepall() as gpeh.INTERNAL_SOHO_DS_MISSING_NEIGHBOUR_ENRICHED;
+
+@Priority(18)
+@Name('Session-Flush')
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from RadioSessionWindow;
+
+@Priority(18)
+@Name('Session-Flush')
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from MeasurementWindow;
+
+@Priority(18)
+@Name('Session-Flush')
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from EE_RRC_Measurement_Temporary;
+
+@Priority(18)
+@Name('Session-Flush')
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from partial;
+
+@Priority(18)
+@Name('Session-Flush')
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from HandoverWindow;
+
+@Priority(18)
+@Name('Session-Flush')
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from CellChangeWindow;
+
+@Priority(18)
+@Name('Session-Flush')
+on correlation.SESSION_FLUSH_EVENT as flush
+delete from SohoWindow;
+
+@Priority(17)
+@Name('Insert-and-Map')
+expression mapRscp {measurement => case when measurement.ASN1_MEASUREMENT.RSCP = INTEGER_MIN_VAL
+                        then
+                            measurement.ASN1_MEASUREMENT.RSCP
+                        when measurement.ASN1_MEASUREMENT.RSCP < -5
+                        then
+                            BASE_RSCP_VALUE - 5
+                        when measurement.ASN1_MEASUREMENT.RSCP >= HIGHEST_RSCP_INDEX
+                        then
+                            BASE_RSCP_VALUE + HIGHEST_RSCP_INDEX - 1
+                        else
+                            BASE_RSCP_VALUE + measurement.ASN1_MEASUREMENT.RSCP
+                        end
+                        }
+
+expression mapEcno {measurement => case when measurement.ASN1_MEASUREMENT.ECNO = INTEGER_MIN_VAL
+                        then
+                             DEFAULT_FLOAT_VALUE
+                        when measurement.ASN1_MEASUREMENT.ECNO < 0
+                        then
+                            BASE_ECNO_VALUE
+                        when measurement.ASN1_MEASUREMENT.ECNO >= HIGHEST_ECNO_INDEX
+                        then
+                            BASE_ECNO_VALUE + ((HIGHEST_ECNO_INDEX - 1)* 0.5f) 
+                        else
+                            BASE_ECNO_VALUE + (measurement.ASN1_MEASUREMENT.ECNO * 0.5f)
+                        end
+                        }
+
+on gpeh.INTERNAL_SYSTEM_RELEASE as callDroppedEvent
+insert into EE_RRC_Measurement_Temporary
+    select     mw.IMSI                                     as IMSI,
+            Util.getMcc(mw.IMSI)                        as IMSI_MCC,
+            Util.getMnc(mw.IMSI)                        as IMSI_MNC,
+            mw.ASN1_MEASUREMENT.c_ID_1                    as c_ID_1,
+            mw.ASN1_MEASUREMENT.c_ID_2                     as c_ID_2,
+            mw.ASN1_MEASUREMENT.c_ID_3                    as c_ID_3,
+            mw.ASN1_MEASUREMENT.c_ID_4                    as c_ID_4,
+            mw.ASN1_MEASUREMENT.RNC_ID_1                as RNC_ID_1,
+            mw.ASN1_MEASUREMENT.RNC_ID_2                as RNC_ID_2,
+            mw.ASN1_MEASUREMENT.RNC_ID_3                as RNC_ID_3,
+            mw.ASN1_MEASUREMENT.RNC_ID_4                as RNC_ID_4,
+            cast(RRC_MEASUREMENT_REPORT_ID,short)        as EVENT_ID,
+            mw.UE_CONTEXT                                 as UE_CONTEXT,
+            mw.RNC_MODULE_ID                            as RNC_MODULE_ID,
+            mw.timestamp                                as timestamp,
+             mw.ASN1_MEASUREMENT.BSIC                     as BSIC,
+             mw.ASN1_MEASUREMENT.MEAS_RESULTS_ORDER_NUMBER  as MEAS_RESULTS_ORDER_NUMBER,
+             mw.ASN1_MEASUREMENT.EVENT_RESULTS_ORDER_NUMBER as EVENT_RESULTS_ORDER_NUMBER,
+             mw.ASN1_MEASUREMENT.VALID_MEAS_RESULTS      as VALID_MEAS_RESULTS,
+             mw.ASN1_MEASUREMENT.VALID_EVENT_RESULTS     as VALID_EVENT_RESULTS,
+             cast(mapEcno(mw), float)                    as ECNO,
+             cast(mapRscp(mw), int)                        as RSCP,
+             mw.ASN1_MEASUREMENT.SCRAMBLING_CODE         as SCRAMBLING_CODE,
+             mw.ASN1_MEASUREMENT.MEASUREMENT_TYPE         as MEASUREMENT_TYPE,
+             mw.ASN1_MEASUREMENT.TRIGGER_EVENT_ID         as TRIGGER_EVENT_ID,
+             mw.ASN1_MEASUREMENT.ADDITIONAL_EVENT_ID     as ADDITIONAL_EVENT_ID
+from MeasurementWindow as mw
+    where mw.IMSI = (case when callDroppedEvent.IMSI = '0fffffffffffffff' then 0 else cast(callDroppedEvent.IMSI, long) end);
+
+@Priority(16)
+@Name('Wakeup-next-statement')
+on gpeh.INTERNAL_SYSTEM_RELEASE as callDroppedEvent
+insert into Wakeup
+select 1 as wakeup_value;
+
+@Priority(15)
+@Name('Thirty-Second-RRC-Measurement-Reports-Before-Call-Drop')
+on Wakeup
+select EE_RRC_Measurement_Temporary.* from EE_RRC_Measurement_Temporary as EE_RRC_Measurement_Temporary;
+
+
+@Priority(14)
+@Name('clean-up')
+on gpeh.INTERNAL_SYSTEM_RELEASE as callDroppedEvent
+delete from MeasurementWindow    
+    where MeasurementWindow.IMSI = (case when callDroppedEvent.IMSI = '0fffffffffffffff' then 0 else cast(callDroppedEvent.IMSI, long) end);
+
+@Priority(13)
+@Name('clean-up-temporary-window')
+on Wakeup
+delete from EE_RRC_Measurement_Temporary;
+
+
+@Priority(12)
+on gpeh.ASN1MeasurementWrapper as measurement
+merge RadioSessionWindow as rsw
+where rsw.UE_CONTEXT     = measurement.UE_CONTEXT
+  and rsw.RNC_MODULE_ID  = measurement.RNC_MODULE_ID
+  and rsw.IMSI != -1l
+  and rsw.SESSION_CLOSED = false
+when matched
+  then insert into 
+  MeasurementWindow select
+        rsw.IMSI                                          as IMSI,
+        measurement.ASN1_MEASUREMENT                    as ASN1_MEASUREMENT,
+        measurement.UE_CONTEXT                            as UE_CONTEXT,
+        measurement.RNC_MODULE_ID                        as RNC_MODULE_ID,
+        measurement.timestamp                            as timestamp
+when not matched
+  then insert into 
+  MeasurementWindow select    
+        measurement.ASN1_MEASUREMENT                    as ASN1_MEASUREMENT,
+        measurement.UE_CONTEXT                            as UE_CONTEXT,
+        measurement.RNC_MODULE_ID                        as RNC_MODULE_ID,
+        measurement.timestamp                            as timestamp;
+
+@Name('IMSI-Updates-RRC')   
+@Priority(9)
+@Drop
+on gpeh.INTERNAL_IMSI as event
+merge MeasurementWindow as measurementWindow
+where measurementWindow.UE_CONTEXT = event.UE_CONTEXT
+  and measurementWindow.RNC_MODULE_ID = event.RNC_MODULE_ID
+  and measurementWindow.IMSI = -1
+when matched
+    then update set
+    IMSI                                                = cast(event.IMSI,long);
+
+@Name('Handover-Capturing')
+@Priority(12)
+on gpeh.INTERNAL_OUT_HARD_HANDOVER_FAILURE as handover
+merge RadioSessionWindow as rsw
+where rsw.UE_CONTEXT     = handover.UE_CONTEXT
+  and rsw.RNC_MODULE_ID  = handover.RNC_MODULE_ID
+  and rsw.IMSI != -1l
+  and rsw.SESSION_CLOSED = false
+when matched  
+  then insert into
+  HandoverWindow select
+        handover                                        as base,
+        rsw.IMSI                                        as IMSI,
+        Util.getMcc(rsw.IMSI)                           as IMSI_MCC,
+        Util.getMnc(rsw.IMSI)                           as IMSI_MNC,
+        case when handover.RSCP_CELL_1 >= -5
+        then cast(Util.getMappedRscp(handover.RSCP_CELL_1), int)
+        else INTEGER_MIN_VAL
+        end                                             as RSCP_CELL_1,
+        case when handover.RSCP_CELL_2 >= -5
+        then cast(Util.getMappedRscp(handover.RSCP_CELL_2), int)
+        else INTEGER_MIN_VAL
+        end                                             as RSCP_CELL_2,
+        case when handover.RSCP_CELL_3 >= -5
+        then cast(Util.getMappedRscp(handover.RSCP_CELL_3), int)
+        else INTEGER_MIN_VAL
+        end                                             as RSCP_CELL_3,
+        case when handover.RSCP_CELL_4 >= -5
+        then cast(Util.getMappedRscp(handover.RSCP_CELL_4), int)
+        else INTEGER_MIN_VAL
+        end                                             as RSCP_CELL_4,
+        case when handover.CPICH_EC_NO_CELL_1 > -1
+        then Util.getMappedEcno(handover.CPICH_EC_NO_CELL_1)
+        else DEFAULT_FLOAT_VALUE
+        end                                             as ECNO_CELL_1,
+        case when handover.CPICH_EC_NO_CELL_2 > -1
+        then Util.getMappedEcno(handover.CPICH_EC_NO_CELL_2)
+        else DEFAULT_FLOAT_VALUE
+        end                                             as ECNO_CELL_2,
+        case when handover.CPICH_EC_NO_CELL_3 > -1
+        then Util.getMappedEcno(handover.CPICH_EC_NO_CELL_3)
+        else DEFAULT_FLOAT_VALUE
+        end                                             as ECNO_CELL_3,
+        case when handover.CPICH_EC_NO_CELL_4 > -1
+        then Util.getMappedEcno(handover.CPICH_EC_NO_CELL_4)
+        else DEFAULT_FLOAT_VALUE
+        end                                             as ECNO_CELL_4,
+        case when handover.PROCEDURE_INDICATOR in (7,12)
+        then Util.getMappedRSSI(handover.DL_QUALITY_MEAS1_TARGET_CELL) 
+        else cast(-1, byte)
+        end                                             as TARGET_CELL_RSSI,
+        case when handover.PROCEDURE_INDICATOR not in (7,12) and handover.DL_QUALITY_MEAS1_TARGET_CELL > -1
+        then Util.getMappedEcno(handover.DL_QUALITY_MEAS1_TARGET_CELL) 
+        else DEFAULT_FLOAT_VALUE 
+        end                                             as TARGET_CELL_ECNO,
+        case when handover.PROCEDURE_INDICATOR not in (7,12) and handover.DL_QUALITY_MEAS2_TARGET_CELL > -1
+        then cast(Util.getMappedRscp(handover.DL_QUALITY_MEAS2_TARGET_CELL), int) 
+        else INTEGER_MIN_VAL 
+        end                                             as TARGET_CELL_RSCP
+when not matched
+  then insert into
+  HandoverWindow select
+        handover                                        as base,
+                case when handover.RSCP_CELL_1 >= -5
+        then cast(Util.getMappedRscp(handover.RSCP_CELL_1), int)
+        else INTEGER_MIN_VAL
+        end                                             as RSCP_CELL_1,
+        case when handover.RSCP_CELL_2 >= -5
+        then cast(Util.getMappedRscp(handover.RSCP_CELL_2), int)
+        else INTEGER_MIN_VAL
+        end                                             as RSCP_CELL_2,
+        case when handover.RSCP_CELL_3 >= -5
+        then cast(Util.getMappedRscp(handover.RSCP_CELL_3), int)
+        else INTEGER_MIN_VAL
+        end                                             as RSCP_CELL_3,
+        case when handover.RSCP_CELL_4 >= -5
+        then cast(Util.getMappedRscp(handover.RSCP_CELL_4), int)
+        else INTEGER_MIN_VAL
+        end                                             as RSCP_CELL_4,
+        case when handover.CPICH_EC_NO_CELL_1 > -1
+        then Util.getMappedEcno(handover.CPICH_EC_NO_CELL_1)
+        else DEFAULT_FLOAT_VALUE
+        end                                             as ECNO_CELL_1,
+        case when handover.CPICH_EC_NO_CELL_2 > -1
+        then Util.getMappedEcno(handover.CPICH_EC_NO_CELL_2)
+        else DEFAULT_FLOAT_VALUE
+        end                                             as ECNO_CELL_2,
+        case when handover.CPICH_EC_NO_CELL_3 > -1
+        then Util.getMappedEcno(handover.CPICH_EC_NO_CELL_3)
+        else DEFAULT_FLOAT_VALUE
+        end                                             as ECNO_CELL_3,
+        case when handover.CPICH_EC_NO_CELL_4 > -1
+        then Util.getMappedEcno(handover.CPICH_EC_NO_CELL_4)
+        else DEFAULT_FLOAT_VALUE
+        end                                             as ECNO_CELL_4,
+        case when handover.PROCEDURE_INDICATOR in (7,12)
+        then Util.getMappedRSSI(handover.DL_QUALITY_MEAS1_TARGET_CELL) 
+        else cast(-1, byte)
+        end                                             as TARGET_CELL_RSSI,
+        case when handover.PROCEDURE_INDICATOR not in (7,12) and handover.DL_QUALITY_MEAS1_TARGET_CELL > -1
+        then Util.getMappedEcno(handover.DL_QUALITY_MEAS1_TARGET_CELL) 
+        else DEFAULT_FLOAT_VALUE
+        end                                             as TARGET_CELL_ECNO,
+        case when handover.PROCEDURE_INDICATOR not in (7,12) and handover.DL_QUALITY_MEAS2_TARGET_CELL > -1
+        then cast(Util.getMappedRscp(handover.DL_QUALITY_MEAS2_TARGET_CELL), int) 
+        else INTEGER_MIN_VAL 
+        end                                             as TARGET_CELL_RSCP;
+
+@Name('IMSI-Updates-Handover')
+@Priority(11)
+on gpeh.INTERNAL_IMSI as event
+merge HandoverWindow as handoverWindow
+where handoverWindow.base.UE_CONTEXT = event.UE_CONTEXT
+  and handoverWindow.base.RNC_MODULE_ID = event.RNC_MODULE_ID
+  and handoverWindow.IMSI = -1l
+when matched
+    then update set
+    IMSI                                                = cast(event.IMSI,long),
+    IMSI_MCC                                            = Util.getMcc(handoverWindow.IMSI),
+    IMSI_MNC                                            = Util.getMnc(handoverWindow.IMSI);
+    
+@Name('Cleanup-Handovers-Without-Imsi-On-Internal-Release')
+@Priority(11)
+on gpeh.INTERNAL_SYSTEM_RELEASE release
+delete from HandoverWindow as handoverWindow where handoverWindow.IMSI = -1l and handoverWindow.base.UE_CONTEXT = release.UE_CONTEXT and handoverWindow.base.RNC_MODULE_ID = release.RNC_MODULE_ID;
+
+@Name('Cleanup-Handovers-Without-Imsi-On-Connection-Release')
+@Priority(11)
+on gpeh.RRC_RRC_CONNECTION_RELEASE_COMPLETE release
+delete from HandoverWindow as handoverWindow where handoverWindow.IMSI = -1l and handoverWindow.base.UE_CONTEXT = release.UE_CONTEXT and handoverWindow.base.RNC_MODULE_ID = release.RNC_MODULE_ID;;
+
+@Name('Cleanup-Handovers-Without-Imsi-On-Connection-Setup')
+@Priority(11)
+on gpeh.RRC_RRC_CONNECTION_SETUP release
+delete from HandoverWindow as handoverWindow where handoverWindow.IMSI = -1l and handoverWindow.base.UE_CONTEXT = release.UE_CONTEXT and handoverWindow.base.RNC_MODULE_ID = release.RNC_MODULE_ID;;
+
+@Name('CellChange-Capturing')
+@Priority(12)
+on gpeh.INTERNAL_SUCCESSFUL_HSDSCH_CELL_CHANGE as cellChange
+merge RadioSessionWindow as rsw
+where rsw.UE_CONTEXT     = cellChange.UE_CONTEXT
+  and rsw.RNC_MODULE_ID  = cellChange.RNC_MODULE_ID
+  and rsw.IMSI != -1l
+  and rsw.SESSION_CLOSED = false
+when matched
+  then insert into
+  CellChangeWindow select
+        cellChange                                      as base,
+        rsw.IMSI                                        as IMSI,
+        Util.getMcc(rsw.IMSI)                           as IMSI_MCC,
+        Util.getMnc(rsw.IMSI)                           as IMSI_MNC,
+        case when cellChange.CPICH_RSCP_SOURCE_CELL >= -5
+        then cast(Util.getMappedRscp(cellChange.CPICH_RSCP_SOURCE_CELL), int)
+        else INTEGER_MIN_VAL
+        end                                             as SOURCE_CELL_RSCP,
+        case when cellChange.CPICH_EC_NO_SOURCE_CELL > -1
+        then Util.getMappedEcno(cellChange.CPICH_EC_NO_SOURCE_CELL)
+        else DEFAULT_FLOAT_VALUE
+        end                                             as SOURCE_CELL_ECNO,
+        case when cellChange.CPICH_RSCP_TARGET_CELL >= -5
+        then cast(Util.getMappedRscp(cellChange.CPICH_RSCP_TARGET_CELL), int)
+        else INTEGER_MIN_VAL
+        end                                             as TARGET_CELL_RSCP,
+        case when cellChange.CPICH_EC_NO_TARGET_CELL > -1
+        then Util.getMappedEcno(cellChange.CPICH_EC_NO_TARGET_CELL)
+        else DEFAULT_FLOAT_VALUE
+        end                                                as TARGET_CELL_ECNO
+when not matched  
+  then insert into
+  CellChangeWindow select
+        cellChange                                      as base,
+        case when cellChange.CPICH_RSCP_SOURCE_CELL >= -5
+        then cast(Util.getMappedRscp(cellChange.CPICH_RSCP_SOURCE_CELL), int)
+        else INTEGER_MIN_VAL
+        end                                             as SOURCE_CELL_RSCP,
+        case when cellChange.CPICH_EC_NO_SOURCE_CELL > -1
+        then Util.getMappedEcno(cellChange.CPICH_EC_NO_SOURCE_CELL)
+        else DEFAULT_FLOAT_VALUE
+        end                                             as SOURCE_CELL_ECNO,
+        case when cellChange.CPICH_RSCP_TARGET_CELL >= -5
+        then cast(Util.getMappedRscp(cellChange.CPICH_RSCP_TARGET_CELL), int)
+        else INTEGER_MIN_VAL
+        end                                             as TARGET_CELL_RSCP,
+        case when cellChange.CPICH_EC_NO_TARGET_CELL > -1
+        then Util.getMappedEcno(cellChange.CPICH_EC_NO_TARGET_CELL)
+        else DEFAULT_FLOAT_VALUE
+        end                                                as TARGET_CELL_ECNO;
+
+@Name('IMSI-Updates-CellChange')
+@Priority(11)
+on gpeh.INTERNAL_IMSI as event
+merge CellChangeWindow as cellChangeWindow
+where cellChangeWindow.base.UE_CONTEXT = event.UE_CONTEXT
+  and cellChangeWindow.base.RNC_MODULE_ID = event.RNC_MODULE_ID
+  and cellChangeWindow.IMSI = -1l
+when matched
+    then update set
+    IMSI                                                = cast(event.IMSI,long),
+    IMSI_MCC                                            = Util.getMcc(cellChangeWindow.IMSI),
+    IMSI_MNC                                            = Util.getMnc(cellChangeWindow.IMSI);
+
+@Name('Cleanup-Cell-Change-Without-Imsi-On-Internal-Release')
+@Priority(11)
+on gpeh.INTERNAL_SYSTEM_RELEASE release
+delete from CellChangeWindow as cellChangeWindow where cellChangeWindow.IMSI = -1l and cellChangeWindow.base.UE_CONTEXT = release.UE_CONTEXT and cellChangeWindow.base.RNC_MODULE_ID = release.RNC_MODULE_ID;
+
+@Name('Cleanup-Cell-Change-Without-Imsi-On-Connection-Release')
+@Priority(11)
+on gpeh.RRC_RRC_CONNECTION_RELEASE_COMPLETE release
+delete from CellChangeWindow as cellChangeWindow where cellChangeWindow.IMSI = -1l and cellChangeWindow.base.UE_CONTEXT = release.UE_CONTEXT and cellChangeWindow.base.RNC_MODULE_ID = release.RNC_MODULE_ID;;
+
+@Name('Cleanup-Cell-Change-Without-Imsi-On-Connection-Setup')
+@Priority(11)
+on gpeh.RRC_RRC_CONNECTION_SETUP release
+delete from CellChangeWindow as cellChangeWindow where cellChangeWindow.IMSI = -1l and cellChangeWindow.base.UE_CONTEXT = release.UE_CONTEXT and cellChangeWindow.base.RNC_MODULE_ID = release.RNC_MODULE_ID;;
+
+@Name('SOHO-Capturing')
+@Priority(11)
+on gpeh.INTERNAL_SOHO_DS_MISSING_NEIGHBOUR as soho
+merge RadioSessionWindow as rsw
+where rsw.UE_CONTEXT     = soho.UE_CONTEXT
+  and rsw.RNC_MODULE_ID  = soho.RNC_MODULE_ID
+  and rsw.IMSI != -1l
+  and rsw.SESSION_CLOSED = false
+when matched  
+  then insert into
+  SohoWindow select
+        soho as base,
+        rsw.IMSI as IMSI,
+        case when soho.CPICH_EC_NO_CELL_1 > -1
+        then Util.getMappedEcno(soho.CPICH_EC_NO_CELL_1)
+        else DEFAULT_FLOAT_VALUE
+        end as ECNO_CELL_1,
+        case when soho.CPICH_EC_NO_CELL_2 > -1
+        then Util.getMappedEcno(soho.CPICH_EC_NO_CELL_2)
+        else DEFAULT_FLOAT_VALUE
+        end as ECNO_CELL_2,
+        case when soho.CPICH_EC_NO_CELL_3 > -1
+        then Util.getMappedEcno(soho.CPICH_EC_NO_CELL_3)
+        else DEFAULT_FLOAT_VALUE
+        end as ECNO_CELL_3,
+        case when soho.CPICH_EC_NO_CELL_4 > -1
+        then Util.getMappedEcno(soho.CPICH_EC_NO_CELL_4)
+        else DEFAULT_FLOAT_VALUE
+        end as ECNO_CELL_4,
+        case when soho.RSCP_CELL_1 >= -5
+        then cast(Util.getMappedRscp(soho.RSCP_CELL_1), int)
+        else INTEGER_MIN_VAL
+        end as RSCP_CELL_1,
+        case when soho.RSCP_CELL_2 >= -5
+        then cast(Util.getMappedRscp(soho.RSCP_CELL_2), int)
+        else INTEGER_MIN_VAL
+        end as RSCP_CELL_2,
+        case when soho.RSCP_CELL_3 >= -5
+        then cast(Util.getMappedRscp(soho.RSCP_CELL_3), int)
+        else INTEGER_MIN_VAL
+        end as RSCP_CELL_3,
+        case when soho.RSCP_CELL_4 >= -5
+        then cast(Util.getMappedRscp(soho.RSCP_CELL_4), int)
+        else INTEGER_MIN_VAL
+        end as RSCP_CELL_4,
+        case when soho.CPICH_EC_NO_TRIGGER_CELL > -1
+        then Util.getMappedEcno(soho.CPICH_EC_NO_TRIGGER_CELL)
+        else DEFAULT_FLOAT_VALUE
+        end as ECNO_TRIGGER_CELL,
+        case when soho.RSCP_TRIGGER_CELL >= -5
+        then cast(Util.getMappedRscp(soho.RSCP_TRIGGER_CELL), int)
+        else INTEGER_MIN_VAL
+        end as RSCP_TRIGGER_CELL,
+        case when soho.CPICH_EC_NO_ADDITIONAL_CELL1 > -1
+        then Util.getMappedEcno(soho.CPICH_EC_NO_ADDITIONAL_CELL1)
+        else DEFAULT_FLOAT_VALUE
+        end as ECNO_ADDITIONAL_CELL1,
+        case when soho.RSCP_ADDITIONAL_CELL1 >= -5
+        then cast(Util.getMappedRscp(soho.RSCP_ADDITIONAL_CELL1), int)
+        else INTEGER_MIN_VAL
+        end as RSCP_ADDITIONAL_CELL1,
+        case when soho.CPICH_EC_NO_ADDITIONAL_CELL2 > -1
+        then Util.getMappedEcno(soho.CPICH_EC_NO_ADDITIONAL_CELL2)
+        else DEFAULT_FLOAT_VALUE
+        end as ECNO_ADDITIONAL_CELL2,
+        case when soho.RSCP_ADDITIONAL_CELL2 >= -5
+        then cast(Util.getMappedRscp(soho.RSCP_ADDITIONAL_CELL2), int)
+        else INTEGER_MIN_VAL
+        end as RSCP_ADDITIONAL_CELL2
+when not matched  
+  then insert into
+  SohoWindow select
+        soho as base,
+        case when soho.CPICH_EC_NO_CELL_1 > -1
+        then Util.getMappedEcno(soho.CPICH_EC_NO_CELL_1)
+        else DEFAULT_FLOAT_VALUE
+        end as ECNO_CELL_1,
+        case when soho.CPICH_EC_NO_CELL_2 > -1
+        then Util.getMappedEcno(soho.CPICH_EC_NO_CELL_2)
+        else DEFAULT_FLOAT_VALUE
+        end as ECNO_CELL_2,
+        case when soho.CPICH_EC_NO_CELL_3 > -1
+        then Util.getMappedEcno(soho.CPICH_EC_NO_CELL_3)
+        else DEFAULT_FLOAT_VALUE
+        end as ECNO_CELL_3,
+        case when soho.CPICH_EC_NO_CELL_4 > -1
+        then Util.getMappedEcno(soho.CPICH_EC_NO_CELL_4)
+        else DEFAULT_FLOAT_VALUE
+        end as ECNO_CELL_4,
+        case when soho.RSCP_CELL_1 >= -5
+        then cast(Util.getMappedRscp(soho.RSCP_CELL_1), int)
+        else INTEGER_MIN_VAL
+        end as RSCP_CELL_1,
+        case when soho.RSCP_CELL_2 >= -5
+        then cast(Util.getMappedRscp(soho.RSCP_CELL_2), int)
+        else INTEGER_MIN_VAL
+        end as RSCP_CELL_2,
+        case when soho.RSCP_CELL_3 >= -5
+        then cast(Util.getMappedRscp(soho.RSCP_CELL_3), int)
+        else INTEGER_MIN_VAL
+        end as RSCP_CELL_3,
+        case when soho.RSCP_CELL_4 >= -5
+        then cast(Util.getMappedRscp(soho.RSCP_CELL_4), int)
+        else INTEGER_MIN_VAL
+        end as RSCP_CELL_4,
+        case when soho.CPICH_EC_NO_TRIGGER_CELL > -1
+        then Util.getMappedEcno(soho.CPICH_EC_NO_TRIGGER_CELL)
+        else DEFAULT_FLOAT_VALUE
+        end as ECNO_TRIGGER_CELL,
+        case when soho.RSCP_TRIGGER_CELL >= -5
+        then cast(Util.getMappedRscp(soho.RSCP_TRIGGER_CELL), int)
+        else INTEGER_MIN_VAL
+        end as RSCP_TRIGGER_CELL,
+        case when soho.CPICH_EC_NO_ADDITIONAL_CELL1 > -1
+        then Util.getMappedEcno(soho.CPICH_EC_NO_ADDITIONAL_CELL1)
+        else DEFAULT_FLOAT_VALUE
+        end as ECNO_ADDITIONAL_CELL1,
+        case when soho.RSCP_ADDITIONAL_CELL1 >= -5
+        then cast(Util.getMappedRscp(soho.RSCP_ADDITIONAL_CELL1), int)
+        else INTEGER_MIN_VAL
+        end as RSCP_ADDITIONAL_CELL1,
+        case when soho.CPICH_EC_NO_ADDITIONAL_CELL2 > -1
+        then Util.getMappedEcno(soho.CPICH_EC_NO_ADDITIONAL_CELL2)
+        else DEFAULT_FLOAT_VALUE
+        end as ECNO_ADDITIONAL_CELL2,
+        case when soho.RSCP_ADDITIONAL_CELL2 >= -5
+        then cast(Util.getMappedRscp(soho.RSCP_ADDITIONAL_CELL2), int)
+        else INTEGER_MIN_VAL
+        end as RSCP_ADDITIONAL_CELL2;
+        
+@Name('IMSI-Updates-Soho')   
+@Priority(11)
+on gpeh.INTERNAL_IMSI as event
+merge SohoWindow as sohoWindow
+where sohoWindow.base.UE_CONTEXT = event.UE_CONTEXT
+  and sohoWindow.base.RNC_MODULE_ID = event.RNC_MODULE_ID
+  and sohoWindow.IMSI = -1l
+when matched
+    then update set
+    IMSI                                                = cast(event.IMSI,long);
+    
+@Name('Cleanup-Soho-Without-Imsi-On-Internal-Release')
+@Priority(11)
+on gpeh.INTERNAL_SYSTEM_RELEASE release
+delete from SohoWindow as sohoWindow where sohoWindow.IMSI = -1l and sohoWindow.base.UE_CONTEXT = release.UE_CONTEXT and sohoWindow.base.RNC_MODULE_ID = release.RNC_MODULE_ID;
+
+@Name('Cleanup-Soho-Without-Imsi-On-Connection-Release')
+@Priority(11)
+on gpeh.RRC_RRC_CONNECTION_RELEASE_COMPLETE release
+delete from SohoWindow as sohoWindow where sohoWindow.IMSI = -1l and sohoWindow.base.UE_CONTEXT = release.UE_CONTEXT and sohoWindow.base.RNC_MODULE_ID = release.RNC_MODULE_ID;
+
+@Name('Cleanup-Soho-Without-Imsi-On-Connection-Setup')
+@Priority(11)
+on gpeh.RRC_RRC_CONNECTION_SETUP release
+delete from SohoWindow as sohoWindow where sohoWindow.IMSI = -1l and sohoWindow.base.UE_CONTEXT = release.UE_CONTEXT and sohoWindow.base.RNC_MODULE_ID = release.RNC_MODULE_ID;
+
+@Priority(10)
+@Name('Session-Closing')
+on correlation.SESSION_END_EVENT as sessionEndEvent
+update RadioSessionWindow AS rsw
+set
+       rsw.RRC_DURATION                        = case when rsw.RRC_ACTIVITY_ON = true
+                                                 then rsw.RRC_DURATION + cast((rsw.SESSION_END-rsw.RRC_CONN_END),int)
+                                                 else rsw.RRC_DURATION
+                                                 end,
+       rsw.RRC_CONN_END                        = case when rsw.RRC_ACTIVITY_ON = true 
+                                                 then rsw.SESSION_END
+                                                 else rsw.RRC_CONN_END 
+                                                 end,
+       rsw.PS_RAB_DURATION                     = case when rsw.RAB_ACTIVITY_ON = true
+                                                 then rsw.PS_RAB_DURATION + cast((rsw.SESSION_END-rsw.PS_RAB_ACTIVITY_END_TIME),int)
+                                                 else rsw.PS_RAB_DURATION
+                                                 end,
+       rsw.PS_RAB_ACTIVITY_END_TIME            = case when rsw.RAB_ACTIVITY_ON = true
+                                                 then rsw.SESSION_END
+                                                 else rsw.PS_RAB_ACTIVITY_END_TIME 
+                                                 end,
+       rsw.CM_DURATION                         = case when rsw.CM_START > 0
+                                                 then rsw.CM_DURATION + cast((rsw.SESSION_END - rsw.CM_START), int)
+                                                 else rsw.CM_DURATION 
+                                                 end,
+       rsw.ACTIVITY_DURATION                   = case when rsw.ACTIVITY_START > 0
+                                                 then rsw.ACTIVITY_DURATION + cast((rsw.SESSION_END-rsw.ACTIVITY_START),int)
+                                                 else rsw.ACTIVITY_DURATION
+                                                 end,
+       rsw.HS_DURATION                         = case when rsw.HS_START > 0
+                                                 then rsw.HS_DURATION + cast((rsw.SESSION_END-rsw.HS_START),int)
+                                                 else rsw.HS_DURATION
+                                                 end,
+       rsw.EUL_DURATION                        = case when rsw.EUL_START > 0
+                                                 then rsw.EUL_DURATION + cast((rsw.SESSION_END-rsw.EUL_START),int)
+                                                 else rsw.EUL_DURATION
+                                                 end,
+       rsw.ACTIVITY                               = case when rsw.RRC_DURATION > 0
+                                                 then cast((rsw.ACTIVITY_DURATION / rsw.RRC_DURATION), float)
+                                                 else rsw.ACTIVITY
+                                                 end,
+       rsw.HS_RATIO                            = case when rsw.ACTIVITY_DURATION > 0
+                                                 then cast((rsw.HS_DURATION / rsw.ACTIVITY_DURATION), float)
+                                                 else rsw.HS_RATIO
+                                                 end,
+       rsw.EUL_RATIO                           = case when rsw.ACTIVITY_DURATION > 0
+                                                 then cast((rsw.EUL_DURATION / rsw.ACTIVITY_DURATION), float)
+                                                 else rsw.EUL_RATIO
+                                                 end,
+       rsw.HSDSCH_USERS_AVG                    = case when rsw.HSDSCH_USERS_SAMPLES > 0
+                                                 then cast(Math.round((rsw.HSDSCH_USERS_TOTAL / cast(rsw.HSDSCH_USERS_SAMPLES,float)).doubleValue()) ,short)
+                                                 else rsw.HSDSCH_USERS_AVG
+                                                 end,
+       rsw.UL_INTERFERENCE_AVG                 = case when rsw.UL_INTERFERENCE_SAMPLES > 0
+                                                 then cast(Math.round(((10 * Math.log10((rsw.UL_INTERFERENCE_TOTAL / rsw.UL_INTERFERENCE_SAMPLES).doubleValue()))*10.0).doubleValue())/10.0, float)
+                                                 else rsw.UL_INTERFERENCE_AVG
+                                                 end,
+       rsw.DL_NON_HS_TX_POWER_AVG              = case when rsw.DL_NON_HS_TX_POWER_SAMPLES > 0
+                                                 then cast(Math.round((rsw.DL_NON_HS_TX_POWER_TOTAL / rsw.DL_NON_HS_TX_POWER_SAMPLES).doubleValue()), int)
+                                                 else rsw.DL_NON_HS_TX_POWER_AVG
+                                                 end,
+       rsw.CM_USER_CNT                         = case when rsw.CM_USER_SAMPLES > 0
+                                                 then cast(Math.round((rsw.CM_USER_TOTAL / cast(rsw.CM_USER_SAMPLES,float)).doubleValue()), int)
+                                                 else rsw.CM_USER_CNT
+                                                 end,
+       rsw.ECNO_AVG                               = case when rsw.NUM_VALID_ECNO_SAMPLES > 0
+                                                    then cast(
+                                                       Math.round((10 * 
+                                                                   Math.log10(
+                                                                       (rsw.ECNO_TOTAL/rsw.NUM_VALID_ECNO_SAMPLES).doubleValue()) 
+                                                                   * 2).doubleValue())
+                                                               /2,
+                                                       float)
+                                                    else rsw.ECNO_AVG
+                                                    end,    
+       rsw.RSCP_AVG                               = case when rsw.NUM_VALID_RSCP_SAMPLES > 0
+                                                    then cast(
+                                                       Math.round(
+                                                               (cast(
+                                                                   10 * 
+                                                                   Math.log10(
+                                                                       (rsw.RSCP_TOTAL/rsw.NUM_VALID_RSCP_SAMPLES).doubleValue()), 
+                                                               float)).floatValue()
+                                                               ), 
+                                                       short)   
+                                                    else rsw.RSCP_AVG   
+                                                    end
+where rsw.START_RAB != -1
+   and rsw.EVENT_CNT > 0;
+
+@Priority(10)
+on gpeh.INTERNAL_IMSI as event
+merge RadioSessionWindow as rsw
+where rsw.UE_CONTEXT     = event.UE_CONTEXT
+  and rsw.RNC_MODULE_ID  = event.RNC_MODULE_ID
+  and rsw.IMSI = -1l
+  and rsw.SESSION_CLOSED = false
+when matched
+  then insert into partial
+  select cast(event.IMSI,long)             as IMSI,
+         event.UE_CONTEXT                  as UE_CONTEXT,
+         event.RNC_MODULE_ID               as RNC_MODULE_ID,
+         event.timestamp                   as IMSI_TIMESTAMP,
+         rsw.PS_RAB_ACTIVITY_START_TIME    as PS_RAB_ACTIVITY_START_TIME,
+         rsw.RRC_CONN_END                  as RRC_CONN_END,
+         rsw.PS_RAB_ACTIVITY_END_TIME      as PS_RAB_ACTIVITY_END_TIME,
+         rsw.RRC_DURATION                  as RRC_DURATION,
+         rsw.PS_RAB_DURATION               as PS_RAB_DURATION,
+         rsw.PS_RAB_ESTABLISH_CNT          as PS_RAB_ESTABLISH_CNT,
+         rsw.CS_RAB_ESTABLISH_CNT          as CS_RAB_ESTABLISH_CNT,
+         rsw.DROPS_CNT                     as DROPS_CNT,
+         rsw.EVENT_CNT                     as EVENT_CNT,
+         rsw.HS_CELL_CHANGE_SUC_CNT        as HS_CELL_CHANGE_SUC_CNT,
+         rsw.HS_CELL_CHANGE_ERR_CNT        as HS_CELL_CHANGE_ERR_CNT,
+         rsw.START_C_ID                    as START_C_ID,
+         rsw.END_C_ID                      as END_C_ID,
+         rsw.START_RNC                     as START_RNC,
+         rsw.END_RNC                       as END_RNC,
+         rsw.IFHO_EXEC_SUC_CNT             as IFHO_EXEC_SUC_CNT,
+         rsw.IFHO_EXEC_ERR_CNT             as IFHO_EXEC_ERR_CNT,
+         rsw.SOHO_EXEC_SUC_CNT             as SOHO_EXEC_SUC_CNT,
+         rsw.SOHO_EXEC_ERR_CNT             as SOHO_EXEC_ERR_CNT,
+         rsw.IRAT_EXEC_ERR_CNT             as IRAT_EXEC_ERR_CNT,
+         rsw.HS_NO_SELECTION_CNT           as HS_NO_SELECTION_CNT,
+         rsw.RAB_ACTIVITY_ON               as RAB_ACTIVITY_ON,
+         rsw.RRC_ACTIVITY_ON               as RRC_ACTIVITY_ON,
+         rsw.CM_CNT                        as CM_CNT,
+         rsw.CM_UL_CNT                     as CM_UL_CNT,
+         rsw.CM_DL_CNT                     as CM_DL_CNT,
+         rsw.CM_ULDL_CNT                   as CM_ULDL_CNT,
+         rsw.CM_DURATION                   as CM_DURATION,
+         rsw.CM_START                      as CM_START,
+         rsw.RRC_MEAS_REP_SAMPLES          as RRC_MEAS_REP_SAMPLES,
+         rsw.RRC_SAMPLES_GC_GS             as RRC_SAMPLES_GC_GS,
+         rsw.RRC_SAMPLES_GC_BS             as RRC_SAMPLES_GC_BS,
+         rsw.RRC_SAMPLES_BC_GS             as RRC_SAMPLES_BC_GS,
+         rsw.RRC_SAMPLES_BC_BS             as RRC_SAMPLES_BC_BS,
+         rsw.ECNO_TOTAL                    as ECNO_TOTAL,
+         rsw.RSCP_TOTAL                    as RSCP_TOTAL,
+         rsw.NUM_VALID_ECNO_SAMPLES        as NUM_VALID_ECNO_SAMPLES,
+         rsw.NUM_VALID_RSCP_SAMPLES        as NUM_VALID_RSCP_SAMPLES,
+         rsw.CS_REASON_OTHER               as CS_REASON_OTHER,
+         rsw.CS_REASON_QUEUE               as CS_REASON_QUEUE,
+         rsw.CS_REASON_QOS_DCH             as CS_REASON_QOS_DCH,
+         rsw.CS_REASON_MOBILITY_COVERAGE   as CS_REASON_MOBILITY_COVERAGE,
+         rsw.CS_REASON_CAPACITY            as CS_REASON_CAPACITY,
+         rsw.CS_REASON_UE_ACTIVITY         as CS_REASON_UE_ACTIVITY,
+         rsw.CDS_SUCC_CNT                  as CDS_SUCC_CNT,
+         rsw.CUS_SUCC_CNT                  as CUS_SUCC_CNT,
+         rsw.CDS_ATT_CNT                   as CDS_ATT_CNT,
+         rsw.CUS_ATT_CNT                   as CUS_ATT_CNT,
+         rsw.ACTIVITY_DURATION             as ACTIVITY_DURATION,
+         rsw.HS_DURATION                   as HS_DURATION,
+         rsw.EUL_DURATION                  as EUL_DURATION,
+         rsw.ACTIVITY_START                as ACTIVITY_START,
+         rsw.HS_START                      as HS_START,
+         rsw.EUL_START                     as EUL_START,
+         rsw.HSDSCH_USERS_AVG              as HSDSCH_USERS_AVG,
+         rsw.UL_INTERFERENCE_AVG           as UL_INTERFERENCE_AVG,
+         rsw.DL_NON_HS_TX_POWER_AVG        as DL_NON_HS_TX_POWER_AVG,
+         rsw.CM_USER_CNT                   as CM_USER_CNT,
+         rsw.HSDSCH_USERS_TOTAL            as HSDSCH_USERS_TOTAL,
+         rsw.HSDSCH_USERS_SAMPLES          as HSDSCH_USERS_SAMPLES,
+         rsw.UL_INTERFERENCE_TOTAL         as UL_INTERFERENCE_TOTAL,
+         rsw.UL_INTERFERENCE_SAMPLES       as UL_INTERFERENCE_SAMPLES,
+         rsw.DL_NON_HS_TX_POWER_TOTAL      as DL_NON_HS_TX_POWER_TOTAL,
+         rsw.DL_NON_HS_TX_POWER_SAMPLES    as DL_NON_HS_TX_POWER_SAMPLES,
+         rsw.CM_USER_TOTAL                 as CM_USER_TOTAL,
+         rsw.CM_USER_SAMPLES               as CM_USER_SAMPLES;
+
+
+@Priority(9)
+on partial
+merge RadioSessionWindow as rsw
+where rsw.IMSI = partial.IMSI
+when matched
+    then update set
+         rsw.UE_CONTEXT                    = partial.UE_CONTEXT,
+         rsw.RNC_MODULE_ID                 = partial.RNC_MODULE_ID,
+         rsw.PS_RAB_ACTIVITY_START_TIME    = case when rsw.PS_RAB_ACTIVITY_START_TIME = -1
+                                             then partial.PS_RAB_ACTIVITY_START_TIME
+                                             else rsw.PS_RAB_ACTIVITY_START_TIME
+                                             end,
+         rsw.RRC_CONN_END                  = partial.RRC_CONN_END,
+         rsw.PS_RAB_ACTIVITY_END_TIME      = rsw.PS_RAB_ACTIVITY_END_TIME,
+         rsw.RRC_DURATION                  = rsw.RRC_DURATION + partial.RRC_DURATION,
+         rsw.PS_RAB_DURATION               = rsw.PS_RAB_DURATION + partial.PS_RAB_DURATION,
+         rsw.PS_RAB_ESTABLISH_CNT          = cast(cast(rsw.PS_RAB_ESTABLISH_CNT,int) + cast(partial.PS_RAB_ESTABLISH_CNT,int),short),
+         rsw.CS_RAB_ESTABLISH_CNT          = cast(cast(rsw.CS_RAB_ESTABLISH_CNT,int) + cast(partial.CS_RAB_ESTABLISH_CNT,int),short),
+         rsw.DROPS_CNT                     = cast(cast(rsw.DROPS_CNT,int) + cast(partial.DROPS_CNT,int),byte),
+         rsw.EVENT_CNT                     = rsw.EVENT_CNT + partial.EVENT_CNT,
+         rsw.HS_CELL_CHANGE_SUC_CNT        = rsw.HS_CELL_CHANGE_SUC_CNT + partial.HS_CELL_CHANGE_SUC_CNT,
+         rsw.HS_CELL_CHANGE_ERR_CNT        = rsw.HS_CELL_CHANGE_ERR_CNT + partial.HS_CELL_CHANGE_ERR_CNT,
+         rsw.END_C_ID                      = partial.END_C_ID,
+         rsw.END_RNC                       = partial.END_RNC,
+         rsw.IFHO_EXEC_SUC_CNT             = rsw.IFHO_EXEC_SUC_CNT + partial.IFHO_EXEC_SUC_CNT,
+         rsw.IFHO_EXEC_ERR_CNT             = rsw.IFHO_EXEC_ERR_CNT + partial.IFHO_EXEC_ERR_CNT,
+         rsw.SOHO_EXEC_SUC_CNT             = rsw.SOHO_EXEC_SUC_CNT + partial.SOHO_EXEC_SUC_CNT,
+         rsw.SOHO_EXEC_ERR_CNT             = rsw.SOHO_EXEC_ERR_CNT + partial.SOHO_EXEC_ERR_CNT,
+         rsw.IRAT_EXEC_ERR_CNT             = rsw.IRAT_EXEC_ERR_CNT + partial.IRAT_EXEC_ERR_CNT,
+         rsw.HS_NO_SELECTION_CNT           = rsw.HS_NO_SELECTION_CNT + partial.HS_NO_SELECTION_CNT,
+         rsw.RAB_ACTIVITY_ON               = partial.RAB_ACTIVITY_ON,
+         rsw.RRC_ACTIVITY_ON               = partial.RRC_ACTIVITY_ON,
+         rsw.RRC_CONNECTION_CNT            = cast(rsw.RRC_CONNECTION_CNT + 1,byte),
+         rsw.CM_CNT                        = rsw.CM_CNT + partial.CM_CNT,
+         rsw.CM_UL_CNT                     = rsw.CM_UL_CNT + partial.CM_UL_CNT,
+         rsw.CM_DL_CNT                     = rsw.CM_DL_CNT + partial.CM_DL_CNT,
+         rsw.CM_ULDL_CNT                   = rsw.CM_ULDL_CNT + partial.CM_ULDL_CNT,
+         rsw.CM_DURATION                   = rsw.CM_DURATION + partial.CM_DURATION,
+         rsw.RRC_MEAS_REP_SAMPLES          = rsw.RRC_MEAS_REP_SAMPLES + partial.RRC_MEAS_REP_SAMPLES,
+         rsw.RRC_SAMPLES_GC_GS             = rsw.RRC_SAMPLES_GC_GS + partial.RRC_SAMPLES_GC_GS,
+         rsw.RRC_SAMPLES_GC_BS             = rsw.RRC_SAMPLES_GC_BS + partial.RRC_SAMPLES_GC_BS,
+         rsw.RRC_SAMPLES_BC_GS             = rsw.RRC_SAMPLES_BC_GS + partial.RRC_SAMPLES_BC_GS,
+         rsw.RRC_SAMPLES_BC_BS             = rsw.RRC_SAMPLES_BC_BS + partial.RRC_SAMPLES_BC_BS,
+         rsw.ECNO_TOTAL                    = rsw.ECNO_TOTAL + partial.ECNO_TOTAL,
+         rsw.RSCP_TOTAL                    = rsw.RSCP_TOTAL + partial.RSCP_TOTAL,
+         rsw.NUM_VALID_ECNO_SAMPLES        = rsw.NUM_VALID_ECNO_SAMPLES + partial.NUM_VALID_ECNO_SAMPLES,
+         rsw.NUM_VALID_RSCP_SAMPLES        = rsw.NUM_VALID_RSCP_SAMPLES + partial.NUM_VALID_RSCP_SAMPLES,
+         rsw.CS_REASON_OTHER               = cast(cast(rsw.CS_REASON_OTHER,int) + cast(partial.CS_REASON_OTHER,int),short),
+         rsw.CS_REASON_QUEUE               = cast(cast(rsw.CS_REASON_QUEUE,int) + cast(partial.CS_REASON_QUEUE,int),short),
+         rsw.CS_REASON_QOS_DCH             = cast(cast(rsw.CS_REASON_QOS_DCH,int) + cast(partial.CS_REASON_QOS_DCH,int),short),
+         rsw.CS_REASON_MOBILITY_COVERAGE   = cast(cast(rsw.CS_REASON_MOBILITY_COVERAGE,int) + cast(partial.CS_REASON_MOBILITY_COVERAGE,int),short),
+         rsw.CS_REASON_CAPACITY            = cast(cast(rsw.CS_REASON_CAPACITY,int) + cast(partial.CS_REASON_CAPACITY,int),short),
+         rsw.CS_REASON_UE_ACTIVITY         = cast(cast(rsw.CS_REASON_UE_ACTIVITY,int) + cast(partial.CS_REASON_UE_ACTIVITY,int),short),
+         rsw.CDS_SUCC_CNT                  = cast(cast(rsw.CDS_SUCC_CNT,int) + cast(partial.CDS_SUCC_CNT,int),short),
+         rsw.CUS_SUCC_CNT                  = cast(cast(rsw.CUS_SUCC_CNT,int) + cast(partial.CUS_SUCC_CNT,int),short),
+         rsw.CDS_ATT_CNT                   = cast(cast(rsw.CDS_ATT_CNT,int) + cast(partial.CDS_ATT_CNT,int),short),
+         rsw.CUS_ATT_CNT                   = cast(cast(rsw.CUS_ATT_CNT,int) + cast(partial.CUS_ATT_CNT,int),short),
+         rsw.ACTIVITY_DURATION             = rsw.ACTIVITY_DURATION + partial.ACTIVITY_DURATION,
+         rsw.HS_DURATION                   = rsw.HS_DURATION + partial.HS_DURATION,
+         rsw.EUL_DURATION                  = rsw.EUL_DURATION + partial.EUL_DURATION,
+         rsw.ACTIVITY_START                = partial.ACTIVITY_START,
+         rsw.HS_START                      = partial.HS_START,
+         rsw.EUL_START                     = partial.EUL_START,
+         rsw.HSDSCH_USERS_TOTAL            = rsw.HSDSCH_USERS_TOTAL + partial.HSDSCH_USERS_TOTAL,
+         rsw.HSDSCH_USERS_SAMPLES          = rsw.HSDSCH_USERS_SAMPLES + partial.HSDSCH_USERS_SAMPLES,
+         rsw.UL_INTERFERENCE_TOTAL         = rsw.UL_INTERFERENCE_TOTAL + partial.UL_INTERFERENCE_TOTAL,
+         rsw.UL_INTERFERENCE_SAMPLES       = rsw.UL_INTERFERENCE_SAMPLES + partial.UL_INTERFERENCE_SAMPLES,
+         rsw.DL_NON_HS_TX_POWER_TOTAL      = rsw.DL_NON_HS_TX_POWER_TOTAL + partial.DL_NON_HS_TX_POWER_TOTAL,
+         rsw.DL_NON_HS_TX_POWER_SAMPLES    = rsw.DL_NON_HS_TX_POWER_SAMPLES + partial.DL_NON_HS_TX_POWER_SAMPLES,
+         rsw.CM_USER_TOTAL                 = rsw.CM_USER_TOTAL + partial.CM_USER_TOTAL,
+         rsw.CM_USER_SAMPLES               = rsw.CM_USER_SAMPLES + partial.CM_USER_SAMPLES,
+         rsw.SESSION_CLOSED                = false
+    then insert into delete_stream
+    select partial.UE_CONTEXT as UE_CONTEXT,
+           partial.RNC_MODULE_ID as RNC_MODULE_ID
+    then insert into clean_up_partial
+    select partial.IMSI as IMSI
+when not matched 
+    then insert into update_stream
+    select partial.IMSI as IMSI,
+           partial.IMSI_TIMESTAMP.roundFloor('min').minus((partial.IMSI_TIMESTAMP.getMinuteOfHour()%SESSION_DURATION_IN_MINUTES)*ONE_MINUTE_IN_MS)    as DATETIME_ID,
+           partial.IMSI_TIMESTAMP.roundFloor('min').minus((partial.IMSI_TIMESTAMP.getMinuteOfHour()%SESSION_DURATION_IN_MINUTES)*ONE_MINUTE_IN_MS).plus(SESSION_DURATION_IN_MINUTES minutes) as SESSION_END,
+           partial.UE_CONTEXT as UE_CONTEXT,
+           partial.RNC_MODULE_ID as RNC_MODULE_ID
+    then insert into clean_up_partial
+    select partial.IMSI                                 as IMSI;
+
+
+
+
+@Priority(8)
+on clean_up_partial
+delete from partial
+where partial.IMSI = clean_up_partial.IMSI;
+
+@Priority(8)
+on update_stream
+update RadioSessionWindow set IMSI           = update_stream.IMSI,
+                              IMSI_MCC       = Util.getMcc(update_stream.IMSI),
+                              IMSI_MNC       = Util.getMnc(update_stream.IMSI),
+                              DATETIME_ID    = update_stream.DATETIME_ID,
+                              SESSION_END    = update_stream.SESSION_END
+where RadioSessionWindow.UE_CONTEXT = update_stream.UE_CONTEXT
+  and RadioSessionWindow.RNC_MODULE_ID = update_stream.RNC_MODULE_ID
+  and RadioSessionWindow.IMSI = -1L
+  and RadioSessionWindow.SESSION_CLOSED=false;
+
+@Priority(7)
+on delete_stream
+delete from RadioSessionWindow 
+where RadioSessionWindow.UE_CONTEXT = delete_stream.UE_CONTEXT
+  and RadioSessionWindow.RNC_MODULE_ID = delete_stream.RNC_MODULE_ID
+  and RadioSessionWindow.IMSI = -1;
+
+
+@Priority(6)  
+@Name('Session-Enrichment')
+on correlation.SESSION_END_EVENT as sessionEndEvent
+select rsw.* from RadioSessionWindow as rsw
+where rsw.EVENT_CNT > 0
+  and rsw.IMSI != -1l
+  and rsw.START_RAB != -1;
+
+@Priority(6)  
+@Name('Handover-Enrichment')
+on correlation.SESSION_END_EVENT as sessionEndEvent
+select hw.* from HandoverWindow as hw
+where  hw.IMSI != -1l;
+
+@Priority(5)
+@Name('Clean-Up-Handover')
+on correlation.SESSION_END_EVENT as sessionEndEvent
+delete from HandoverWindow handoverWindow where handoverWindow.IMSI != -1l ;
+
+@Priority(6)  
+@Name('CellChange-Enrichment')
+on correlation.SESSION_END_EVENT as sessionEndEvent
+select ccw.* from CellChangeWindow as ccw
+where ccw.IMSI != -1l;
+
+@Priority(5)
+@Name('Clean-Up-CellChange')
+on correlation.SESSION_END_EVENT as sessionEndEvent
+delete from CellChangeWindow as ccw where ccw.IMSI != -1l;
+
+@Priority(6)  
+@Name('Soho-Enrichment')
+on correlation.SESSION_END_EVENT as sessionEndEvent
+select soho.* from SohoWindow as soho
+where soho.IMSI != -1l;
+
+@Priority(5)
+@Name('Clean-Up-Soho')
+on correlation.SESSION_END_EVENT as sessionEndEvent
+delete from SohoWindow as soho where soho.IMSI != -1l;
+
+@Priority(5)
+@Name('Session-carry-over')
+on correlation.SESSION_END_EVENT as sessionEndEvent
+merge RadioSessionWindow AS rsw
+where rsw.RRC_ACTIVITY_ON = true
+  and rsw.EVENT_CNT > 0
+  and rsw.IMSI != -1l
+when matched
+        then insert into RadioSessionWindow select
+            rsw.UE_CONTEXT                              as UE_CONTEXT,
+            rsw.RNC_MODULE_ID                              as RNC_MODULE_ID,
+            case when rsw.RAB_ACTIVITY_ON=true
+            then rsw.END_RAB
+            else
+            cast(-1, short)
+            end                                          as START_RAB,
+            case when rsw.RAB_ACTIVITY_ON=true
+            then rsw.END_RAB
+            else
+            cast(-1, short)
+            end                                         as END_RAB,
+            case when rsw.RAB_ACTIVITY_ON=true
+            then rsw.SESSION_END 
+            else
+            0l
+            end                                          as PS_RAB_ACTIVITY_START_TIME,
+            case when rsw.RAB_ACTIVITY_ON=true
+            then rsw.SESSION_END 
+            else
+            0l
+            end                                         as PS_RAB_ACTIVITY_END_TIME,
+            case when rsw.CM_START > 0
+            then rsw.SESSION_END
+            else
+            0
+            end                                         as CM_START,
+            rsw.IMSI                                    as IMSI,
+            rsw.IMSI_MCC                                 as IMSI_MCC,
+            rsw.IMSI_MNC                                as IMSI_MNC,
+            rsw.HSDPA_UE_CATEGORY                        as HSDPA_UE_CATEGORY,
+            rsw.EUL_UE_CATEGORY                            as EUL_UE_CATEGORY,
+            rsw.SESSION_END                                as DATETIME_ID,         
+            rsw.SESSION_END                              as timestamp,
+            rsw.SESSION_END                               as RRC_CONN_END,
+            rsw.SESSION_END.
+            plus(SESSION_DURATION_IN_MINUTES minutes)   as SESSION_END,
+            0                                           as RRC_DURATION,
+            0                                           as PS_RAB_DURATION,
+            cast(0,short)                               as PS_RAB_ESTABLISH_CNT,
+            cast(0,short)                               as CS_RAB_ESTABLISH_CNT,
+            cast(0,byte)                                as DROPS_CNT,
+            0                                           as EVENT_CNT,
+            0                                           as HS_CELL_CHANGE_SUC_CNT,
+            0                                           as HS_CELL_CHANGE_ERR_CNT,
+            rsw.END_C_ID                                   as START_C_ID,
+            rsw.END_C_ID                                as END_C_ID,
+            rsw.END_RNC                                 as START_RNC,
+            rsw.END_RNC                                 as END_RNC,
+            cast(SESSION_DURATION_IN_SECONDS,short)     as SESSION_DURATION,
+            0                                           as IFHO_EXEC_SUC_CNT,
+            0                                           as IFHO_EXEC_ERR_CNT,
+            0                                           as SOHO_EXEC_SUC_CNT,
+            0                                           as SOHO_EXEC_ERR_CNT,
+            0                                           as IRAT_EXEC_ERR_CNT,
+            0                                           as HS_NO_SELECTION_CNT,
+            rsw.RAB_ACTIVITY_ON                           as RAB_ACTIVITY_ON,
+            rsw.RRC_ACTIVITY_ON                            as RRC_ACTIVITY_ON,
+            cast(0,byte)                                as RRC_CONNECTION_CNT,
+            0                                           as CM_CNT,
+            0                                           as CM_UL_CNT,
+            0                                           as CM_DL_CNT,
+            0                                           as CM_ULDL_CNT,
+            0                                           as CM_DURATION,
+              0                                            as RRC_MEAS_REP_SAMPLES,
+            0                                            as RRC_SAMPLES_GC_GS,
+            0                                            as RRC_SAMPLES_GC_BS,
+            0                                            as RRC_SAMPLES_BC_GS,
+            0                                            as RRC_SAMPLES_BC_BS,
+            0                                            as ECNO_TOTAL,
+            0                                            as RSCP_TOTAL,
+            0                                            as NUM_VALID_ECNO_SAMPLES,
+            0                                            as NUM_VALID_RSCP_SAMPLES,
+            cast(0,short)                               as CS_REASON_OTHER,
+            cast(0,short)                               as CS_REASON_QUEUE,  
+            cast(0,short)                               as CS_REASON_QOS_DCH,
+            cast(0,short)                               as CS_REASON_MOBILITY_COVERAGE,
+            cast(0,short)                               as CS_REASON_CAPACITY,
+            cast(0,short)                               as CS_REASON_UE_ACTIVITY,
+            cast(0,short)                               as CDS_SUCC_CNT,
+            cast(0,short)                               as CUS_SUCC_CNT,
+            cast(0,short)                               as CDS_ATT_CNT,
+            cast(0,short)                               as CUS_ATT_CNT,
+            0                                           as ACTIVITY_DURATION,
+            0                                           as HS_DURATION,
+            0                                           as EUL_DURATION,
+            case when rsw.HS_START > 0
+            then rsw.SESSION_END
+            else -1
+            end                                         as HS_START,
+            case when rsw.ACTIVITY_START > 0
+            then rsw.SESSION_END
+            else -1
+            end                                         as ACTIVITY_START,
+            case when rsw.EUL_START > 0
+            then rsw.SESSION_END
+            else -1
+            end                                         as EUL_START,
+            0                                           as HSDSCH_USERS_TOTAL,
+            0                                           as HSDSCH_USERS_SAMPLES,
+            0                                           as UL_INTERFERENCE_TOTAL,
+            0                                           as UL_INTERFERENCE_SAMPLES,
+            0                                           as DL_NON_HS_TX_POWER_TOTAL,
+            0                                           as DL_NON_HS_TX_POWER_SAMPLES,
+            0                                           as CM_USER_TOTAL,
+            0                                           as CM_USER_SAMPLES,
+            true                                        as CARRIED_OVER,
+            EVENT_ID_VALUE                              as EVENT_ID;
+
+
+@Name('Delete-Closed-Sessions')
+@Priority(4)
+on correlation.SESSION_END_EVENT as sessionEndEvent
+delete from RadioSessionWindow as rsw
+where rsw.SESSION_END<=sessionEndEvent.timestamp
+      and not (rsw.IMSI = -1l and rsw.RRC_ACTIVITY_ON = true);
+
+
+@Priority(3)
+@Drop
+@Name('Connection-Setup')
+on gpeh.RRC_RRC_CONNECTION_SETUP as rrc
+merge RadioSessionWindow AS rsw
+where rsw.UE_CONTEXT = rrc.UE_CONTEXT
+  and rsw.RNC_MODULE_ID = rrc.RNC_MODULE_ID
+  //and rsw.RRC_ACTIVITY_ON = true //cannot use this filter here -  in most cases, we will have gotten an RRC connection release complete event, which will set this to false
+  // (and cannot change that logic, its used to calculate other values
+    and rsw.SESSION_CLOSED = false
+when matched and rsw.RRC_ACTIVITY_ON = true //ie no RRC_CONNECTION_RELEASE_COMPLETE event received
+     then
+         update set
+            rsw.SESSION_CLOSED              = true,
+            rsw.RRC_ACTIVITY_ON             = false,
+            rsw.PS_RAB_DURATION             = case when rsw.RAB_ACTIVITY_ON = true 
+                                              then 
+                                                rsw.PS_RAB_DURATION + cast((rrc.timestamp-rsw.PS_RAB_ACTIVITY_END_TIME),int)
+                                              else
+                                                rsw.PS_RAB_DURATION
+                                              end,
+            rsw.PS_RAB_ACTIVITY_END_TIME    = case when rsw.RAB_ACTIVITY_ON = true 
+                                              then 
+                                                rrc.timestamp
+                                              else
+                                                rsw.PS_RAB_ACTIVITY_END_TIME 
+                                              end,
+            rsw.CM_DURATION                 = case when rsw.CM_START > 0 
+                                              then 
+                                                rsw.CM_DURATION + cast((rrc.timestamp - rsw.CM_START), int)  
+                                              else
+                                                rsw.CM_DURATION 
+                                              end,
+            rsw.CM_START                    = 0,
+            rsw.RAB_ACTIVITY_ON             = false,
+            rsw.RRC_DURATION                = rsw.RRC_DURATION + cast((rrc.timestamp-rsw.RRC_CONN_END),int),
+            rsw.RRC_CONN_END                = rrc.timestamp,
+            rsw.ACTIVITY_DURATION           = case when rsw.ACTIVITY_START > 0
+                                              then rsw.ACTIVITY_DURATION + cast((rrc.timestamp - rsw.ACTIVITY_START), int)
+                                              else rsw.ACTIVITY_DURATION
+                                              end,
+            rsw.ACTIVITY_START              = -1,
+            rsw.HS_DURATION                 = case when rsw.HS_START > 0
+                                              then rsw.HS_DURATION + cast((rrc.timestamp - rsw.HS_START), int)
+                                              else rsw.HS_DURATION
+                                              end,
+            rsw.HS_START                    = -1,
+            rsw.EUL_DURATION                = case when rsw.EUL_START > 0
+                                              then rsw.EUL_DURATION + cast((rrc.timestamp - rsw.EUL_START), int)
+                                              else rsw.EUL_DURATION
+                                              end,
+            rsw.EUL_START                   = -1
+     then 
+         insert into RadioSessionWindow
+         select
+            rrc.UE_CONTEXT                              as UE_CONTEXT,
+            rrc.RNC_MODULE_ID                           as RNC_MODULE_ID,
+            rrc.timestamp.roundFloor('min').minus((rrc.timestamp.getMinuteOfHour()%SESSION_DURATION_IN_MINUTES)*ONE_MINUTE_IN_MS)                 as DATETIME_ID,         
+            rrc.timestamp                               as timestamp,
+            0l                                          as PS_RAB_ACTIVITY_START_TIME,
+            rrc.timestamp                               as RRC_CONN_END,
+            0l                                          as PS_RAB_ACTIVITY_END_TIME,
+            rrc.timestamp.roundFloor('min').minus((rrc.timestamp.getMinuteOfHour()%SESSION_DURATION_IN_MINUTES)*ONE_MINUTE_IN_MS).plus(SESSION_DURATION_IN_MINUTES minutes) as SESSION_END,
+            0                                           as RRC_DURATION,
+            0                                           as PS_RAB_DURATION,
+            cast(0,short)                               as PS_RAB_ESTABLISH_CNT,
+            cast(0,short)                               as CS_RAB_ESTABLISH_CNT,
+            cast(0,byte)                                as DROPS_CNT,
+            1                                           as EVENT_CNT,
+            0                                           as HS_CELL_CHANGE_SUC_CNT,
+            0                                           as HS_CELL_CHANGE_ERR_CNT,
+            rrc.getC_ID_1()                              as START_C_ID,
+            rrc.getC_ID_1()                             as END_C_ID,
+            rrc.RNC_ID_1                                 as START_RNC,
+            rrc.RNC_ID_1                                   as END_RNC,
+            cast(SESSION_DURATION_IN_SECONDS,short)     as SESSION_DURATION,
+            0                                           as IFHO_EXEC_SUC_CNT,
+            0                                           as IFHO_EXEC_ERR_CNT,
+            0                                           as SOHO_EXEC_SUC_CNT,
+            0                                           as SOHO_EXEC_ERR_CNT,
+            0                                           as IRAT_EXEC_ERR_CNT,
+            0                                           as HS_NO_SELECTION_CNT,
+            false                                          as RAB_ACTIVITY_ON,
+            true                                        as RRC_ACTIVITY_ON,
+            cast(1,byte)                                as RRC_CONNECTION_CNT,
+            0                                           as CM_CNT,
+            0                                           as CM_UL_CNT,
+            0                                           as CM_DL_CNT,
+            0                                           as CM_ULDL_CNT,
+            0                                           as CM_USER_CNT,
+            0                                           as CM_DURATION,
+            0                                           as CM_START,
+            0                                            as RRC_MEAS_REP_SAMPLES,
+            0                                            as RRC_SAMPLES_GC_GS,
+            0                                            as RRC_SAMPLES_GC_BS,
+            0                                            as RRC_SAMPLES_BC_GS,
+            0                                            as RRC_SAMPLES_BC_BS,
+            0                                            as ECNO_TOTAL,
+            0                                            as RSCP_TOTAL,
+            0                                            as NUM_VALID_ECNO_SAMPLES,
+            0                                            as NUM_VALID_RSCP_SAMPLES,
+            cast(0,short)                               as CS_REASON_OTHER,
+            cast(0,short)                               as CS_REASON_QUEUE,
+            cast(0,short)                               as CS_REASON_QOS_DCH,
+            cast(0,short)                               as CS_REASON_MOBILITY_COVERAGE,
+            cast(0,short)                               as CS_REASON_CAPACITY,
+            cast(0,short)                               as CS_REASON_UE_ACTIVITY,
+            cast(0,short)                               as CDS_SUCC_CNT,
+            cast(0,short)                               as CUS_SUCC_CNT,
+            cast(0,short)                               as CDS_ATT_CNT,
+            cast(0,short)                               as CUS_ATT_CNT,
+            0                                           as ACTIVITY_DURATION,
+            0                                           as HS_DURATION,
+            0                                           as EUL_DURATION,
+            0                                           as HSDSCH_USERS_TOTAL,
+            0                                           as HSDSCH_USERS_SAMPLES,
+            0                                           as UL_INTERFERENCE_TOTAL,
+            0                                           as UL_INTERFERENCE_SAMPLES,
+            0                                           as DL_NON_HS_TX_POWER_TOTAL,
+            0                                           as DL_NON_HS_TX_POWER_SAMPLES,
+            0                                           as CM_USER_TOTAL,
+            0                                           as CM_USER_SAMPLES,
+            EVENT_ID_VALUE                              as EVENT_ID 
+when matched and rsw.RRC_ACTIVITY_ON = false //ie RRC_CONNECTION_RELEASE_COMPLETE event correctly received
+     then
+         update set
+            rsw.SESSION_CLOSED              = true,
+            rsw.PS_RAB_DURATION             = case when rsw.RAB_ACTIVITY_ON = true 
+                                              then 
+                                                rsw.PS_RAB_DURATION + cast((rrc.timestamp-rsw.PS_RAB_ACTIVITY_END_TIME),int)
+                                              else
+                                                rsw.PS_RAB_DURATION
+                                              end,
+            rsw.PS_RAB_ACTIVITY_END_TIME    = case when rsw.RAB_ACTIVITY_ON = true 
+                                              then 
+                                                rrc.timestamp
+                                              else
+                                                rsw.PS_RAB_ACTIVITY_END_TIME 
+                                              end,
+            rsw.CM_DURATION                 = case when rsw.CM_START > 0 
+                                              then 
+                                                rsw.CM_DURATION + cast((rrc.timestamp - rsw.CM_START), int)
+                                              else
+                                                rsw.CM_DURATION 
+                                              end,
+            rsw.CM_START                    = 0,
+            rsw.RAB_ACTIVITY_ON             = false,
+            rsw.ACTIVITY_DURATION           = case when rsw.ACTIVITY_START > 0
+                                              then rsw.ACTIVITY_DURATION + cast((rrc.timestamp - rsw.ACTIVITY_START), int)
+                                              else rsw.ACTIVITY_DURATION
+                                              end,
+            rsw.ACTIVITY_START              = -1,
+            rsw.HS_DURATION                 = case when rsw.HS_START > 0
+                                              then rsw.HS_DURATION + cast((rrc.timestamp - rsw.HS_START), int)
+                                              else rsw.HS_DURATION
+                                              end,
+            rsw.HS_START                    = -1,
+            rsw.EUL_DURATION                = case when rsw.EUL_START > 0
+                                              then rsw.EUL_DURATION + cast((rrc.timestamp - rsw.EUL_START), int)
+                                              else rsw.EUL_DURATION
+                                              end,
+            rsw.EUL_START                   = -1
+     then 
+         insert into RadioSessionWindow
+         select
+            rrc.UE_CONTEXT                              as UE_CONTEXT,
+            rrc.RNC_MODULE_ID                           as RNC_MODULE_ID,
+            rrc.timestamp.roundFloor('min').minus((rrc.timestamp.getMinuteOfHour()%SESSION_DURATION_IN_MINUTES)*ONE_MINUTE_IN_MS)                 as DATETIME_ID,         
+            rrc.timestamp                               as timestamp,
+            0l                                          as PS_RAB_ACTIVITY_START_TIME,
+            rrc.timestamp                               as RRC_CONN_END,
+            0l                                          as PS_RAB_ACTIVITY_END_TIME,
+            rrc.timestamp.roundFloor('min').minus((rrc.timestamp.getMinuteOfHour()%SESSION_DURATION_IN_MINUTES)*ONE_MINUTE_IN_MS).plus(SESSION_DURATION_IN_MINUTES minutes) as SESSION_END,
+            0                                           as RRC_DURATION,
+            0                                           as PS_RAB_DURATION,
+            cast(0,short)                               as PS_RAB_ESTABLISH_CNT,
+            cast(0,short)                               as CS_RAB_ESTABLISH_CNT,
+            cast(0,byte)                                as DROPS_CNT,
+            1                                           as EVENT_CNT,
+            0                                           as HS_CELL_CHANGE_SUC_CNT,
+            0                                           as HS_CELL_CHANGE_ERR_CNT,
+            rrc.getC_ID_1()                              as START_C_ID,
+            rrc.getC_ID_1()                             as END_C_ID,
+            rrc.RNC_ID_1                                 as START_RNC,
+            rrc.RNC_ID_1                                   as END_RNC,
+            cast(SESSION_DURATION_IN_SECONDS,short)     as SESSION_DURATION,
+            0                                           as IFHO_EXEC_SUC_CNT,
+            0                                           as IFHO_EXEC_ERR_CNT,
+            0                                           as SOHO_EXEC_SUC_CNT,
+            0                                           as SOHO_EXEC_ERR_CNT,
+            0                                           as IRAT_EXEC_ERR_CNT,
+            0                                           as HS_NO_SELECTION_CNT,
+            false                                          as RAB_ACTIVITY_ON,
+            true                                        as RRC_ACTIVITY_ON,
+            cast(1,byte)                                as RRC_CONNECTION_CNT,
+            0                                           as CM_CNT,
+            0                                           as CM_UL_CNT,
+            0                                           as CM_DL_CNT,
+            0                                           as CM_ULDL_CNT,
+            0                                           as CM_USER_CNT,
+            0                                           as CM_DURATION,
+            0                                           as CM_START,
+            0                                            as RRC_MEAS_REP_SAMPLES,
+            0                                            as RRC_SAMPLES_GC_GS,
+            0                                            as RRC_SAMPLES_GC_BS,
+            0                                            as RRC_SAMPLES_BC_GS,
+            0                                            as RRC_SAMPLES_BC_BS,
+            0                                            as ECNO_TOTAL,
+            0                                            as RSCP_TOTAL,
+            0                                            as NUM_VALID_ECNO_SAMPLES,
+            0                                            as NUM_VALID_RSCP_SAMPLES,
+            cast(0,short)                               as CS_REASON_OTHER,
+            cast(0,short)                               as CS_REASON_QUEUE,
+            cast(0,short)                               as CS_REASON_QOS_DCH,
+            cast(0,short)                               as CS_REASON_MOBILITY_COVERAGE,
+            cast(0,short)                               as CS_REASON_CAPACITY,
+            cast(0,short)                               as CS_REASON_UE_ACTIVITY,
+            cast(0,short)                               as CDS_SUCC_CNT,
+            cast(0,short)                               as CUS_SUCC_CNT,
+            cast(0,short)                               as CDS_ATT_CNT,
+            cast(0,short)                               as CUS_ATT_CNT,
+            0                                           as ACTIVITY_DURATION,
+            0                                           as HS_DURATION,
+            0                                           as EUL_DURATION,
+            0                                           as HSDSCH_USERS_TOTAL,
+            0                                           as HSDSCH_USERS_SAMPLES,
+            0                                           as UL_INTERFERENCE_TOTAL,
+            0                                           as UL_INTERFERENCE_SAMPLES,
+            0                                           as DL_NON_HS_TX_POWER_TOTAL,
+            0                                           as DL_NON_HS_TX_POWER_SAMPLES,
+            0                                           as CM_USER_TOTAL,
+            0                                           as CM_USER_SAMPLES,
+            EVENT_ID_VALUE                              as EVENT_ID
+when not matched 
+         then
+              insert into RadioSessionWindow
+             select
+                rrc.UE_CONTEXT                              as UE_CONTEXT,
+                rrc.RNC_MODULE_ID                           as RNC_MODULE_ID,
+                rrc.timestamp.roundFloor('min').minus((rrc.timestamp.getMinuteOfHour()%SESSION_DURATION_IN_MINUTES)*ONE_MINUTE_IN_MS)                 as DATETIME_ID,         
+                rrc.timestamp                               as timestamp,
+                0l                                          as PS_RAB_ACTIVITY_START_TIME,
+                rrc.timestamp                               as RRC_CONN_END,
+                0l                                          as PS_RAB_ACTIVITY_END_TIME,
+                rrc.timestamp.roundFloor('min').minus((rrc.timestamp.getMinuteOfHour()%SESSION_DURATION_IN_MINUTES)*ONE_MINUTE_IN_MS).plus(SESSION_DURATION_IN_MINUTES minutes) as SESSION_END,
+                0                                           as RRC_DURATION,
+                0                                           as PS_RAB_DURATION,
+                cast(0,short)                               as PS_RAB_ESTABLISH_CNT,
+                cast(0,short)                               as CS_RAB_ESTABLISH_CNT,
+                cast(0,byte)                                as DROPS_CNT,
+                1                                           as EVENT_CNT,
+                0                                           as HS_CELL_CHANGE_SUC_CNT,
+                0                                           as HS_CELL_CHANGE_ERR_CNT,
+                rrc.getC_ID_1()                              as START_C_ID,
+                rrc.getC_ID_1()                             as END_C_ID,
+                rrc.RNC_ID_1                                 as START_RNC,
+                rrc.RNC_ID_1                                   as END_RNC,
+                cast(SESSION_DURATION_IN_SECONDS,short)     as SESSION_DURATION,
+                0                                           as IFHO_EXEC_SUC_CNT,
+                0                                           as IFHO_EXEC_ERR_CNT,
+                0                                           as SOHO_EXEC_SUC_CNT,
+                0                                           as SOHO_EXEC_ERR_CNT,
+                0                                           as IRAT_EXEC_ERR_CNT,
+                0                                           as HS_NO_SELECTION_CNT,
+                false                                          as RAB_ACTIVITY_ON,
+                true                                        as RRC_ACTIVITY_ON,
+                cast(1,byte)                                as RRC_CONNECTION_CNT,
+                0                                           as CM_CNT,
+                0                                           as CM_UL_CNT,
+                0                                           as CM_DL_CNT,
+                0                                           as CM_ULDL_CNT,
+                0                                           as CM_USER_CNT,
+                0                                           as CM_DURATION,
+                0                                           as CM_START,
+                0                                            as RRC_MEAS_REP_SAMPLES,
+                0                                            as RRC_SAMPLES_GC_GS,
+                0                                            as RRC_SAMPLES_GC_BS,
+                0                                            as RRC_SAMPLES_BC_GS,
+                0                                            as RRC_SAMPLES_BC_BS,
+                0                                            as ECNO_TOTAL,
+                0                                            as RSCP_TOTAL,
+                0                                            as NUM_VALID_ECNO_SAMPLES,
+                0                                            as NUM_VALID_RSCP_SAMPLES,
+                cast(0,short)                               as CS_REASON_OTHER,
+                cast(0,short)                               as CS_REASON_QUEUE,
+                cast(0,short)                               as CS_REASON_QOS_DCH,
+                cast(0,short)                               as CS_REASON_MOBILITY_COVERAGE,
+                cast(0,short)                               as CS_REASON_CAPACITY,
+                cast(0,short)                               as CS_REASON_UE_ACTIVITY,
+                cast(0,short)                               as CDS_SUCC_CNT,
+                cast(0,short)                               as CUS_SUCC_CNT,
+                cast(0,short)                               as CDS_ATT_CNT,
+                cast(0,short)                               as CUS_ATT_CNT,
+                0                                           as ACTIVITY_DURATION,
+                0                                           as HS_DURATION,
+                0                                           as EUL_DURATION,
+                0                                           as HSDSCH_USERS_TOTAL,
+                0                                           as HSDSCH_USERS_SAMPLES,
+                0                                           as UL_INTERFERENCE_TOTAL,
+                0                                           as UL_INTERFERENCE_SAMPLES,
+                0                                           as DL_NON_HS_TX_POWER_TOTAL,
+                0                                           as DL_NON_HS_TX_POWER_SAMPLES,
+                0                                           as CM_USER_TOTAL,
+                0                                           as CM_USER_SAMPLES,
+                EVENT_ID_VALUE                              as EVENT_ID;
+
+
+@Drop
+@Priority(2)
+on gpeh.INTERNAL_SYSTEM_UTILIZATION as interSysUtil
+update RadioSessionWindow AS rsw
+set
+       rsw.HSDSCH_USERS_TOTAL                  = rsw.HSDSCH_USERS_TOTAL + interSysUtil.getNUMBER_OF_USERS_ASSIGNED_TO_PHYS_HS_CHAN(),
+       rsw.HSDSCH_USERS_SAMPLES                = rsw.HSDSCH_USERS_SAMPLES + 1,
+       rsw.UL_INTERFERENCE_TOTAL               = rsw.UL_INTERFERENCE_TOTAL + cast(Math.pow(10,((-112.1 + 0.1*interSysUtil.getUL_INTERFERENCE())/10.0).doubleValue()), float),
+       rsw.UL_INTERFERENCE_SAMPLES             = rsw.UL_INTERFERENCE_SAMPLES + 1,
+       rsw.DL_NON_HS_TX_POWER_TOTAL            = rsw.DL_NON_HS_TX_POWER_TOTAL + interSysUtil.getDL_NON_HS_TX_POWER(),
+       rsw.DL_NON_HS_TX_POWER_SAMPLES          = rsw.DL_NON_HS_TX_POWER_SAMPLES + 1,
+       rsw.CM_USER_TOTAL                       = rsw.CM_USER_TOTAL + interSysUtil.getNO_OF_CM_USERS(),
+       rsw.CM_USER_SAMPLES                     = rsw.CM_USER_SAMPLES + 1
+where interSysUtil.getC_ID_1() = rsw.END_C_ID
+   and rsw.RRC_ACTIVITY_ON = true;
+
+
+@Drop
+@Priority(1)
+
+expression isServingCell { event => DefaultLookupService.getInstance().isForServingCell(event.getRNC_ID_1(), event.getC_ID_1(), 
+                                     cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getSCRAMBLING_CODE())}
+                                    
+expression isFreqEvent {event => cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getMEASUREMENT_TYPE() = 0 
+                           or  cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getMEASUREMENT_TYPE() = 1}                   
+
+
+expression getRscp {event =>  case when cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getRSCP() < -5
+                        then
+                            BASE_RSCP_VALUE - 5
+                        when cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getRSCP() >= HIGHEST_RSCP_INDEX
+                        then
+                            BASE_RSCP_VALUE + HIGHEST_RSCP_INDEX - 1
+                        else
+                            BASE_RSCP_VALUE + cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getRSCP()
+                        end
+                        }
+
+expression getEcno {event => case when cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getECNO() < 0 
+                        then
+                            BASE_ECNO_VALUE
+                        when cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getECNO() >= HIGHEST_ECNO_INDEX
+                        then
+                            BASE_ECNO_VALUE + ((HIGHEST_ECNO_INDEX - 1)* 0.5f) 
+                        else
+                            BASE_ECNO_VALUE + (cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getECNO()) * 0.5f
+                        end
+                        }
+
+expression ecnoAndRscpAreSet {event => cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getRSCP() != -2147483648 
+                                and cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getECNO() != -2147483648}
+
+expression ecnoIsSet {event => cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getECNO() != -2147483648}                                
+
+expression rscpIsSet {event => cast(event, com.ericsson.cepmediation.loading.asn1.ASN1MeasurementWrapper).getASN1_MEASUREMENT().getRSCP() != -2147483648}
+
+on GpehBase AS event
+    merge RadioSessionWindow as rsw
+    where rsw.UE_CONTEXT = event.UE_CONTEXT
+    and rsw.RNC_MODULE_ID = event.RNC_MODULE_ID
+    and rsw.SESSION_CLOSED = false
+    when matched and event.getEventId()=INTERNAL_RAB_ESTABLISHMENT_ID
+                 and Util.containsPsRab(cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_ESTABLISHMENT).getTARGET_CONF())
+         then update set
+             rsw.PS_RAB_ACTIVITY_START_TIME    = case when rsw.START_RAB=cast(-1,short)
+                                                  then
+                                                    event.timestamp
+                                                  else
+                                                     rsw.PS_RAB_ACTIVITY_START_TIME
+                                                  end,
+             rsw.PS_RAB_ACTIVITY_END_TIME      = event.timestamp,                                                                 
+             rsw.PS_RAB_ESTABLISH_CNT          = Util.getPsCount(cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_ESTABLISHMENT).getSOURCE_CONF(),
+                                                                 cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_ESTABLISHMENT).getTARGET_CONF(),
+                                                                 rsw.PS_RAB_ESTABLISH_CNT),
+             rsw.EVENT_CNT                     = rsw.EVENT_CNT+1,
+             rsw.END_C_ID                      = event.getC_ID_1(),
+             rsw.END_RNC                       = event.RNC_ID_1,
+             rsw.CS_RAB_ESTABLISH_CNT          = Util.getCsCount(cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_ESTABLISHMENT).getSOURCE_CONF(),
+                                                                 cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_ESTABLISHMENT).getTARGET_CONF(),
+                                                                 rsw.CS_RAB_ESTABLISH_CNT),
+             rsw.RAB_ACTIVITY_ON               = true,
+             rsw.END_RAB                       = cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_ESTABLISHMENT).getTARGET_CONF(),
+             rsw.START_RAB                     = case when rsw.START_RAB=cast(-1,short)
+                                                 then 
+                                                    cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_ESTABLISHMENT).getTARGET_CONF()
+                                                 else
+                                                    rsw.START_RAB
+                                                 end,
+             rsw.HSDPA_UE_CATEGORY             = case when cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_ESTABLISHMENT).getHS_DSCH_PHYSICAL_LAYER_CATEGORY() != -1
+                                                 then cast(cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_ESTABLISHMENT).getHS_DSCH_PHYSICAL_LAYER_CATEGORY(),short)
+                                                 else rsw.HSDPA_UE_CATEGORY
+                                                 end,
+             rsw.EUL_UE_CATEGORY               = case when cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_ESTABLISHMENT).getE_DCH_PHYSICAL_LAYER_CATEGORY() != -1
+                                                 then cast(cast(ee.event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_ESTABLISHMENT).getE_DCH_PHYSICAL_LAYER_CATEGORY(),short)
+                                                 else rsw.EUL_UE_CATEGORY
+                                                 end,
+            rsw.ACTIVITY_START                 = case when ACTIVITY_START < 0
+                                                      and cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_ESTABLISHMENT).getTARGET_CONF() != 4 
+                                                 then 
+                                                   event.timestamp 
+                                                 else 
+                                                   rsw.ACTIVITY_START
+                                                 end,
+            rsw.HS_START                       = case when true = Util.isHsdpaBearer(cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_ESTABLISHMENT).getTARGET_CONF())
+                                                 then 
+                                                  event.timestamp
+                                                 else 
+                                                   rsw.HS_START
+                                                 end,
+            rsw.EUL_START                      = case when true = Util.isHsupaBearer(cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_ESTABLISHMENT).getTARGET_CONF())
+                                                 then 
+                                                   event.timestamp
+                                                 else 
+                                                   rsw.EUL_START
+                                                 end
+     when matched  and event.getEventId()=INTERNAL_RAB_ESTABLISHMENT_ID
+                   and Util.isCsRabOnly(cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_ESTABLISHMENT).getTARGET_CONF())
+         then UPDATE SET
+             rsw.EVENT_CNT                     = rsw.EVENT_CNT+1,
+             rsw.END_C_ID                      = event.getC_ID_1(),
+             rsw.END_RNC                       = event.RNC_ID_1,
+             rsw.CS_RAB_ESTABLISH_CNT          = Util.getCsCount(cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_ESTABLISHMENT).getSOURCE_CONF(),
+                                                                 cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_ESTABLISHMENT).getTARGET_CONF(),
+                                                                 rsw.CS_RAB_ESTABLISH_CNT)
+      when matched and (event.getEventId()=INTERNAL_RAB_RELEASE_ID 
+                   and rsw.RAB_ACTIVITY_ON = true
+                   and not Util.containsPsRab(cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_RELEASE).getTARGET_CONF()))
+         then UPDATE SET
+             rsw.EVENT_CNT                     = rsw.EVENT_CNT+1,
+             rsw.END_C_ID                      = event.getC_ID_1(),
+             rsw.END_RNC                       = event.RNC_ID_1,
+             rsw.PS_RAB_DURATION               = rsw.PS_RAB_DURATION + cast((event.timestamp-rsw.PS_RAB_ACTIVITY_END_TIME),int),
+             rsw.END_RAB                       = cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_RELEASE).getSOURCE_CONF(),
+             rsw.PS_RAB_ACTIVITY_END_TIME      = event.timestamp,
+             rsw.RAB_ACTIVITY_ON               = false,
+             rsw.ACTIVITY_DURATION             = case when rsw.ACTIVITY_START > 0
+                                                 then rsw.ACTIVITY_DURATION + cast((event.timestamp - rsw.ACTIVITY_START), int)
+                                                 else rsw.ACTIVITY_DURATION
+                                                 end,
+            rsw.ACTIVITY_START                 = -1,
+            rsw.HS_DURATION                    = case when rsw.HS_START > 0
+                                                 then rsw.HS_DURATION + cast((event.timestamp - rsw.HS_START), int)
+                                                 else rsw.HS_DURATION
+                                                 end,
+            rsw.HS_START                       = -1,
+            rsw.EUL_DURATION                   = case when rsw.EUL_START > 0
+                                                 then rsw.EUL_DURATION + cast(( event.timestamp - rsw.EUL_START), int)
+                                                 else rsw.EUL_DURATION
+                                                 end,
+            rsw.EUL_START                      = -1
+     when matched and event.getEventId()=INTERNAL_RAB_RELEASE_ID
+                  and rsw.RAB_ACTIVITY_ON = true 
+                  and Util.containsPsRab(cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_RAB_RELEASE).getTARGET_CONF())
+         then UPDATE SET
+             rsw.EVENT_CNT                     = rsw.EVENT_CNT+1,
+             rsw.END_C_ID                      = event.getC_ID_1(),
+             rsw.END_RNC                       = event.RNC_ID_1
+      when matched and event.getEventId()=INTERNAL_SYSTEM_RELEASE_ID
+                   and rsw.RAB_ACTIVITY_ON = true 
+                   and not Util.containsPsRab(cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_SYSTEM_RELEASE).getTARGET_CONF())
+         then UPDATE SET
+            rsw.EVENT_CNT                      = rsw.EVENT_CNT+1,
+            rsw.END_C_ID                       = event.getC_ID_1(),
+            rsw.END_RNC                        = event.RNC_ID_1,
+            rsw.PS_RAB_DURATION                = rsw.PS_RAB_DURATION + cast((event.timestamp-rsw.PS_RAB_ACTIVITY_END_TIME),int),
+            rsw.END_RAB                        = cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_SYSTEM_RELEASE).getSOURCE_CONF(),
+            rsw.PS_RAB_ACTIVITY_END_TIME       = event.timestamp,
+            rsw.RAB_ACTIVITY_ON                = false,
+            rsw.DROPS_CNT                      = cast((rsw.DROPS_CNT + 1),byte),
+            rsw.ACTIVITY_DURATION                   = case when rsw.ACTIVITY_START > 0
+                                                 then rsw.ACTIVITY_DURATION + cast((event.timestamp - rsw.ACTIVITY_START), int)
+                                                 else rsw.ACTIVITY_DURATION
+                                                 end,
+            rsw.ACTIVITY_START                      = -1,
+            rsw.HS_DURATION                    = case when rsw.HS_START > 0
+                                                 then rsw.HS_DURATION + cast((event.timestamp - rsw.HS_START), int)
+                                                 else rsw.HS_DURATION
+                                                 end,
+            rsw.HS_START                       = -1,
+            rsw.EUL_DURATION                   = case when rsw.EUL_START > 0
+                                                  then rsw.EUL_DURATION + cast(( event.timestamp - rsw.EUL_START), int)
+                                                   else rsw.EUL_DURATION
+                                                    end,
+            rsw.EUL_START                      = -1   
+     when matched and event.getEventId()=INTERNAL_SYSTEM_RELEASE_ID
+            then UPDATE SET
+            rsw.EVENT_CNT                      = rsw.EVENT_CNT+1,
+            rsw.END_C_ID                       = event.getC_ID_1(),
+            rsw.END_RNC                        = event.RNC_ID_1,
+            rsw.DROPS_CNT                      = cast((rsw.DROPS_CNT + 1),byte)
+     when matched and event.getEventId()=RRC_RRC_CONNECTION_RELEASE_COMPLETE_ID
+         then UPDATE SET
+             rsw.EVENT_CNT                     = rsw.EVENT_CNT+1,
+             rsw.END_C_ID                      = event.getC_ID_1(),
+             rsw.END_RNC                       = event.RNC_ID_1,
+             rsw.PS_RAB_DURATION               = case when rsw.RAB_ACTIVITY_ON = true 
+                                                 then 
+                                                   rsw.PS_RAB_DURATION + cast((event.timestamp-rsw.PS_RAB_ACTIVITY_END_TIME),int)
+                                                 else
+                                                   rsw.PS_RAB_DURATION
+                                                 end,
+             rsw.PS_RAB_ACTIVITY_END_TIME      = case when rsw.RAB_ACTIVITY_ON = true 
+                                                 then 
+                                                   event.timestamp
+                                                 else
+                                                   rsw.PS_RAB_ACTIVITY_END_TIME 
+                                                 end,
+             rsw.CM_DURATION                   = case when rsw.CM_START > 0 
+                                                  then 
+                                                 rsw.CM_DURATION + cast((event.timestamp - rsw.CM_START), int)  
+                                                   else
+                                                 rsw.CM_DURATION 
+                                                   end,
+             rsw.CM_START                      = 0,
+             rsw.RAB_ACTIVITY_ON               = false,
+             rsw.RRC_ACTIVITY_ON               = false,
+             rsw.RRC_DURATION                  = rsw.RRC_DURATION + cast((event.timestamp-rsw.RRC_CONN_END),int),
+             rsw.RRC_CONN_END                  = event.timestamp,
+             rsw.ACTIVITY_DURATION             = case when rsw.ACTIVITY_START > 0
+                                                   then rsw.ACTIVITY_DURATION + cast((event.timestamp - rsw.ACTIVITY_START), int)
+                                                 else rsw.ACTIVITY_DURATION
+                                                 end,
+            rsw.ACTIVITY_START                 = -1,
+            rsw.HS_DURATION                    = case when rsw.HS_START > 0
+                                                 then rsw.HS_DURATION + cast((event.timestamp - rsw.HS_START), int)
+                                                 else rsw.HS_DURATION
+                                                 end,
+            rsw.HS_START                       = -1,
+            rsw.EUL_DURATION                   = case when rsw.EUL_START > 0
+                                                 then rsw.EUL_DURATION + cast((event.timestamp - rsw.EUL_START), int)
+                                                 else rsw.EUL_DURATION
+                                                 end,
+            rsw.EUL_START                      = -1
+     when matched and event.getEventId()=INTERNAL_FAILED_HSDSCH_CELL_CHANGE_ID
+         then UPDATE SET
+             rsw.HS_CELL_CHANGE_ERR_CNT        = rsw.HS_CELL_CHANGE_ERR_CNT+1,
+             rsw.EVENT_CNT                     = rsw.EVENT_CNT+1,
+             rsw.END_C_ID                      = event.getC_ID_1(),
+             rsw.END_RNC                       = event.RNC_ID_1
+     when matched and event.getEventId()=INTERNAL_SUCCESSFUL_HSDSCH_CELL_CHANGE_ID
+         then UPDATE SET
+             rsw.HS_CELL_CHANGE_SUC_CNT        = rsw.HS_CELL_CHANGE_SUC_CNT+1,
+             rsw.EVENT_CNT                     = rsw.EVENT_CNT+1,
+             rsw.END_C_ID                      = event.getC_ID_1(),
+             rsw.END_RNC                       = event.RNC_ID_1
+     when matched and event.getEventId()=INTERNAL_HSDSCH_CELL_SELECTION_NO_CELL_SELECTED_ID
+         then UPDATE SET
+             rsw.HS_NO_SELECTION_CNT           = rsw.HS_NO_SELECTION_CNT+1,
+             rsw.EVENT_CNT                     = rsw.EVENT_CNT+1,
+             rsw.END_C_ID                      = event.getC_ID_1(),
+             rsw.END_RNC                       = event.RNC_ID_1
+     when matched and event.getEventId()=INTERNAL_CMODE_ACTIVATE_ID
+         then UPDATE SET
+             rsw.CM_START                      = case when rsw.CM_START = 0
+                                                 then
+                                                     event.timestamp
+                                                 else
+                                                     rsw.CM_START
+                                                 end,
+             rsw.CM_UL_CNT                     = case when (cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CMODE_ACTIVATE)).getCM_TYPE() = 2 
+                                                 then 
+                                                   rsw.CM_UL_CNT + 1
+                                                 else
+                                                   rsw.CM_UL_CNT 
+                                                 end,
+             rsw.CM_DL_CNT                     = case when (cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CMODE_ACTIVATE)).getCM_TYPE() = 0 
+                                                 then 
+                                                   rsw.CM_DL_CNT + 1
+                                                 else
+                                                   rsw.CM_DL_CNT 
+                                                 end,
+             rsw.CM_ULDL_CNT                   = case when (cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CMODE_ACTIVATE)).getCM_TYPE() = 1 
+                                                 then 
+                                                   rsw.CM_ULDL_CNT + 1
+                                                 else
+                                                   rsw.CM_ULDL_CNT 
+                                                 end,
+             rsw.CM_CNT                        = rsw.CM_CNT + 1,
+             rsw.EVENT_CNT                     = rsw.EVENT_CNT+1,
+             rsw.END_C_ID                      = event.getC_ID_1(),
+             rsw.END_RNC                       = event.RNC_ID_1
+     when matched and event.getEventId()=INTERNAL_CMODE_DEACTIVATE_ID
+         then UPDATE SET
+             rsw.CM_DURATION                   = case when rsw.CM_START > 0
+                                                 then
+                                                  rsw.CM_DURATION + cast(( event.timestamp - rsw.CM_START), int)
+                                                 else 
+                                                    rsw.CM_DURATION
+                                                 end,
+             rsw.CM_START                      = 0,
+             rsw.EVENT_CNT                     = rsw.EVENT_CNT+1,
+             rsw.END_C_ID                      = event.getC_ID_1(),
+             rsw.END_RNC                       = event.RNC_ID_1
+    when matched and event.getEventId()=INTERNAL_OUT_HARD_HANDOVER_FAILURE_ID
+        then update set
+            rsw.IRAT_EXEC_ERR_CNT              = case when cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_OUT_HARD_HANDOVER_FAILURE).getPROCEDURE_INDICATOR() in (7,12)
+                                                                  then rsw.IRAT_EXEC_ERR_CNT + 1
+                                                                  else rsw.IRAT_EXEC_ERR_CNT
+                                                                  end,
+            rsw.EVENT_CNT                      = rsw.EVENT_CNT+1,
+            rsw.END_C_ID                       = event.getC_ID_1(),
+            rsw.END_RNC                        = event.RNC_ID_1
+    when matched and event.getEventId()=INTERNAL_IFHO_EXECUTION_ACTIVE_ID
+        then update set
+            rsw.IFHO_EXEC_ERR_CNT              = case when cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_IFHO_EXECUTION_ACTIVE).getRESULT() > 0
+                                                 then rsw.IFHO_EXEC_ERR_CNT + 1
+                                                 else rsw.IFHO_EXEC_ERR_CNT
+                                                 end,
+            rsw.IFHO_EXEC_SUC_CNT              = case when cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_IFHO_EXECUTION_ACTIVE).getRESULT() = 0
+                                                 then rsw.IFHO_EXEC_SUC_CNT + 1
+                                                 else rsw.IFHO_EXEC_SUC_CNT
+                                                 end,
+            rsw.EVENT_CNT                      = rsw.EVENT_CNT+1,
+            rsw.END_C_ID                       = event.getC_ID_1(),
+            rsw.END_RNC                        = event.RNC_ID_1    
+    when matched and event.getEventId()=INTERNAL_SOFT_HANDOVER_EXECUTION_ID
+        then update set
+            rsw.SOHO_EXEC_ERR_CNT              = case when cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_SOFT_HANDOVER_EXECUTION).getRESULT() > 0
+                                                 then rsw.SOHO_EXEC_ERR_CNT + 1
+                                                 else rsw.SOHO_EXEC_ERR_CNT
+                                                 end,
+            rsw.SOHO_EXEC_SUC_CNT              = case when cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_SOFT_HANDOVER_EXECUTION).getRESULT() = 0
+                                                 then rsw.SOHO_EXEC_SUC_CNT + 1
+                                                 else rsw.SOHO_EXEC_SUC_CNT
+                                                 end,
+            rsw.EVENT_CNT                      = rsw.EVENT_CNT+1,
+            rsw.END_C_ID                       = event.getC_ID_1(),
+            rsw.END_RNC                        = event.RNC_ID_1
+    when matched and event.getEventId()=INTERNAL_CHANNEL_SWITCHING_ID
+        then UPDATE SET
+            rsw.CS_REASON_OTHER                = case when (cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING)).getCHANNEL_SWITCH_REASON() = 6 
+                                                 then 
+                                                   cast(rsw.CS_REASON_OTHER + 1, short)
+                                                 else 
+                                                  rsw.CS_REASON_OTHER
+                                                 end,
+            rsw.CS_REASON_QUEUE                = case when (cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING)).getCHANNEL_SWITCH_REASON() = 2
+                                                 then
+                                                    cast(rsw.CS_REASON_QUEUE + 1, short)
+                                                 else 
+                                                  rsw.CS_REASON_QUEUE
+                                                 end,
+            rsw.CS_REASON_QOS_DCH              = case when (cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING)).getCHANNEL_SWITCH_REASON() in (12, 13)
+                                                 then
+                                                    cast(rsw.CS_REASON_QOS_DCH + 1, short) 
+                                                 else 
+                                                      rsw.CS_REASON_QOS_DCH
+                                                 end,
+            rsw.CS_REASON_MOBILITY_COVERAGE    = case when (cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING)).getCHANNEL_SWITCH_REASON() in (3, 4)
+                                                 then
+                                                   cast(rsw.CS_REASON_MOBILITY_COVERAGE + 1, short) 
+                                                 else
+                                                  rsw.CS_REASON_MOBILITY_COVERAGE
+                                                 end,
+            rsw.CS_REASON_CAPACITY             = case when (cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING)).getCHANNEL_SWITCH_REASON() in (0, 10, 1, 7)
+                                                 then
+                                                  cast(rsw.CS_REASON_CAPACITY + 1, short)
+                                                 else
+                                                  rsw.CS_REASON_CAPACITY
+                                                 end,
+            rsw.CS_REASON_UE_ACTIVITY          = case when (cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING)).getCHANNEL_SWITCH_REASON() in (5, 8, 9)
+                                                 then
+                                                   cast(rsw.CS_REASON_UE_ACTIVITY +1, short) 
+                                                 else
+                                                  rsw.CS_REASON_UE_ACTIVITY
+                                                 end,
+            rsw.CDS_SUCC_CNT                   = case when Util.isDownswitch(event) = true and (cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING)).getEXCEPTION_CLASS() = 0
+                                                 then cast(rsw.CDS_SUCC_CNT + 1, short) 
+                                                 else rsw.CDS_SUCC_CNT
+                                                 end,
+            rsw.CUS_SUCC_CNT                   = case when Util.isDownswitch(event) = false and (cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING)).getEXCEPTION_CLASS() = 0
+                                                 then cast(rsw.CUS_SUCC_CNT + 1, short)
+                                                 else rsw.CUS_SUCC_CNT
+                                                 end,
+            rsw.CDS_ATT_CNT                    = case when Util.isDownswitch(event) = true 
+                                                 then cast(rsw.CDS_ATT_CNT + 1, short) 
+                                                 else rsw.CDS_ATT_CNT
+                                                 end,
+            rsw.CUS_ATT_CNT                    = case when Util.isDownswitch(event) = false
+                                                 then cast(rsw.CUS_ATT_CNT + 1, short) 
+                                                 else rsw.CUS_ATT_CNT
+                                                 end,
+            rsw.ACTIVITY_DURATION              = case when rsw.ACTIVITY_START > 0
+                                                 then rsw.ACTIVITY_DURATION + cast((event.timestamp - rsw.ACTIVITY_START), int)
+                                                 else rsw.ACTIVITY_DURATION
+                                                 end,
+            rsw.ACTIVITY_START                 = case when Util.containsPsRab(cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING).getTARGET_CONF())
+                                                      and cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING).getTARGET_CONF() != 4
+                                                 then event.timestamp
+                                                 else -1
+                                                 end,
+            rsw.HS_DURATION                    = case when rsw.HS_START > 0
+                                                   then rsw.HS_DURATION + cast(( event.timestamp - rsw.HS_START), int)
+                                                   else rsw.HS_DURATION
+                                                  end,
+            rsw.HS_START                       = case when true = Util.isHsdpaBearer(cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING).getTARGET_CONF())
+                                                 then event.timestamp
+                                                 else -1
+                                                 end,
+            rsw.EUL_DURATION                   = case when rsw.EUL_START > 0
+                                                 then rsw.EUL_DURATION + cast((event.timestamp - rsw.EUL_START), int)
+                                                 else rsw.EUL_DURATION
+                                                 end,
+            rsw.EUL_START                      = case when true = Util.isHsupaBearer(cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING).getTARGET_CONF())
+                                                 then event.timestamp
+                                                 else -1
+                                                 end,
+            rsw.PS_RAB_DURATION                = case when rsw.RAB_ACTIVITY_ON = true 
+                                                      and not Util.containsPsRab(cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING).getTARGET_CONF())
+                                                 then 
+                                                     rsw.PS_RAB_DURATION + cast((event.timestamp-rsw.PS_RAB_ACTIVITY_END_TIME),int)
+                                                 else
+                                                   rsw.PS_RAB_DURATION
+                                                 end,
+            rsw.PS_RAB_ACTIVITY_END_TIME       = case when rsw.RAB_ACTIVITY_ON = true 
+                                                      and not Util.containsPsRab(cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING).getTARGET_CONF()) 
+                                                 then 
+                                                   event.timestamp
+                                                 else
+                                                   rsw.PS_RAB_ACTIVITY_END_TIME 
+                                                 end,
+            rsw.END_RAB                        = case when rsw.RAB_ACTIVITY_ON = true 
+                                                      and not Util.containsPsRab(cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING).getTARGET_CONF()) 
+                                                 then 
+                                                   cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING).getSOURCE_CONF()
+                                                 else
+                                                   case when Util.containsPsRab(cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING).getTARGET_CONF()) = true
+                                                   then cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING).getTARGET_CONF()
+                                                   else rsw.END_RAB
+                                                   end
+                                                 end,
+            rsw.RAB_ACTIVITY_ON                = case when rsw.RAB_ACTIVITY_ON = true 
+                                                      and not Util.containsPsRab(cast(event, com.ericsson.cepmediation.apeventbeans.gpeh.INTERNAL_CHANNEL_SWITCHING).getTARGET_CONF()) 
+                                                 then 
+                                                   false
+                                                 else
+                                                   rsw.RAB_ACTIVITY_ON 
+                                                 end,
+            rsw.EVENT_CNT                      = rsw.EVENT_CNT+1,
+            rsw.END_C_ID                       = event.getC_ID_1(),
+            rsw.END_RNC                        = event.RNC_ID_1
+    when matched and event.getEventId()=RRC_MEASUREMENT_REPORT_ID
+        then update set
+            rsw.RRC_MEAS_REP_SAMPLES = rsw.RRC_MEAS_REP_SAMPLES + 1,
+            rsw.EVENT_CNT                     = rsw.EVENT_CNT+1,
+            rsw.END_C_ID                      = event.getC_ID_1(),
+            rsw.END_RNC                       = event.RNC_ID_1
+    when matched and event.getEventId()=ASN1_MEASUREMENT_ID
+        then update set
+            rsw.RRC_SAMPLES_GC_GS               =    case when ecnoAndRscpAreSet(event) and isFreqEvent(event) and isServingCell(event) 
+                                                    and getRscp(event) >= DefaultLookupService.getInstance().getRSCPThresholdValue() 
+                                                    and getEcno(event) >= DefaultLookupService.getInstance().getECNOThresholdValue() 
+                                                then
+                                                rsw.RRC_SAMPLES_GC_GS + 1
+                                                else
+                                                rsw.RRC_SAMPLES_GC_GS
+                                                end,
+            rsw.RRC_SAMPLES_GC_BS               =    case when ecnoAndRscpAreSet(event) and isFreqEvent(event) and isServingCell(event) 
+                                                    and getRscp(event) >=  DefaultLookupService.getInstance().getRSCPThresholdValue() 
+                                                    and getEcno(event) < DefaultLookupService.getInstance().getECNOThresholdValue() 
+                                                then
+                                                rsw.RRC_SAMPLES_GC_BS + 1
+                                                else
+                                                rsw.RRC_SAMPLES_GC_BS
+                                                end,
+            rsw.RRC_SAMPLES_BC_GS               =    case when ecnoAndRscpAreSet(event) and isFreqEvent(event) and isServingCell(event) 
+                                                    and getRscp(event) <  DefaultLookupService.getInstance().getRSCPThresholdValue() 
+                                                    and getEcno(event) >= DefaultLookupService.getInstance().getECNOThresholdValue() 
+                                                then
+                                                rsw.RRC_SAMPLES_BC_GS + 1
+                                                else
+                                                rsw.RRC_SAMPLES_BC_GS
+                                                end,
+            rsw.RRC_SAMPLES_BC_BS               =    case when ecnoAndRscpAreSet(event) and isFreqEvent(event) and isServingCell(event) 
+                                                    and getRscp(event) <  DefaultLookupService.getInstance().getRSCPThresholdValue() 
+                                                    and getEcno(event) < DefaultLookupService.getInstance().getECNOThresholdValue() 
+                                                then
+                                                rsw.RRC_SAMPLES_BC_BS + 1
+                                                else
+                                                rsw.RRC_SAMPLES_BC_BS
+                                                end,            
+            rsw.ECNO_TOTAL                       =    case when ecnoIsSet(event) and isFreqEvent(event) and isServingCell(event)  
+                                                then 
+                                                rsw.ECNO_TOTAL + cast(Math.pow(10, (getEcno(event)/10).doubleValue()), float)  
+                                                else
+                                                rsw.ECNO_TOTAL
+                                                end,
+            rsw.NUM_VALID_ECNO_SAMPLES           =    case when ecnoIsSet(event) and isFreqEvent(event) and isServingCell(event) 
+                                                then
+                                                NUM_VALID_ECNO_SAMPLES + 1
+                                                else
+                                                NUM_VALID_ECNO_SAMPLES
+                                                end,
+            rsw.RSCP_TOTAL                       =    case when rscpIsSet(event) and isFreqEvent(event) and isServingCell(event)
+                                                then
+                                                rsw.RSCP_TOTAL + cast(Math.pow(10, (getRscp(event)/10).doubleValue()), float)
+                                                else
+                                                rsw.RSCP_TOTAL
+                                                end,    
+            rsw.NUM_VALID_RSCP_SAMPLES           =    case when rscpIsSet(event) and isFreqEvent(event) and isServingCell(event)
+                                                then 
+                                                NUM_VALID_RSCP_SAMPLES + 1
+                                                else
+                                                NUM_VALID_RSCP_SAMPLES
+                                                end

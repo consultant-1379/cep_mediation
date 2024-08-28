@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>cep-mediation</artifactId>
+        <groupId>com.ericsson.eniq.events.cepmediation</groupId>
+        <version>2.2.7</version>
+    </parent>
+
+    <artifactId>cep-mediation-ap-event-beans-generated</artifactId>
+    <name>${eniq.events.app.name} :: CEP Mediation AP Event Beans Generated</name>
+    <packaging>jar</packaging>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>com.ericsson.eniq.events.cepmediation</groupId>
+            <artifactId>cep-mediation-base</artifactId>
+            <version>2.2.7</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ericsson.eniq.events.cepmediation</groupId>
+            <artifactId>cep-mediation-app-config-generated</artifactId>
+            <version>2.2.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr-runtime</artifactId>
+            <version>3.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ericsson.eniq.events.cepmediation</groupId>
+            <artifactId>cep-mediation-ap-event-beans</artifactId>
+            <version>2.2.7</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+
+        <plugins>
+
+            <!-- 1) Specifying path to generated java classes as absolute ie ${root.path}/cep_mediation/... 
+                rather than absolute path as this was causing problems when running builds 
+                from parent pom and module pom. The generated source files are deliberately 
+                placed in src/main/java in this module so that they are compiled and jarred 
+                up 2) Generation of these classes is tied to the process-resources phase 
+                so that it happens after the resource files have been included in the classpath 
+                (these are required for the code generation) but before the compile stage 
+                runs - this will compile the generated code -->
+
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>2.4.1</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>${root.path}/cep_mediation/cep-mediation-ap-event-beans-generated/src/main/java/</directory>
+                            <includes>
+                                <include>**/*.java</include>
+                            </includes>
+                        </fileset>
+                        <fileset>
+                            <directory>${root.path}/cep_mediation/cep-mediation-ap-event-beans-generated/src/main/resources/esper</directory>
+                            <includes>
+                                <include>**/*.xml</include>
+                            </includes>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <executions>
+                    <execution>
+                        <id>generate_esper_config</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <executable>java</executable>
+                            <mainClass>com.ericsson.cepmediation.apeventbeans.generation.GenerateEsperConfig</mainClass>
+                            <arguments>
+                                <argument>${root.path}/cep_mediation/cep-mediation-ap-event-beans-generated/src/main/resources/esper</argument>
+                                <argument>${root.path}</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate_beans</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <executable>java</executable>
+                            <mainClass>com.ericsson.cepmediation.apeventbeans.generation.GenerateEventBeans</mainClass>
+                            <arguments>
+                                <argument>${root.path}/cep_mediation/cep-mediation-ap-event-beans-generated/src/main/java/</argument>
+                                <argument>${root.path}</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate_iq_filewriter</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <executable>java</executable>
+                            <mainClass>com.ericsson.cepmediation.apeventbeans.generation.GenerateIqFileWriter</mainClass>
+                            <arguments>
+                                <argument>${root.path}/cep_mediation/cep-mediation-ap-event-beans-generated/src/main/java/</argument>
+                                <argument>${root.path}</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate_uertt_filewriter</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <executable>java</executable>
+                            <mainClass>com.ericsson.cepmediation.apeventbeans.generation.GenerateUERTTFileWriter</mainClass>
+                            <arguments>
+                                <argument>${root.path}/cep_mediation/cep-mediation-ap-event-beans-generated/src/main/java/</argument>
+                                <argument>${root.path}</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>                
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>                        
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${root.path}/cep_mediation/cep-mediation-ap-event-beans-generated/target/classes/esper</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${root.path}/cep_mediation/cep-mediation-ap-event-beans-generated/src/main/resources/esper</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+
+    </build>
+
+</project>

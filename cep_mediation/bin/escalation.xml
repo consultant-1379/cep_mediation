@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<EscalationsResponse>
+    <Status>Success</Status>
+    <Escalation id="100" name="Default Escalation" description="This is an Escalation Scheme created by HQ that performs no actions" pauseAllowed="false" maxPauseTime="300000" notifyAll="false" repeat="false"/>
+    <Escalation id="10001" name="CEP Mediation Escalation" description="" pauseAllowed="true" maxPauseTime="172800000" notifyAll="false" repeat="true">
+        <Action id="10051" actionType="EmailAction" wait="3600000" sms="false" notifyType="email">
+            <Notify name="someone_email@something.com"/>
+        </Action>
+    </Escalation>
+</EscalationsResponse>
+

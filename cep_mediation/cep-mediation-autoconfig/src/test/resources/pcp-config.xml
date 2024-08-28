@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<network-elements>
+        <network-element>
+                <ip>10.45.192.183</ip>
+                <uname>admin</uname>
+                <password>admin</password>
+        </network-element>
+        <network-element>
+                <ip>10.45.192.181</ip>
+                <uname>dcuser</uname>
+                <password>dcuser</password>
+        </network-element>
+</network-elements>
